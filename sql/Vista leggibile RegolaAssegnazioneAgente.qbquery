@@ -1,0 +1,11 @@
+﻿select titoloufficio as Agenzia,nomeutente as Utente,CodClasse as Cod_Classe,TitoloClasse AS Classe,TitoloFamiglia as Prodotto,
+CASE TipoDistribuzione WHEN 'C' THEN 'equo carico TOTALE' WHEN 'I' THEN 'equo carico GIORNO' WHEN 'P' THEN 'preferito' END AS Distribuzione
+from regolaassegnazione ra
+left join classificazione c on ra.idclasse=c.idclasse
+left join famigliaprodotto f on f.idfamiglia=ra.idfamiglia
+left join reparto r on r.idreparto=ra.idreparto
+Left join area a on a.idarea=ra.idarea
+left join utente u on u.idutente=ra.idutente
+where tipoassegnazione=3
+order by agenzia,nomeutente,ra.idclasse,ra.ordine;
+

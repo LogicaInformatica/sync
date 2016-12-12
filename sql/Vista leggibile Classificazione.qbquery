@@ -1,0 +1,10 @@
+﻿select
+  codclasselegacy as Codice_OCS,CodClasse as Codice_CNC,TitoloClasse as Denominazione,
+  case idtipopagamento when 2 then 'RID' WHEN 1 THEN 'BP' ELSE '' END AS Tipo_Pagamento,
+  titolofamiglia as Prodotto,NumInsolutiDa as Num_Min_impagate,NumInsolutiA as Num_Max_impagate,
+NumRataDa as Dalla_rata,NumRataA as Alla_rata,ImpInsolutoDa AS Importo_Minimo,
+NumGiorniDa AS Da_giorni,NumGiorniA as A_giorni,FlagRecidivo AS Solo_Recidivo,FlagCambioAgente AS Cambio_agenzia,
+CASE WHEN FlagManuale IN ('A','B') THEN 'Sì' ELSE 'No' END AS Motore,
+CASE FlagNoAffido WHEN 'Y' THEN 'No' ELSE 'Sì' END AS Affidata,Condizione
+ from classificazione c left join famigliaprodotto f on f.idfamiglia=c.idfamiglia
+ where flagrecupero='Y'

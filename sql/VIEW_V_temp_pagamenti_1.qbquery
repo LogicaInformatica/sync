@@ -1,0 +1,11 @@
+﻿CREATE OR REPLACE VIEW v_temp_pagamenti_1 (IdContratto,NumRata,DataScadenza,ImpInsoluto,ImpCapitale,ImpInteressi,ImpPagato,IdTipoInsoluto)
+AS
+select IdContratto,NumRata,DataScadenza,Importo AS ImpInsoluto,Importo as ImpCapitale,0 as ImpInteressi,0 as ImpPagato,IdTipoInsoluto
+from movimento m
+where importo>0 and datascadenza<CURDATE() and idtipomovimento=163
+and not exists (select 1 from movimento b where b.idcontratto=m.idcontratto and b.idmovimento>m.idmovimento and idtipomovimento=163)
+UNION ALL
+select IdContratto,NumRata,'1900-01-01' as DataScadenza,0 AS ImpInsoluto,0 as ImpCapitale,0 as ImpInteressi,-Importo as ImpPagato,IdTipoInsoluto
+from movimento m
+where importo<0 and datascadenza IS NULL
+and not exists (select 1 from movimento b where b.idcontratto=m.idcontratto and b.idmovimento>m.idmovimento and datascadenza is null)

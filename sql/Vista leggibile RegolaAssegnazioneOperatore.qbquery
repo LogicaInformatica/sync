@@ -1,0 +1,11 @@
+﻿select titoloufficio as Agenzia,nomeutente as Utente,CodClasse as Cod_Classe,TitoloClasse AS Classe
+from regolaassegnazione ra
+left join classificazione c on ra.idclasse=c.idclasse
+left join reparto r on r.idreparto=ra.idreparto
+left join utente u on u.idutente=ra.idutente
+where tipoassegnazione=1
+order by nomeutente,agenzia,ra.idclasse,ra.ordine;
+
+
+SELECT * FROM regolaassegnazione r where tipoassegnazione=1;
+

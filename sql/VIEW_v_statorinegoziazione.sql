@@ -1,0 +1,15 @@
+CREATE OR REPLACE VIEW v_statorinegoziazione
+AS
+select *,
+CASE CodStatoRinegoziazione
+WHEN 'CAND' THEN 1
+WHEN 'PRRI' THEN 3
+WHEN 'PRAC' THEN 7
+WHEN 'RESP' THEN 5
+WHEN 'ARIN' THEN 4
+WHEN 'AACC' THEN 8
+WHEN 'RINE' THEN 6
+WHEN 'ACCO' THEN 10
+WHEN 'RSAC' THEN 9
+END as KeyOrd
+FROM statorinegoziazione

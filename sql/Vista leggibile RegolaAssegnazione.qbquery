@@ -1,0 +1,11 @@
+﻿select CodClasse as Cod_Classe,TitoloClasse AS Classe,TitoloFamiglia as Prodotto,titoloufficio as Agenzia,
+DurataAssegnazione as Durata,TitoloArea as Area,
+CASE TipoDistribuzione WHEN 'C' THEN 'equo carico TOTALE' WHEN 'I' THEN 'equo carico GIORNO' WHEN 'P' THEN 'preferito' END AS Distribuzione,
+GiorniFissiInizio AS Inizio_giorni_fissi,GiorniFissiFIne as Fine_Giorni_Fissi,ra.Condizione
+from regolaassegnazione ra
+left join classificazione c on ra.idclasse=c.idclasse
+left join famigliaprodotto f on f.idfamiglia=ra.idfamiglia
+left join reparto r on r.idreparto=ra.idreparto
+Left join area a on a.idarea=ra.idarea
+where tipoassegnazione=2
+order by ra.idclasse,ra.ordine,ra.idreparto;

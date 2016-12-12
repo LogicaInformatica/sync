@@ -1,0 +1,5 @@
+﻿CREATE OR REPLACE VIEW v_temp_pagamenti (IdContratto,NumRata,DataScadenza,ImpInsoluto,ImpCapitale,ImpInteressi,ImpPagato,IdTipoInsoluto)
+AS
+select IdContratto,NumRata,Max(DataScadenza),Max(ImpInsoluto),Max(ImpCapitale),Max(ImpInteressi),Max(ImpPagato),Max(IdTipoInsoluto)
+FROM v_temp_pagamenti_1
+GROUP BY IdContratto,NumRata

@@ -1,0 +1,5 @@
+create or replace VIEW V_Profili_Funzione_Riservati
+as
+SELECT pu.IdUtente as IdUtente FROM profiloutente pu,v_profili_funzioni_attivi pf,funzione f
+WHERE pu.idprofilo=pf.idprofilo and pf.idfunzione=f.idfunzione
+and codfunzione='READ_RISERVATO'
