@@ -1,0 +1,1 @@
+{"subject": "Rifiuto autorizzazione abbuono","body": "L'utente %NOMEAUTORE%, in data %DATARICHIESTA% ha respinto la richiesta di abbuono per le seguenti pratiche:<br><table><thead><tr><th>Contratto</th><th>Intestatario</th><th>Importo</th></tr></thead>%Modello.SubModMMail%</table><br>%NOTA%<br>[Messaggio generato automaticamente dal sistema]"}

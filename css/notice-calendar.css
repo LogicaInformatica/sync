@@ -1,0 +1,18 @@
+/*
+ */
+
+.x-date-inner .x-date-notice a:hover{
+    text-decoration:none !important;
+}
+
+.x-date-inner .x-date-notice a {
+    color:#800000;
+    background: no-repeat 0 0;
+    background-image: url("../images/notice.gif");
+    padding:1px 4px;
+}
+
+.x-date-inner .x-date-notice a:hover{
+    color:#000;
+    border:1px solid #f00;
+}

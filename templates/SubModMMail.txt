@@ -1,0 +1,5 @@
+<TR>
+<TD>%CodContratto%</TD>
+<TD>%Intestatario%</TD>
+<TD align=right>%ImpInsolutoIT%</TD>
+</TR>

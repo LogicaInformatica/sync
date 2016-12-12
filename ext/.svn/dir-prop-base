@@ -1,0 +1,15 @@
+K 10
+svn:ignore
+V 121
+adapter
+docs
+edspencer-Ext.ux.Exporter-71e60b8
+edspencer-Ext.ux.Printer-19e5250
+examples
+pkgs
+resources
+src
+test
+welcome
+
+END

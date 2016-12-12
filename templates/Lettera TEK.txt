@@ -1,0 +1,58 @@
+@A
+%RapprLegale%
+%Indirizzo%
+%Cap% %Localita% %SiglaProvincia%
+@T
+Brand: %CodBrand%
+
+
+
+ 
+
+
+Roma, %Oggi%
+
+Oggetto:  Sollecito pagamento Euro %ImpInsolutoIT%
+          Contratto   %CodContratto%/%CodProdotto% - Intestato a %Intestatario%
+
+Rata	Scadenza	Importo	
+%NumRata%	%DataScadenza%	%ImpInsolutoIT%
+
+
+Gentile Cliente,
+
+con la presente la informiamo che non risulta pervenuto il pagamento della rata scaduta  indicata  in 
+oggetto in quanto non è stato possibile agganciare il RID con la Sua banca di appoggio.
+
+Per risolvere il problema  potrà recarsi  in Banca  e consegnare i  codici necessari per l' aggancio, 
+perché solo la Sua Banca può, in questi casi, effettuare tale operazione con la Sua autorizzazione.
+
+Codice Sia : L 6146 tipo 4
+Codice Individuale : %CodIndividuale%
+
+La preghiamo  di controllare  il buon esito dell’operazione  e qualora non avesse già  provveduto, la 
+invitiamo a versare il prima possibile l’importo di cui sopra utilizzando la seguente  modalità:
+
+-   Bonifico  Bancario   presso la  UNICREDIT BANCA  (Cod.  IBAN IT77X0200805346000500045561)
+    intestato alla Toyota Financial Services (UK) Plc con indicazione del numero di contratto 
+    (finanziamento n. %CodContratto%/%CodProdotto%) nella causale;
+
+-   Pagamento presso una delle oltre 32.000 ricevitorie del Lotto, tabaccherie  e  bar  della 
+    rete LOTTOMATICA,  utilizzando il codice a barre sul retro della presente  lettera  ( per  
+    importi fino a €1.500).
+
+Qualora avesse  già provveduto  al relativo saldo,  la preghiamo di  considerare  nulla  la  presente 
+comunicazione.
+
+Per qualsiasi chiarimento potrà contattare l'agenzia %Agenzia% da noi incaricata all'indirizzo e-mail 
+%EmailAgenzia% oppure al numero %TelAgenzia% dal Lunedì al Venerdì dalle  ore 09:00 alle ore 18:00.
+
+Cordiali saluti
+
+                                                                 Toyota Financial Services
+
+      **************************************IMPORTANTE***************************************
+Nel caso fosse residente in uno dei comuni emiliani  colpiti dal sisma  indicati nel decreto 06/06/12 
+pubblicato  nella Gazzetta Ufficiale n. 74 del 07/06/12, la preghiamo di  ritenere nulla la  presente 
+comunicazione e di volerci contattare non appena possibile al numero 06.54898414 oppure all’indirizzo
+e-mail  collection @it.toyota-fs.com

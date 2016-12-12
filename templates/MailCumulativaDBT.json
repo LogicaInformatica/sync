@@ -1,0 +1,1 @@
+{"subject": "Rifiuto autorizzazione per passaggio in DBT","body": "L'utente %NOMEAUTORE%, in data %DATARICHIESTA% ha rifiutato la richiesta di passaggio in DBT delle seguenti pratiche:<br><table><thead><tr><th>Contratto</th><th>Intestatario</th><th>Importo</th></tr></thead>%Modello.SubModMMail%</table><br>%NOTA%<br>[Messaggio generato automaticamente dal sistema]"}

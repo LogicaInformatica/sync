@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 32
+/svn/Toyota/!svn/ver/499/DCS/ext
+END
+ext.jsb2
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/Toyota/!svn/ver/376/DCS/ext/ext.jsb2
+END
+license.txt
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/Toyota/!svn/ver/376/DCS/ext/license.txt
+END
+ext-all.js
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/Toyota/!svn/ver/376/DCS/ext/ext-all.js
+END
+Printer-all.js
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/Toyota/!svn/ver/374/DCS/ext/Printer-all.js
+END
+ext-lang-it.js
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/Toyota/!svn/ver/374/DCS/ext/ext-lang-it.js
+END
+ext-all-debug.js
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/Toyota/!svn/ver/376/DCS/ext/ext-all-debug.js
+END
+Exporter-all.js
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/Toyota/!svn/ver/499/DCS/ext/Exporter-all.js
+END
+release-notes.html
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/Toyota/!svn/ver/376/DCS/ext/release-notes.html
+END
+index.html
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/Toyota/!svn/ver/376/DCS/ext/index.html
+END
+INCLUDE_ORDER.txt
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/Toyota/!svn/ver/376/DCS/ext/INCLUDE_ORDER.txt
+END
+ext-all-debug-w-comments.js
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/Toyota/!svn/ver/376/DCS/ext/ext-all-debug-w-comments.js
+END
+gpl-3.0.txt
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/Toyota/!svn/ver/376/DCS/ext/gpl-3.0.txt
+END

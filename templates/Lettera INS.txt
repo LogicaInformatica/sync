@@ -1,0 +1,53 @@
+@A
+%RapprLegale%
+%Indirizzo%
+%Cap% %Localita% %SiglaProvincia%
+@T
+Brand: %CodBrand%
+
+Totale: € %ImpInsolutoIT%
+ 
+Roma, %Oggi%
+
+Oggetto:  Sollecito pagamento Euro %ImpInsolutoIT%
+          Contratto   %CodContratto%/%CodProdotto%
+          Intestato a %Intestatario%
+
+Rata	Scadenza	Importo	
+%Modello.SubModDEO% 
+
+
+Interessi di mora: € %ImpInteressiMoraIT%  - Spese di recupero: € %ImpSpeseRecuperoIT%   Totale: € %TotaleSoloDebito%
+
+Gentile Cliente,
+
+con la presente la informiamo che non risulta pervenuto il pagamento delle rate scadute  indicate  in 
+oggetto.
+
+Nel caso non avesse gia' provveduto, la invitiamo a versare il prima possibile l'importo di cui sopra 
+utilizzando una delle seguenti  modalità:
+
+-   Bonifico  Bancario   presso la  UNICREDIT BANCA  (Cod.  IBAN  IT77X0200805346000500045561)
+    intestato alla Toyota Financial Services (UK) Plc con indicazione  del numero di contratto
+    (n. %CodContrattoRidotto%) nella causale;
+
+-   Pagamento presso una delle oltre 32.000 ricevitorie  del Lotto, tabaccherie  e  bar  della
+    rete LOTTOMATICA,  utilizzando il codice a barre sul retro della  presente  lettera  ( per
+    importi fino a € 1.500 di cui massimo € 999,99 in contanti);
+
+La informiamo inoltre che,  continuando l'attuale stato  di  insolvenza, saremo tenuti a comunicare 
+il ritardo nei  pagamenti ai  sistemi di informazione creditizia ai sensi degli articoli 4 del Codice 
+Deontologico sulla privacy, 125 comma 3 del Decreto Legislativo 1° settembre 1993 e della Circolare di 
+Banca di Italia n.139 del 11/2/1991 e s.m.i.. La segnalazione presso le suddette  banche dati potrebbe  
+avere  riflessi negativi per l'accesso al credito.
+
+Qualora  avesse già provveduto al  relativo saldo  e/o avesse attivato la procedura per l'estinzione
+anticipata, la preghiamo di considerare nulla la presente comunicazione.
+
+Per qualsiasi chiarimento potrà contattare l'agenzia %Agenzia% da noi incaricata all'indirizzo e-mail 
+%EmailAgenzia% oppure al numero %TelAgenzia% dal Lunedì al Venerdì 
+dalle  ore 09:00 alle ore 18:00.
+
+Distinti saluti
+                                                                 Ufficio Recupero Crediti
+                                                                 

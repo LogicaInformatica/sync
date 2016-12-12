@@ -1,0 +1,221 @@
+
+/* SCA modifica parziale...
+.x-btn-submenu button {
+	margin-left: 10%;
+    text-align: left;
+    vertical-align: middle;
+	background-image: none;
+	width: 90%;
+}
+
+.x-btn-submenu td {
+    text-align: left;
+    vertical-align: middle;
+	background-image: none;
+}
+
+.x-btn-pressed td {
+	background: #e0e0f0;
+}
+
+.x-btn-pressed button {
+	color: blue;
+	font-weight: bold;
+}
+*/
+
+.btn-submenu button {
+	margin-left: 20px;
+    text-align: left;
+    vertical-align: middle;
+	width: 90%;
+}
+
+.btn-submain button {
+    text-align: center;
+    vertical-align: middle;
+	width: 90%;
+}
+
+.panel-title {
+	color:#15428B;
+	font:bold 11px tahoma,arial,verdana,sans-serif !important;
+}
+
+.red-title {
+	color:#ff0000;
+	font:bold 13px tahoma,arial,verdana,sans-serif !important;
+}
+
+.grid-add {
+	background-image:url(../images/add.gif) !important;
+}
+.grid-remove {
+	background-image:url(../images/delete.gif) !important;
+}
+.grid-edit {
+	background-image:url(../images/leaf.gif) !important;
+}
+.grid-print {
+	background-image:url(../images/stampa.gif) !important;
+}
+.grid-ricerca {
+	background-image:url(../images/lenteVuota.png) !important;
+}
+.grid-row-giallochiaro {
+	background-color: #ffff97 !important;
+}
+.grid-row-rosso {
+	background-color: #ffebea !important;
+}
+.grid-row-azzurrochiaro {
+	background-color: #ffffff !important;	
+}
+.grid-row-verdechiaro {
+	background-color:#ecfdef !important;	
+}
+.grid-row-arancionechiaro {
+	background-color:#fef0e0 !important;
+}
+.grid-row-azzurroscuro {
+	background-color: #e8f2fe !important;
+}
+.icon-prev {
+	background-image:url(../images/prev.gif) !important;
+}
+.icon-next {
+	background-image:url(../images/next.gif) !important;
+}
+
+.mod-recapito {
+	height: 16px;
+	width: 16px;
+	background-image:url(../images/leaf.gif) !important;
+}
+
+.del-row {
+	height: 16px;
+	width: 16px;
+	background-image:url(../images/delete.gif) !important;
+}
+
+.disp-row {
+	height: 16px;
+	width: 16px;
+	background-image:url(../images/write_off.png) !important;
+}
+
+.see_dett {
+	height: 16px;
+	width: 16px;
+	background-image:url(../images/eye.png) !important;
+}
+
+.con_note {
+	height: 16px;
+	width: 16px;
+	background-image:url(../images/con_comment.png) !important;
+}
+.con_note_non_lette {
+	height: 16px;
+	width: 16px;
+	background-image:url(../images/con_comment_unread.png) !important;
+}
+.senza_note {
+	height: 16px;
+	width: 16px;
+	background-image:url(../images/comment.png) !important;
+}
+
+.con_allegati {
+	height: 16px;
+	width: 16px;
+	background-image:url(../images/con_allegati.png) !important;
+}
+.senza_allegati {
+	height: 16px;
+	width: 16px;
+	background-image:url(../images/allegati.png) !important;
+}
+
+/* pallini per rinegoziazione */
+.rineg_verde 	{height: 16px; width: 16px; background-image:url(../images/pallinoVerde.png);}
+.rineg_giallo 	{height: 16px; width: 16px; background-image:url(../images/pallinoGiallo.png);}
+.rineg_rosso 	{height: 16px; width: 16px; background-image:url(../images/pallinoRosso.png);}
+.rineg_grigio 	{height: 16px; width: 16px; background-image:url(../images/pallinoGrigio.png);}
+.rineg_blu   	{height: 16px; width: 16px; background-image:url(../images/pallinoBlu.png);}
+
+/* icone azione dettaglio rate provvigione */
+.dettaglioRateNoChange {height: 16px; width: 16px; background-image:url(../images/leaf.gif)}
+.dettaglioRateChanged  {height: 16px; width: 16px; background-image:url(../images/leafGialla.gif)}
+
+
+.attivazione {
+	height: 16px;
+	width: 16px;
+	background-image:url(../images/control_play.png) !important;
+}
+.sospensione {
+	height: 16px;
+	width: 16px;
+	background-image:url(../images/control_pause.png) !important;
+}
+
+.empty_ico {
+	height: 16px;
+	width: 16px;
+	background-image:url(../images/empty.gif) !important;
+}
+
+.invioMail {
+	height: 16px;
+	width: 16px;
+	background-image:url(../images/email.png) !important;
+}
+
+.invioSms {
+	height: 16px;
+	width: 16px;
+	background-image:url(../images/phone.png) !important;
+}
+
+.impersonaUser {
+	height: 16px;
+	width: 16px;
+	background-image:url(../images/inside.png) !important;
+}
+
+.in_dettaglio {
+	height: 16px;
+	width: 16px;
+	background-image:url(../images/lente.png) !important;
+}
+.annotazioni {
+	height: 16px;
+	width: 16px;
+	background-image:url(../images/book.png) !important;
+}
+.arrow_redo {
+	height: 16px;
+	width: 16px;
+	background-image:url(../images/arrow_redo.png) !important;
+}
+.note_post_it {
+	height: 16px;
+	width: 16px;
+	background-image:url(../images/icon_postit.gif) !important;
+}
+.help_it {
+	height: 16px;
+	width: 16px;
+	background-image:url(../images/icon-question.png) !important;
+}
+.subtit /* usato per il sottotitolo dei pannelli (nella gestione anagrafica) */
+{
+	font-weight: normal;
+	color: black;
+}
+
+.invisible { /* usato per la getClass in tabs_Pratiche.js */
+	display: none;
+}
