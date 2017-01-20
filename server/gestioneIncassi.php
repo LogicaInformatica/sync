@@ -158,7 +158,7 @@ function doMain()
 						
 						$tipoAll = getScalar("SELECT IdTipoAllegato FROM tipoallegato WHERE CodTipoAllegato='GEN'");
 						
-						allegaDocumento(&$incasso,$tipoAll,'Ricevuta di pagamento','N');
+						allegaDocumento($incasso,$tipoAll,'Ricevuta di pagamento','N');
 						
 						$IdAllegato=getInsertId();
 						
