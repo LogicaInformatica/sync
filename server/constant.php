@@ -4,7 +4,7 @@
 //            quindi mettete fuori dallo "switch" sottostante solo le costanti che sono identiche in tutti gli ambienti
 //            e dentro i case dello "switch" quelle che si differenziano almeno per uno degli ambienti
 //
-$sito = $_SERVER['ENVIRONMENT'];
+$sito = $_SERVER['EB_ENVIRONMENT'];
 switch ($sito) {
 	case 'lbit':
 		define('SITE_NAME', 'Conn@&cut LabIt');

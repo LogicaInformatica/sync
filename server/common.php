@@ -1716,4 +1716,50 @@ function doCurl($url,$data=null,$headers=null) {
 	}
 	return $resp; // torna comunque la risposta
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+// writeProcessLog
+// Scrive una nuova riga nella tabella ProcessLog
+// Argomenti:
+//		$process	nome convenzionale del processo (ad es. "OCS_IMPORT")
+//      $text       testo del messaggio da registrare
+//      $level      (opzionale, default=0)
+//                  0 - informativo, no action
+//                  1 - errore, no action
+//                  2 - errore con mail (accumulata nel messaggio finale)
+//                  3 - errore con mail ed eventuale SMS
+//                  4 - info con mail ed SMS
+//---------------------------------------------------------------------------------------------------------------------
+function writeProcessLog($process,$text,$level=0)
+{
+	global $debug; // settata dal chiamante se vuole vedere i messaggi a console
+
+	if($debug) echo "$text<br>\n";
+	
+	trace($text,false,$level>1); // invia mail per livello di log 2, 3 e 4
+
+	if ($level>=3) { // richiesto invio SMS
+		$smsDest = getSysParm("ADMIN_SMS");
+		if ($smsDest>'') {
+			inviaSMS($smsDest,$text,$errmsg);
+		}
+	}
+	$sql = "INSERT INTO processlog (ProcessName,LogMessage,LogLevel) VALUES(".quote_smart($process).",".quote_smart($text).",$level)";
+	execute($sql,false); // evita traccia perché se MySql è KO , va in ricorsione
+	
+	if ($level!=-2) {
+		if (hasProcessLogInterrupt($process)) { // ricevuto comando di chiusura
+			return false;
+		}
+	}
+	return true;
+}
+
+/**
+ * hasProcessLogInterrupt
+ * Torna TRUE se nel processlog, per il processo dato, è stata registrata una richiesta di interruzione (LogLevel=-2)
+ */
+function hasProcessLogInterrupt($process) {
+	return rowExistsInTable('processlog','LogLevel=-2 AND ProcessName='.quote_smart($process));
+}
 ?>

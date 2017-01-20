@@ -144,7 +144,7 @@ function doMain() {
  */
 function aggiornaAllegati($IdContratto) {
 	if (!(DMS_API_LIST_URL>'')) return; // non è definita interfaccia con il DMS
-	list($cod,$prefix) = getRow("SELECT SUBSTR(CodContratto,2),SUBSTR(CodContratto,1,2) FROM contratto WHERE IdContratto=$IdContratto",MYSQLI_NUM);
+	list($cod,$prefix) = getRow("SELECT SUBSTR(CodContratto,3),SUBSTR(CodContratto,1,2) FROM contratto WHERE IdContratto=$IdContratto",MYSQLI_NUM);
 	if ($prefix=='LO') $prefix='CO';
 	
 	$url = sprintf(DMS_API_LIST_URL,$cod,$prefix);
@@ -170,9 +170,10 @@ function aggiornaAllegati($IdContratto) {
 				}
 				return false;
 			}
+			trace("Risposta dal documentale: $json",false);
 			// Cancella le righe nella tabella allegato provenienti dal DMS
 			beginTrans();
-			if (!execute("DELETE FROM allegato WHERE UrlAllegato LIKE '".DMS_API_GET_URL."%'")) {
+			if (!execute("DELETE FROM allegato WHERE UrlAllegato LIKE '".substr(DMS_API_GET_URL,0,30)."%'")) {
 				rollback();
 			}
 			$list = $list['data'];
