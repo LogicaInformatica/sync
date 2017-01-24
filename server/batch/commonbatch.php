@@ -1,7 +1,7 @@
 <?php 
 $_SESSION['userContext'] = array(); 
 if (!function_exists("inviaSMS")) {
-	require_once("../workflowFunc.php");
+	require_once(__DIR__."/../workflowFunc.php");
 } else {
 	require_once("../common.php");
 }
@@ -138,7 +138,7 @@ function writeResult($id,$esito,$msg)
 			execute($sql);
 			if (getAffectedRows()==0)
 				trace("UPDATE Importlog non effettuato; Id=$id; Message=$msg");
-			else if ($esito!='K') // se K, già tracciato dalla writeProcessLog
+			else if ($esito!='K') // se K, giï¿½ tracciato dalla writeProcessLog
 				trace($msg,FALSE);
 		}
 	}
@@ -200,8 +200,8 @@ function changeImportStatus($idImportLog,$status)
 
 //----------------------------------------------------------------
 // checkSemaphore
-// Controlla che il batch non sia già in esecuzione
-// Torna FALSE se il job è già in esecuzione (cioè se il record di
+// Controlla che il batch non sia giï¿½ in esecuzione
+// Torna FALSE se il job ï¿½ giï¿½ in esecuzione (cioï¿½ se il record di
 // chiave 1 ha Status=R)
 //----------------------------------------------------------------
 function checkSemaphore()
@@ -220,11 +220,11 @@ function checkSemaphore()
 
 //--------------------------------------------------------------------
 // checkAndSetSemaphore
-// Controlla che il batch non sia già in esecuzione e mette il
+// Controlla che il batch non sia giï¿½ in esecuzione e mette il
 // flag per tali controllo
-// Torna FALSE se il job è già in esecuzione (cioè se il record di
-// chiave 1 ha Status=R oppure se ImportResult non è U)
-// (Se ImportResult è NULL significa che è ancora la vecchia gestione
+// Torna FALSE se il job ï¿½ giï¿½ in esecuzione (cioï¿½ se il record di
+// chiave 1 ha Status=R oppure se ImportResult non ï¿½ U)
+// (Se ImportResult ï¿½ NULL significa che ï¿½ ancora la vecchia gestione
 // e quindi la condizione non si applica)
 //--------------------------------------------------------------------
 function checkAndSetSemaphore()
@@ -232,7 +232,7 @@ function checkAndSetSemaphore()
 	try
 	{
 		if (rowExistsInTable("importlog","IdImportLog=1 AND (Status='R' OR ImportResult!='U')"))
-			return FALSE; // già in esecuzione oppure invio files non completo
+			return FALSE; // giï¿½ in esecuzione oppure invio files non completo
 				
 		if (!execute("UPDATE importlog SET Status='R' WHERE IdImportLog=1"))
            	return FALSE;
@@ -255,7 +255,7 @@ function resetSemaphore()
 	try
 	{
 		// Annulla lo Status, per consentire la partenza del job successivo, il giorno dopo
-		// Mette P nell'importResult se questo è non nullo, il che indica che la nuova gestione con fineInvio.php è in funzione
+		// Mette P nell'importResult se questo ï¿½ non nullo, il che indica che la nuova gestione con fineInvio.php ï¿½ in funzione
 		// altrimenti lascia NULL in tale campo (altrimenti alla ripartenza il batch successivo si blocca)
 		execute("UPDATE importlog SET Status=NULL,ImportResult=IF(ImportResult IS NULL,NULL,'P'),Message='Elaborazione files terminata' WHERE IdImportLog=1");
 	}
@@ -292,6 +292,6 @@ if (!function_exists('writeProcessLog')) {
 		}
 		
 		$sql = "INSERT INTO processlog (ProcessName,LogMessage,LogLevel) VALUES('$process',".quote_smart($text).",$level)";
-		return execute($sql,false); // evita traccia perché se MySql è KO , va in ricorsione
+		return execute($sql,false); // evita traccia perchï¿½ se MySql ï¿½ KO , va in ricorsione
 	}
 }
