@@ -1,7 +1,7 @@
 <?php 
 $_SESSION['userContext'] = array(); 
 if (!function_exists("inviaSMS")) {
-	require_once(__DIR__."/../workflowFunc.php");
+	require_once("../workflowFunc.php");
 } else {
 	require_once("../common.php");
 }
