@@ -141,8 +141,8 @@ DCS.GridPratichePianoRientro = Ext.extend(DCS.GridPratiche, {
 DCS.PratichePianoRientro = function(){
 
 	return {
-		create: function(){
-			DCS.showMask();
+		create: function(tipo){
+			DCS.showMask(); 
 			var TabPanelPr = new Ext.TabPanel({
 					activeTab: 0,
 					id: 'TabPanelPr',

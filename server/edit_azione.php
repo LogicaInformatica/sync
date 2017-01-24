@@ -587,7 +587,7 @@ try
 		        
 				break;		
 
-			case "Base": // Form base: solo la nota e il titolo dell'azione, piï¿½ azioni specifiche
+			case "Base": // Form base: solo la nota e il titolo dell'azione, più azioni specifiche
 				//trace("in singolo: ".$azione["CodAzione"]);
 				switch ($azione["CodAzione"])
 				{					
@@ -614,7 +614,7 @@ try
 							if (!revocaAgenzia($idContratto,TRUE))
 								Throw new Exception("Cambio di stato non riuscito a causa del seguente errore: ".getLastError());
 								
-						if (!eseguiAzione($idStatoAzione,$idContratto,$parameters,$userid)) // automatismo: il cambio stato ï¿½ descritto dalla riga di statoazione
+						if (!eseguiAzione($idStatoAzione,$idContratto,$parameters,$userid)) // automatismo: il cambio stato è descritto dalla riga di statoazione
 							Throw new Exception("Cambio di stato non riuscito");
 
 						if ($azione["CodAzione"]!='INT')
@@ -657,8 +657,8 @@ try
 							$resR = getScalar($sqlPR);
 							//trace("resR $resR");
 								
-							//se ci sono state risposte allora ï¿½ possibile inoltrare di nuovo una richiesta di proroga
-							//altrimenti ï¿½ ancora in attesa
+							//se ci sono state risposte allora è possibile inoltrare di nuovo una richiesta di proroga
+							//altrimenti è ancora in attesa
 							if(($resA!=0)||($resR!=0))
 							{
 								//trace("proposta per $idContratto");
@@ -681,8 +681,8 @@ try
 						$res = getScalar($sql);
 						//trace("azione $idAzione");
 						//trace("res $res");
-						//se vi ï¿½ una richiesta VALIDA allora la si prende in considerazione(caso in cui si sbagli e 
-						//si provi a rifiutare una pratica su cui non vi ï¿½ stata fatta richiesta di proroga)
+						//se vi è una richiesta VALIDA allora la si prende in considerazione(caso in cui si sbagli e 
+						//si provi a rifiutare una pratica su cui non vi è stata fatta richiesta di proroga)
 						if($res>0)
 						{
 							//trova la data dell'ultima proposta di proroga e usala per sapere se dopo vi son
@@ -709,13 +709,13 @@ try
 									and DATE(DataEvento) BETWEEN '$dataPP' AND DataFineAffido";
 									//and DATE(sr.DataEvento) <= v.DataFineAffido";
 							$resRif = getScalar($sqlRif);*/
-							//per ora puï¿½ rifiutare + volte la stessa pratica lo stesso giorno anche se ï¿½ logicamente 
-							//non accettabile come cosa visto che lo stato appare come rifiutato di giï¿½
+							//per ora può rifiutare + volte la stessa pratica lo stesso giorno anche se è logicamente 
+							//non accettabile come cosa visto che lo stato appare come rifiutato di già
 							//un ulteriore controllo se necessario va implementato sull'ultima data ed ORA dell'ultimo rifiuto.
 							//trace("resAcc $resAcc");
 							//trace("resRif $resRif");
 							//se non vi sono state risposte alla richiesta in questione ne negative ne positive la 
-							//si rifiuta salvandone lo stato, altrimenti l'azione non ï¿½ valida e viene ignorata
+							//si rifiuta salvandone lo stato, altrimenti l'azione non è valida e viene ignorata
 							if($resAcc==0)
 							{
 								//trace("Rifiuto per $idContratto");
@@ -775,7 +775,7 @@ try
 				break;
 				
             
-			case "BaseConImporto": // Form base con importo residuo: solo la nota e il titolo dell'azione, piï¿½ azioni specifiche
+			case "BaseConImporto": // Form base con importo residuo: solo la nota e il titolo dell'azione, più azioni specifiche
 				//trace("in singolo: ".$azione["CodAzione"]);
 				switch ($azione["CodAzione"])
 				{					
@@ -798,7 +798,7 @@ try
 				break; 
 							
 			case 'BaseLeg':
-		        if ($azioneSpeciale == "Y") // controlla, perchï¿½ alcune azioni possono essere cambiate in "normali" dopo
+		        if ($azioneSpeciale == "Y") // controlla, perché alcune azioni possono essere cambiate in "normali" dopo
 				                            // la loro progettazione
 				{
 					registraAzioneSpeciale();
@@ -840,19 +840,6 @@ try
 				else
 					$statolegale = "Assegnato stato legale $statolegale";
 				writeHistory($idAzione,$statolegale,$idContratto,$nota);
-				break;
-			
-			case 'CambioStatoStragiud':
-				$idStatoStragiudiziale = $_REQUEST["IdStatoStragiudiziale"]; // id dello stato stragiudiziale
-				$statostragiudiziale  = cambioStatoStragiud($idContratto,$idStatoStragiudiziale);// vedi funzione cambioStatoLegale
-				if ($statostragiudiziale===FALSE)
-					Throw new Exception(getLastError());
-				$esitoAzione = "Effettuato cambio di stato stragiudiziale";
-				if($statostragiudiziale =="")
-					$statostragiudiziale = "Rimosso lo stato stragiudiziale";
-				else
-					$statostragiudiziale = "Assegnato stato stragiudiziale $statostragiudiziale";
-				writeHistory($idAzione,$statostragiudiziale,$idContratto,$nota);
 				break;
 					
 			case "CambiaClasse":	// Cambio classificazione
@@ -989,11 +976,11 @@ try
 				break;
 			case "RegistraPianiRientro":				
 				
-				//controllo che non esista giï¿½ un piano di rientro
+				//controllo che non esista già un piano di rientro
 				
 				$resp = getScalar("select count(*) from pianorientro where IdContratto = ".$idContratto);
 				if($resp > 0)
-					Throw new Exception("Esiste giï¿½ un piano di rientro");
+					Throw new Exception("Esiste già un piano di rientro");
 				else
 				{	
 					if (insertPianoRientro($idContratto,$_REQUEST["ImportoPag"],$_REQUEST["NumeroRate"],$_REQUEST["DataInizioPagamento"],$_REQUEST["NotePianoRientro"]))
@@ -1828,14 +1815,14 @@ try
 		        //controllo se sto allegando o effettuando la RichiestaPR 
 			    if ($idallegati=='')  // RichiestaPR
 			    {
-			      //controllo che non esista giï¿½ un piano di rientro
+			      //controllo che non esista già un piano di rientro
 				  $resp = getScalar("select count(*) from pianorientro where IdContratto = ".$idContratto);
 				  if($resp > 0){
 				    $idAzioneSpeciale = $_REQUEST['idAzioneSpeciale'];
 				    $storiaRecuperoAllegati = $_REQUEST['storiaRecuperoAllegati'];
 			 	 	if (!deleteAzioneSpeciale($idAzioneSpeciale,$storiaRecuperoAllegati))
 			   	 		Throw new Exception(getLastError());
-					Throw new Exception("Esiste giï¿½ un piano di rientro");
+					Throw new Exception("Esiste già un piano di rientro");
 				  } else
 				  {	
 					 if (!registraAzioneSpeciale())
@@ -1947,7 +1934,7 @@ try
 				if (!saveWriteoff($idContratto))
 					Throw new Exception(getLastError());
 			 	
-				if ($azioneSpeciale == "Y") // controlla, perchï¿½ alcune azioni possono essere cambiate in "normali" dopo
+				if ($azioneSpeciale == "Y") // controlla, perché alcune azioni possono essere cambiate in "normali" dopo
 						                    // la loro progettazione
 				{
 					$htmlAzione = "'".addslashes($_REQUEST["txtHTML"])."'";
@@ -1982,7 +1969,7 @@ try
 			
 			case "Rifiuta": // respinge una richiesta in workflow
 				//ripristina lo stato e manda le mail ai precedenti manipolatori del contratto.
-				//l'azione ï¿½ considerata equivalente ad una revoca della proposta di workflow.
+				//l'azione è considerata equivalente ad una revoca della proposta di workflow.
 				//ripristinaStato($idContratto); fatto tramite azioni automatiche
 				$codAzione = $azione['CodAzione'];
 				emailListaUtentiContratti($idContratto,$codAzione,$manipolatori);
@@ -2135,7 +2122,7 @@ try
 				break;		
 				
 			case 'Speciale':
-				if ($azioneSpeciale == "Y") // controlla, perchï¿½ alcune azioni possono essere cambiate in "normali" dopo
+				if ($azioneSpeciale == "Y") // controlla, perché alcune azioni possono essere cambiate in "normali" dopo
 				                            // la loro progettazione
 				{
 			   	 	if (!registraAzioneSpeciale())
@@ -2158,7 +2145,7 @@ try
 				$chkFlag = $_REQUEST["chkFlag"]?'Y':'N';
 				switch ($azione["CodAzione"])
 				{
-					case "REP": // reperibilitï¿½
+					case "REP": // reperibilità
 						if (!execute("UPDATE cliente SET FlagIrreperibile='$chkFlag' WHERE IdCliente = ".$pratica["IdCliente"]))
 				      		Throw new Exception(getLastError());
 						if ($chkFlag=='Y')
@@ -2184,7 +2171,7 @@ try
 						break;	
 				}
 				
-				if ($azioneSpeciale == "Y") // controlla, perchï¿½ alcune azioni possono essere cambiate in "normali" dopo
+				if ($azioneSpeciale == "Y") // controlla, perché alcune azioni possono essere cambiate in "normali" dopo
 				                            // la loro progettazione
 				{
 					// le azioni speciali vengono registrate nella relativa tabella	
@@ -2225,7 +2212,7 @@ try
 		// Applica la percentuale di svalutazione, se prevista e l'azione non prevede convalida
 		if ($form!="Svalutazione" && $azioneSpeciale!="Y")
 		{
-			applicaPercSvalutazione(0,$idContratto,$azione["PercSvalutazione"]); // non indica nella history l'azione, pechï¿½ ï¿½ un effetto collaterale
+			applicaPercSvalutazione(0,$idContratto,$azione["PercSvalutazione"]); // non indica nella history l'azione, peché è un effetto collaterale
 		}	
 		
 		// Aggiorna campo DataUltimaAzione
@@ -2297,7 +2284,7 @@ function insertIncasso($idContratto,$idCliente,$IdAllegato) {
 
 //**********************************************************************************************************
 // deleteScadenze
-// Cancella tutte le scadenze di una pratica da oggi in avanti se il flag appodsito (chkHidden) ï¿½ ON
+// Cancella tutte le scadenze di una pratica da oggi in avanti se il flag appodsito (chkHidden) è ON
 // (operazione che viene anche eseguita prima di generare una nuova scadenza)
 //**********************************************************************************************************
 function deleteScadenze($idContratto)
@@ -2389,7 +2376,7 @@ function azioneSpeciale($idAzione,$idContratto,$nota,$dataScadenza="NULL")
 		beginTrans();
 		$idAzioneSpeciale = getScalar("SELECT IdAzioneSpeciale FROM v_azioni_da_convalidare WHERE IdContratto=$idContratto AND IdAzione=$idAzione");
 
-		if ($idAzioneSpeciale>0) { // esiste giï¿½ la stessa azione in attesa di convalida
+		if ($idAzioneSpeciale>0) { // esiste già la stessa azione in attesa di convalida
 			$sql = "UPDATE azionespeciale SET DataEvento=NOW(),IdUtente=$IdUser,Nota=$nota,DataScadenza=$dataScadenza"
 			      .",LastUpd=NOW(),LastUser=".quote_smart($context["Userid"])." WHERE IdAzioneSpeciale=$idAzioneSpeciale";
 			$resp = execute($sql);

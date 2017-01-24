@@ -1,7 +1,7 @@
 <?php
 require_once("common.php");
 try { 
-	// NOTA BENE: se il php gira in modalità sicura, le due istruzioni sottostanti non hanno effetto
+	// NOTA BENE: se il php gira in modalitÃ  sicura, le due istruzioni sottostanti non hanno effetto
 	set_time_limit(1000); // aumenta il tempo max di cpu
 	ini_set('max_execution_time','300');
 	$titolo = $_REQUEST['filename'];
@@ -21,8 +21,10 @@ try {
 		header("Content-Disposition: attachment; filename=\"".$titolo."_".date("Ymd_Hi").".csv\"");
 	} else {
 		trace("export.php emette header per output excel",false);
-		header("Content-type: application/vnd.ms-excel");
+		mb_internal_encoding('UTF-8');
+		header("Content-type: application/vnd.ms-excel; charset=utf-8");
 		header("Content-Disposition: attachment; filename=\"".$titolo."_".date("Ymd_Hi").".xls\"");
+		echo "\xEF\xBB\xBF";
 	}
 	// Se viene passato il parametro 'xls', si deve solo rimandare indietro con l'header impostato
 	if (isset($_REQUEST['xls'])) {
@@ -33,14 +35,14 @@ try {
 /*------------------------------------------------------------------------------------
  * Senza xls: il file va generato lato server leggendo i dati sul db
  * Riceve il titolo, un array con le colonne della griglia, l'url della pagina php
- * che effettuerà la lettura (la stessa richiamata normalmente copn ajax) e
+ * che effettuerÃ  la lettura (la stessa richiamata normalmente copn ajax) e
  * l'oggetto baseParams da passare alla pagina php
  *
  * Le colonne sono oggetti con i seguenti attributi:
  * 		xtype, align, dataIndex, format, header, width
  *-----------------------------------------------------------------------------------*/ 
 	$titolo = $_REQUEST['titolo'];
-	$titolo  = str_replace("/","-",$titolo); // la barra dà errore in Excel
+	$titolo  = str_replace("/","-",$titolo); // la barra dÃ  errore in Excel
 	if (get_magic_quotes_gpc()) {
 		$columns = json_decode(stripslashes($_REQUEST['columns']));
 		$baseParams = json_decode(stripslashes($_REQUEST['baseParams']));
@@ -70,7 +72,7 @@ try {
 	ob_start();  // fa in modo che l'output vada in un buffer
 	$limit = 2000;
 	$functions = array("doMain","read","export"); // funzioni che tenta di chiamare per ottenere la griglia
-	for ($from=0;;$from+=$limit) // mille righe per volta, altrimenti può dare errore
+	for ($from=0;;$from+=$limit) // mille righe per volta, altrimenti puÃ² dare errore
 	{
 		$exportFrom = $from;
 		$exportLimit = $limit;
@@ -93,7 +95,7 @@ try {
 		if (!($dati->total>"0")) break;
 		$numRighe += $dati->total;
 		$results = array_merge($results,$dati->results);
-	 	if (($dati->total+0) != $limit) break;  // se non ho letto 1000 righe, o è finito o il chiamato non è predisposto
+	 	if (($dati->total+0) != $limit) break;  // se non ho letto 1000 righe, o ï¿½ finito o il chiamato non ï¿½ predisposto
 	                                             	     // e quindi ha letto tutte le righe
 	}
 	ob_end_clean();           
@@ -134,10 +136,10 @@ try {
 					}else{
 						$values[] = "";
 					}
-				}else if ($fld=='CAP' || $col->xtype=='string' || $v=='') { // 'string' è un xtype inventato per l'occasione
+				}else if ($fld=='CAP' || $col->xtype=='string' || $v=='') { // 'string' ï¿½ un xtype inventato per l'occasione
 					$values[] = '"'.str_replace('"','""',$v).'"';
 				}else{
-					if (preg_match("/^(\d)*(\.{0,1})(\d)*$/", $v)) {  // è  un numero valido formato inglese
+					if (preg_match("/^(\d)*(\.{0,1})(\d)*$/", $v)) {  // ï¿½  un numero valido formato inglese
 						$values[] = str_replace('.',',',$v); // mette con virgola italiana
 					} else if ($col->align=='right') { // qualcosa allineato a destra?
 						if (preg_match("/^((\d{1,3}\.(\d{3}\.)*\d{3}|\d{1,3}),\d+)$/", $v)) {	// numero decimale con separatori italiani
@@ -163,65 +165,63 @@ try {
 	// Continua con l'export Excel 
 	echo '<?xml version="1.0" encoding="utf-8"?><?mso-application progid="Excel.Sheet"?>';
 	?>
-	<ss:Workbook xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" 
+	<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+			xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
 			xmlns:x="urn:schemas-microsoft-com:office:excel" 
 			xmlns:o="urn:schemas-microsoft-com:office:office" 
 			xmlns:html="http://www.w3.org/TR/REC-html40">
-	<o:DocumentProperties>
-		<o:Title><?php echo $titolo;?></o:Title>
-		<o:Created><?php echo date("Y-m-d\TH:i\Z")?></o:Created>
-	</o:DocumentProperties>
-	<ss:ExcelWorkbook>
-		<ss:WindowHeight>9240</ss:WindowHeight>
-		<ss:WindowWidth>50000</ss:WindowWidth>
-		<ss:ProtectStructure>false</ss:ProtectStructure>
-		<ss:ProtectWindows>false</ss:ProtectWindows>
-	</ss:ExcelWorkbook>
-	<ss:Styles>
-		<ss:Style ss:ID="Default" ss:Name="Normal">
-			<ss:Alignment ss:Vertical="Top" ss:WrapText="0" />
-			<ss:Font ss:FontName="arial" ss:Size="10" />
-			<ss:Interior />
-			<ss:NumberFormat />
-			<ss:Protection />
-			<ss:Borders />
-		</ss:Style>
-		<ss:Style ss:ID="headercell">
-			<ss:Font ss:Bold="1" ss:Size="10" />
-			<ss:Interior ss:Pattern="Solid" ss:Color="#C0C0C0" />
-			<ss:Alignment ss:WrapText="0" ss:Horizontal="Center" />
-		</ss:Style>
-		<ss:Style ss:ID="dec">
-			<ss:NumberFormat ss:Format="[$-410]#,##0.00"/>
-		</ss:Style>
-		<ss:Style ss:ID="dataFormat">
-			<ss:Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
-			<!-- <ss:Borders>
-				<ss:Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#000000"/>
-				<ss:Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#C0C0C0"/>
-				<ss:Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#C0C0C0"/>
-				<ss:Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#C0C0C0"/>
-			</ss:Borders> -->
-		<ss:NumberFormat ss:Format="Short Date"/>
-		</ss:Style>
-	</ss:Styles>
-	<ss:Worksheet ss:Name="<?php echo $titolo;?>">
-		<ss:Names>
-			<ss:NamedRange ss:Name="Print_Titles" ss:RefersTo="='<?php echo $titolo;?>'!R1:R1" />
-		</ss:Names>
+	<DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+		<Title><?php echo $titolo;?></Title>
+		<Created><?php echo date("Y-m-d\TH:i:s\Z")?></Created>
+	</DocumentProperties>
+	<ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
+		<WindowHeight>9240</WindowHeight>
+		<WindowWidth>50000</WindowWidth>
+		<WindowTopX>0</WindowTopX>
+        <WindowTopY>0</WindowTopY>
+		<ProtectStructure>False</ProtectStructure>
+		<ProtectWindows>False</ProtectWindows>
+	</ExcelWorkbook>
+	<Styles>
+		<Style ss:ID="Default" ss:Name="Normal">
+			<Alignment ss:Vertical="Top"/>
+			<Font ss:FontName="arial"/>
+			<Interior />
+			<NumberFormat />
+			<Protection />
+			<Borders />
+		</Style>
+		<Style ss:ID="headercell">
+			<Font ss:FontName="Arial" ss:Bold="1"/>
+			<Interior ss:Pattern="Solid" ss:Color="#C0C0C0" />
+			<Alignment ss:Vertical="Bottom" ss:Horizontal="Center" />
+		</Style>
+		<Style ss:ID="dec">
+			<NumberFormat ss:Format="[$-410]#,##0.00"/>
+		</Style>
+		<Style ss:ID="dataFormat">
+			<Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+			<NumberFormat ss:Format="Short Date"/>
+		</Style>
+	</Styles>
+	<Worksheet ss:Name="<?php echo $titolo;?>">
+		<Names>
+			<NamedRange ss:Name="Print_Titles" ss:RefersTo="='<?php echo $titolo;?>'!R1" />
+		</Names>
 	<?php
-	echo '<ss:Table x:FullRows="1" x:FullColumns="1" ss:ExpandedColumnCount="'.
+	echo '<Table x:FullRows="1" x:FullColumns="1" ss:ExpandedColumnCount="'.
 			count($columns).'" ss:ExpandedRowCount="'.(1+$numRighe).'">';
 
 			
 	foreach ($columns as $col) {
-		echo '<ss:Column ss:AutoFitWidth="1" ss:Width="'.$col->width.'"/>';
+		echo '<Column ss:AutoFitWidth="1" ss:Width="'.$col->width.'"/>';
 	}
-	echo '<ss:Row ss:AutoFitHeight="1">';
+	echo '<Row ss:AutoFitHeight="1">';
 	foreach ($columns as $col) {
-		echo '<ss:Cell ss:StyleID="headercell"><ss:Data ss:Type="String">'.str_replace("<br>","\n",$col->header).'</ss:Data><ss:NamedCell ss:Name="Print_Titles" /></ss:Cell>';
+		echo '<Cell ss:StyleID="headercell"><Data ss:Type="String">'.str_replace("<br>","\n",htmlspecialchars(html_entity_decode(convertToUTF8($col->header)))).'</Data><NamedCell ss:Name="Print_Titles" /></Cell>';
+		echo "\n";
 	}
-	echo "</ss:Row>\n";
+	echo "</Row>\n";
 	foreach ($results as $row) {
 		if (count($selected)>0) {
 			if (!in_array($row->IdContratto,$selected)) continue;
@@ -230,72 +230,74 @@ try {
 		// per misteriosi motivi, solo se si mette una qualche pausa (anche un trace)
 		// riesce a scrivere output molto grandi altrimenti si pianta
 		//time_nanosleep ( 0 , 10*1000*1000 ); // aspetta 1 centesimo di secondo
-		echo '<ss:Row>';
+		echo "\n";
+		echo '<Row>';
 		foreach ($columns as $col) {
 			$fld = $col->dataIndex;
 			if ($fld>'') {
-				$v = $row->$fld;
+				$v = convertToUTF8($row->$fld);
 				if ($col->xtype=='datecolumn') {
 					if($v > '') {
 						$v = internetTime($v);
 						if ($v>'') {
-							echo '<ss:Cell ss:StyleID="dataFormat">';
-							echo '<ss:Data ss:Type="DateTime"><![CDATA['.$v.']]></ss:Data></ss:Cell>';	
+							echo '<Cell ss:StyleID="dataFormat">';
+							echo '<Data ss:Type="DateTime">'.$v.'</Data></Cell>';	
 						} else {
-							echo '<ss:Cell><ss:Data ss:Type="String"></ss:Data></ss:Cell>';
+							echo '<Cell><Data ss:Type="String"></Data></Cell>';
 						}
 					}else{
-						echo '<ss:Cell><ss:Data ss:Type="String"></ss:Data></ss:Cell>';
+						echo '<Cell><Data ss:Type="String"></Data></Cell>';
 					}
-				}else if ($fld=='CAP' || $col->xtype=='string' || $v=='') { // 'string' è un xtype inventato per l'occasione
-					echo '<ss:Cell><ss:Data ss:Type="String"><![CDATA['.$v.']]></ss:Data></ss:Cell>';
+				}else if ($fld=='CAP' || $col->xtype=='string' || $v=='') { // 'string' ï¿½ un xtype inventato per l'occasione
+					echo '<Cell><Data ss:Type="String">'.htmlspecialchars(html_entity_decode($v)).'</Data></Cell>';
 				}else{
-					if (preg_match("/^(\d)*(\.{0,1})(\d)*$/", $v))   // è  un numero valido
-						echo '<ss:Cell ss:StyleID="dec"><ss:Data ss:Type="Number">'.$v.'</ss:Data></ss:Cell>';
+					if (preg_match("/^(\d)*(\.{0,1})(\d)*$/", $v))   // ï¿½  un numero valido
+						echo '<Cell ss:StyleID="dec"><Data ss:Type="Number">'.$v.'</Data></Cell>';
 					else if ($col->align=='right')   // qualcosa allineato a destra?
 					{
 						if (preg_match("/^((\d{1,3}\.(\d{3}\.)*\d{3}|\d{1,3}),\d+)$/", $v)) {	// numero decimale con separatori italiani
-							echo '<ss:Cell ss:StyleID="dec">';
+							echo '<Cell ss:StyleID="dec">';
 							$v = str_replace(',','.',str_replace('.','',$v));
-							echo "<ss:Data ss:Type=\"Number\">$v</ss:Data></ss:Cell>";
+							echo "<Data ss:Type=\"Number\">$v</Data></Cell>";
 						} else if (preg_match("/^(\d)+,(\d)+$/", $v)) { // numero con virgola (non ok per Excel XML)
 							$v = str_replace(',','.',$v);
-							echo '<ss:Cell ss:StyleID="dec"><ss:Data ss:Type="Number">'.$v.'</ss:Data></ss:Cell>';
+							echo '<Cell ss:StyleID="dec"><Data ss:Type="Number">'.$v.'</Data></Cell>';
 						} else  
-							echo '<ss:Cell><ss:Data ss:Type="String"><![CDATA['.$v.']]></ss:Data></ss:Cell>';
+							echo '<Cell><Data ss:Type="String">'.htmlspecialchars(html_entity_decode($v)).'</Data></Cell>';
 						 
 					} else {
-						echo '<ss:Cell><ss:Data ss:Type="String"><![CDATA['.$v.']]></ss:Data></ss:Cell>';
+						echo '<Cell><Data ss:Type="String">'.htmlspecialchars(html_entity_decode($v)).'</Data></Cell>';
 					}
+
 				}
 			}
 		}
-		echo "</ss:Row>\n";
+		echo "</Row>\n";
 		flush();
 		ob_flush();
 	}
 	?>
-		</ss:Table>
+		</Table>
 			  
-		<x:WorksheetOptions>
-			<x:PageSetup>
-				<x:Layout x:CenterHorizontal="1" x:Orientation="Landscape" />
-				<x:Footer x:Data="Page &amp;P of &amp;N" x:Margin="0.5" />
-				<x:PageMargins x:Top="0.5" x:Right="0.5" x:Left="0.5" x:Bottom="0.8" />
-			</x:PageSetup>
-			<x:Print>
-				<x:PrintErrors>Blank</x:PrintErrors>
-				<x:FitWidth>1</x:FitWidth>
-				<x:FitHeight>32767</x:FitHeight>
-				<x:ValidPrinterInfo />
-				<x:VerticalResolution>600</x:VerticalResolution>
-			</x:Print>
-			<x:FitToPage /><x:Selected />
-			<x:ProtectObjects>False</x:ProtectObjects>
-			<x:ProtectScenarios>False</x:ProtectScenarios>
-		</x:WorksheetOptions>
-	</ss:Worksheet>
-	</ss:Workbook>
+		<WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+			<PageSetup>
+				<Layout x:CenterHorizontal="1" x:Orientation="Landscape" />
+				<Footer x:Data="Page &amp;P of &amp;N"/>
+				<PageMargins x:Top="0.5" x:Right="0.5" x:Left="0.5" x:Bottom="0.8" />
+			</PageSetup>
+			<FitToPage />
+			<Print>
+				<PrintErrors>Blank</PrintErrors>
+				<FitHeight>32767</FitHeight>
+				<ValidPrinterInfo />
+				<VerticalResolution>600</VerticalResolution>
+			</Print>
+			<Selected />
+			<ProtectObjects>False</ProtectObjects>
+			<ProtectScenarios>False</ProtectScenarios>
+		</WorksheetOptions>
+	</Worksheet>
+	</Workbook>
 	<?php 
 }
 catch (Exception $e)

@@ -126,14 +126,14 @@ DCS.Charts.Sintesi = Ext.extend(Ext.Panel, {
 					Ext.getCmp(this.task+'_title').update('<h1>' + record.data.FY + ' - ' + record.data.mese  + 
 							'<br><font size=2>'+ this.titlePanel+'</font></h1>');
 		
-					// rilascia quelli gi‡ allocati
+					// rilascia quelli gi√† allocati
 					var g = FusionCharts(this.task+"_chartId"); /* sufficiente per FusionChart vers.3, non per la 2 */
 					if (g) g.dispose();
 					var g2 = FusionCharts(this.task+"_chartId2");
 					if (g2) g2.dispose();
 
 					g = new FusionCharts("FusionCharts/"+DCS.Charts.tipi[this.itipo]+".swf", this.task+"_chartId", "100%", "90%", "0", "1" );
-					// non va: Ë asincrono anche se la guida non lo dice
+					// non va: √® asincrono anche se la guida non lo dice
 					//g.setXMLUrl("server/charts/sintesi.php?type=stack&mese="+record.data.num+"&task="+this.task);
 
 					Ext.Ajax.request({
@@ -383,6 +383,7 @@ DCS.Charts.TargetTable = Ext.extend(Ext.grid.GridPanel, {
 //-----------------------------------------------------------
 DCS.Charts.GeoTable = Ext.extend(Ext.grid.GridPanel, {
 	gstore: null,
+	width: 2000,
 	pagesize: 0,
 	titlePanel: '',
 	task:null,
@@ -394,45 +395,52 @@ DCS.Charts.GeoTable = Ext.extend(Ext.grid.GridPanel, {
 			fields = [{name: 'Area'},
 		              {name: 'Totale',type:'float'},
 		              {name: 'TotaleNum',type:'int'},
+		              {name: 'Ats'},{name: 'AtsNum',type:'int'},
 		              {name: 'City1'},{name: 'City1Num',type:'int'},
-		              {name: 'CitySP'},{name: 'CitySPNum',type:'int'},
+		              {name: 'City2'},{name: 'City2Num',type:'int'},
 		              {name: 'Eurocollection'},{name: 'EurocollectionNum',type:'int'},
 		              {name: 'Fides'},{name: 'FidesNum',type:'int'},
+		              {name: 'GeaServices'},{name: 'GeaServicesNum',type:'int'},
+		              {name: 'Kreos'},{name: 'KreosNum',type:'int'},
 		              {name: 'Ncp31'},{name: 'Ncp31Num',type:'int'},
-		              {name: 'Nicol35'},{name: 'Nicol35Num',type:'int'},
-		              {name: 'Setel1'},{name: 'Setel1Num',type:'int'},
-		              {name: 'Setel2'},{name: 'Setel2Num',type:'int'},
-		              {name: 'Sogec'},{name: 'SogecNum',type:'int'},
-		              {name: 'Starcredit'},{name: 'StarcreditNum',type:'int'},
-		              {name: 'Sting'},{name: 'StingNum',type:'int'}
+		              {name: 'Nicol35'},{name: 'Nicol35Num',type:'int'}, 
+		              {name: 'Osirc'},{name: 'OsircNum',type:'int'},
+		              {name: 'Sogec1'},{name: 'Sogec1Num',type:'int'},
+		              {name: 'Sogec2'},{name: 'Sogec2Num',type:'int'},
+		              {name: 'Starcredit'},{name: 'StarcreditNum',type:'int'}
+//		              {name: 'Sting'},{name: 'StingNum',type:'int'}
 		              ];
 
 		 	columns = [{dataIndex:'Area',width:87, header:'Regione',sortable:false},
-		   	           {dataIndex:'Totale',width:65, header:'TOTALE<br>IPR %',sortable:true,align:'right',css:'background-color:aquamarine;font-weight:bold;',xtype:'numbercolumn',format:'000,00 %/i'},
-		   	           {dataIndex:'TotaleNum',width:31, header:'TOTALE<br>N.',sortable:true,align:'right'},
-		   	           {dataIndex:'City1',width:47, header:'City (24)<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
-		   	           {dataIndex:'City1Num',width:31, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
-		   	           {dataIndex:'CitySP',width:47, header:'City (SP)<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
-		   	           {dataIndex:'CitySPNum',width:31, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
-		   	           {dataIndex:'Eurocollection',width:69, header:'Eurocoll.<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
-		   	           {dataIndex:'EurocollectionNum',width:31, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
-		   	           {dataIndex:'Fides',width:49, header:'Fides<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
-		   	           {dataIndex:'FidesNum',width:31, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
-		   	           {dataIndex:'Ncp31',width:49, header:'NCP<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
-		   	           {dataIndex:'Ncp31Num',width:31, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
-		   	           {dataIndex:'Nicol35',width:49, header:'Nicol (35)<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
-		   	           {dataIndex:'Nicol35Num',width:31, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
-		   	           {dataIndex:'Setel1',width:49, header:'Setel (27)<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
-		   	           {dataIndex:'Setel1Num',width:31, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
-		   	           {dataIndex:'Setel2',width:49, header:'Setel (29)<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
-		   	           {dataIndex:'Setel2Num',width:31, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
-		   	           {dataIndex:'Sogec',width:54, header:'Sogec<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
-		   	           {dataIndex:'SogecNum',width:31, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
-		   	           {dataIndex:'Starcredit',width:70, header:'Starcredit<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
-		   	           {dataIndex:'StarcreditNum',width:31, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
-		   	           {dataIndex:'Sting',width:49, header:'Sting<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
-		   	           {dataIndex:'StingNum',width:31, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV}
-		   	           ];
+		   	           {dataIndex:'Totale',width:100, header:'TOTALE<br>IPR %',sortable:true,align:'right',css:'background-color:aquamarine;font-weight:bold;',xtype:'numbercolumn',format:'000,00 %/i'},
+		   	           {dataIndex:'TotaleNum',width:50, header:'TOTALE<br>N.',sortable:true,align:'right'},
+		   	           {dataIndex:'City1',width:100, header:'City (24)<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'City1Num',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           {dataIndex:'City2',width:100, header:'City (P4)<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'City2Num',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           {dataIndex:'Eurocollection',width:100, header:'Eurocoll.<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'EurocollectionNum',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           {dataIndex:'Fides',width:100, header:'Fides<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'FidesNum',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           {dataIndex:'GeaServices',width:100, header:'Gea Services<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'GeaServicesNum',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           {dataIndex:'Kreos',width:100, header:'Kreos<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'KreosNum',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           {dataIndex:'Ncp31',width:100, header:'NCP<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'Ncp31Num',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           {dataIndex:'Nicol35',width:100, header:'Nicol (35)<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'Nicol35Num',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           {dataIndex:'Osirc',width:100, header:'Osirc (2A)<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'OsircNum',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           {dataIndex:'Sogec1',width:100, header:'Sogec (S2)<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'Sogec1Num',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           {dataIndex:'Sogec2',width:100, header:'Sogec (P2)<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'Sogec2Num',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           {dataIndex:'Starcredit',width:100, header:'Starcredit<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'StarcreditNum',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           //{dataIndex:'Sting',width:100, header:'Sting<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	        //{dataIndex:'StingNum',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           {dataIndex:'dummy',width:2}];
 		}
 		else // tabella per stragiudiziale
 		{
@@ -450,23 +458,23 @@ DCS.Charts.GeoTable = Ext.extend(Ext.grid.GridPanel, {
 		              ];
 
 		 	columns = [{dataIndex:'Area',width:87, header:'Regione',sortable:false},
-		   	           {dataIndex:'Totale',width:65, header:'TOTALE<br>IPR %',sortable:true,align:'right',css:'background-color:aquamarine;font-weight:bold;',xtype:'numbercolumn',format:'000,00 %/i'},
-		   	           {dataIndex:'TotaleNum',width:31, header:'TOTALE<br>N.',sortable:true,align:'right'},
-		   	           {dataIndex:'Css',width:57, header:'CSS<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
-		   	           {dataIndex:'CssNum',width:41, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
-		   	           {dataIndex:'EY',width:69, header:'ERNST & YOUNG<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
-		   	           {dataIndex:'EYNum',width:31, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
-		   	           {dataIndex:'Fides',width:69, header:'FIDES<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
-		   	           {dataIndex:'FidesNum',width:31, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
-		   	           {dataIndex:'Fire',width:69, header:'FIRE<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
-		   	           {dataIndex:'FireNum',width:31, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
-		   	           {dataIndex:'Nicol',width:69, header:'NICOL<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
-		   	           {dataIndex:'NicolNum',width:31, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
-		   	           {dataIndex:'City',width:59, header:'CITY<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
-		   	           {dataIndex:'CityNum',width:31, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
-		   	           {dataIndex:'Irc',width:59, header:'IRC<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'Totale',width:100, header:'TOTALE<br>IPR %',sortable:true,align:'right',css:'background-color:aquamarine;font-weight:bold;',xtype:'numbercolumn',format:'000,00 %/i'},
+		   	           {dataIndex:'TotaleNum',width:50, header:'TOTALE<br>N.',sortable:true,align:'right'},
+		   	           {dataIndex:'Css',width:100, header:'CSS<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'CssNum',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           {dataIndex:'EY',width:100, header:'ERNST & YOUNG<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'EYNum',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           {dataIndex:'Fides',width:100, header:'FIDES<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'FidesNum',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           {dataIndex:'Fire',width:100, header:'FIRE<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'FireNum',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           {dataIndex:'Nicol',width:100, header:'NICOL<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'NicolNum',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           {dataIndex:'City',width:100, header:'CITY<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'CityNum',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           {dataIndex:'Irc',width:100, header:'IRC<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
 		   	           {dataIndex:'IrcNum',width:51, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},		   	         
-		   	           {dataIndex:'Luzzi',width:59, header:'Studio Luzzi<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'Luzzi',width:100, header:'Studio Luzzi<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
 		   	           {dataIndex:'LuzziNum',width:51, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},		   	         
 					   {dataIndex:'dummy',width:2}];
 		}

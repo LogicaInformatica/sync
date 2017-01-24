@@ -56,10 +56,6 @@ try
 	                        		 from allegato a join tipoallegato t on a.IdTipoAllegato=t.IdTipoAllegato
 	                            	and t.CodTipoAllegato IN ('CON','DOC') and a.IdUtente IS NULL where a.lastupd>s.dataevento))";
 	}	   
-	
-	// temporaneo 17/3/2016 per test Mario
-	//$strQyery .= " AND FALSE"; // torna lista vuota 
-	
 	$list =  join(',',fetchValuesArray($strQyery));
 	trace("Lista contratti: $list",false);
 	echo("U\t".$list);

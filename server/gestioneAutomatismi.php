@@ -51,7 +51,7 @@ function readA()
 	if ($counter == NULL)
 		$counter = 0;
 	if ($counter == 0) {
-		$arr = array();
+			$arr = array();
 	} else {
 	 
 		$start = isset($_REQUEST['start']) ? (integer)$_REQUEST['start'] : (isset($_GET['start'])? (integer)$_GET['start'] : '');
@@ -264,13 +264,14 @@ function saveFuncA()
 	$response = saveValidation();
 	if($response=='')
 	{
+		//se il profilo utente è in modifica
 		if($IdAut!=null)
 		{
 			$codMex = "MOD_AUT";
 			if(!is_numeric($Modello))
 			{//caso di update senza cambiamento della box del modello
 				$sretriveidMod = "select IdModello from modello where TitoloModello = '$Modello'";
-				$Modello = getScalar($sretriveidMod);
+				$Modello=getScalar($sretriveidMod);
 			}
 			if (!($Modello>0))
 				$Modello = "NULL";
@@ -339,18 +340,18 @@ function saveValidation()
 	$responso='';
 	
 	if ($Modello>'') {
-		if(!is_numeric($Modello))
-		{
-			$sretriveidMod = "SELECT count(*) FROM modello where TitoloModello like '$Modello'";
-			$Modello=getScalar($sretriveidMod);
-		}else{
-			$sretriveidMod = "SELECT count(*) FROM modello where IdModello=$Modello";
-			$Modello=getScalar($sretriveidMod);
-		}
-		
-		if($Modello == 0)
-		{
-			$responso .= "Nessun modello compatibile";
+	if(!is_numeric($Modello))
+	{
+		$sretriveidMod = "SELECT count(*) FROM modello where TitoloModello like '$Modello'";
+		$Modello=getScalar($sretriveidMod);
+	}else{
+		$sretriveidMod = "SELECT count(*) FROM modello where IdModello=$Modello";
+		$Modello=getScalar($sretriveidMod);
+	}
+	
+	if($Modello == 0)
+	{
+		$responso .= "Nessun modello compatibile";
 		}
 	}
 	return $responso;

@@ -220,7 +220,6 @@ echo "\n<script>",
 <script type="text/javascript" src="js/tabs_PraticheSvalutate.js"></script>
 <script type="text/javascript" src="js/tabs_PraticheSituazione.js"></script>
 <script type="text/javascript" src="js/tabs_PraticheStatiLegali.js"></script>
-<script type="text/javascript" src="js/tabs_PraticheStatiStragiudiziali.js"></script>
 <script type="text/javascript" src="js/tabs_PraticheRinegoziate.js"></script>
 <script type="text/javascript" src="js/tabs_PratichePianoRientro.js"></script>
 <script type="text/javascript" src="js/tabs_ProcedureLista.js"></script>
@@ -400,21 +399,21 @@ echo "\n<script>",
 		//----------------------------------------------------------------------------
 		// Gestione della sessione scaduta 
 		//----------------------------------------------------------------------------
-		DCS.emetteMessaggioSessioneScaduta = function() {
+		// Crea un delayedTask che entra allo scadere del timeout
+		var timeoutTask = new Ext.util.DelayedTask ( function() 
+				{
 			Ext.MessageBox.show({
 				   title: "Sessione scaduta",
 				   msg: "La sessione corrente &egrave; scaduta per prolungata inattivit&agrave;. Per motivi di sicurezza, &egrave; necessario ripetere il login.",
 				   buttons: Ext.Msg.OK,
 				   icon: Ext.Msg.INFO,
-				   fn: function(btn,text,opts) {
+				   fn: function(btn,text,opts)
+				   {
 					   document.location.replace("<?php echo PORTAL_URL;?>");
 				   }
-			});
-		}
-		
-		// Crea un delayedTask che entra allo scadere del timeout
-		var timeoutTask = new Ext.util.DelayedTask ( DCS.emetteMessaggioSessioneScaduta );
-
+				});
+				});
+				
 		var restartTimeout = function(conn, options) 
 		{
 			// esclude la particolare chiamata per il mantenimento della sessione fisica

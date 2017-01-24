@@ -16,6 +16,7 @@ DCS.Allegato = function(idContratto, codContratto, isStorico) {
 				+" "+addedQueryPiece
 				+" AND IdContratto="+idContratto+" ORDER BY Data";
 
+	
 	var dsAllegato = new Ext.data.Store({
 		proxy: new Ext.data.HttpProxy({
 			//where to retrieve data
@@ -248,7 +249,10 @@ DCS.Allegato = function(idContratto, codContratto, isStorico) {
     });
 
      // trigger the data store load
+    DCS.showMask("Lettura lista documenti allegati...");
     dsAllegato.load();
+
+    DCS.hideMask();
     
 	return grid;
 };

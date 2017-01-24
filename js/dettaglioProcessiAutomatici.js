@@ -119,7 +119,7 @@ DCS.DettaglioProcesso = Ext.extend(Ext.TabPanel, {
 			
 			//Form su cui montare gli elementi
 			var formPAut = new Ext.form.FormPanel({
-				title:'Dati Processi automatici',		//il titolo ï¿½ usato per testare il tab
+				title:'Dati Processi automatici',		//il titolo è usato per testare il tab
 				frame: true,
 				bodyStyle: 'padding:5px 5px 0',
 				border: false,

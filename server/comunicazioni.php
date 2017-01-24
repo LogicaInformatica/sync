@@ -46,7 +46,7 @@ function doMain()
 			break;
 		case "lettirecenti": // messaggi letti di recente
 			$where .= " AND IdNota IN (SELECT IdNota FROM notautente WHERE IdUtente="
-			       . $context["IdUtente"]. " AND LastUpd>CURDATE()-INTERVAL 14 DAY)" ;
+			       . $context["IdUtente"]. " AND LastUpd>CURDATE()-INTERVAL 7 DAY)" ;
 			$order = "LastUpd DESC";	
 			break;
 		case "scadenzegenerali":

@@ -61,23 +61,23 @@ DCS.GridUtenti = Ext.extend(Ext.grid.GridPanel, {
 									}else{
 										return;
 									}
-									//si sta cancellando la selezione: ok
-									Ext.Ajax.request({
-								        url: 'server/utentiProfili.php',
-								        method: 'POST',
-										        params: {task: 'deleteU',id: IdUtente, type: type},
-								        success: function(obj) {
-								        	eval('var resp = '+obj.responseText);
-								        	Ext.MessageBox.alert('Esito', resp.error);
-								        	grid.getStore().reload();
-										},
-										failure: function (obj) {
-											eval('var resp = '+obj.responseText);
-			                    			Ext.MessageBox.alert('Errore', resp.error); 
-			                    		},
-										scope: this,
-										waitMsg: 'Cancellazione in corso...'
-								    });
+							//si sta cancellando la selezione: ok
+							Ext.Ajax.request({
+						        url: 'server/utentiProfili.php',
+						        method: 'POST',
+								        params: {task: 'deleteU',id: IdUtente, type: type},
+						        success: function(obj) {
+						        	eval('var resp = '+obj.responseText);
+						        	Ext.MessageBox.alert('Esito', resp.error);
+						        	grid.getStore().reload();
+								},
+								failure: function (obj) {
+									eval('var resp = '+obj.responseText);
+	                    			Ext.MessageBox.alert('Errore', resp.error); 
+	                    		},
+								scope: this,
+								waitMsg: 'Cancellazione in corso...'
+						    });
 								},
 							})
 					},

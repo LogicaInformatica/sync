@@ -1,7 +1,6 @@
 <?php
 require_once("workflowFunc.php");
 require_once("userFunc.php");
-require_once("riempimentoOptInsoluti.php");
 doMain();
 
 function doMain()
@@ -408,7 +407,7 @@ function aggiornaTipo()
 		}
 		//trace("TA ".$_POST['TitoloTipoPartita']);
 		//*****inserimento
-		$counter = getScalar("Select count(*) FROM $tab where $idField = 0$indexTab");
+		$counter = getScalar("Select count(*) FROM $tab where $idField = $indexTab");
 		if($counter==0 && $indexTab==0)
 		{
 			//$counterCod = getScalar("Select count(*) FROM $tab where $codField='".$_POST['CodTipo']."'");
@@ -489,7 +488,7 @@ function aggiornaTipo()
 					//trace("Mod part: $sqlModTipo");
 					if (execute($sqlModTipo))
 					//if(true)
-					{						
+					{
 						// All'aggiornamento di una tipologica, devo ricalcolare _opt_insoluti
 						updateOptInsoluti(true); // aggiorna l'intera tabella
 						

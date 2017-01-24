@@ -268,19 +268,19 @@ function doMain()
 						
 						$urlAttuale=$distinta['IdCompagnia']."/distinte/".$fileName;
 					}else{
-						$urlAttuale=''; // caso in cui non c'ï¿½ il vecchio file su tabella e non c'ï¿½ il docPath
-						//se non c'ï¿½ il path sono due i casi:
-						//1. Vi ï¿½ il vecchio url da tabella e basta
-						//2. Il vecchio url da tabella ï¿½ stato eliminato logicamente SULLA FORM e l'utente ha 
+						$urlAttuale=''; // caso in cui non c'è il vecchio file su tabella e non c'è il docPath
+						//se non c'è il path sono due i casi:
+						//1. Vi è il vecchio url da tabella e basta
+						//2. Il vecchio url da tabella è stato eliminato logicamente SULLA FORM e l'utente ha 
 						//	 inoltrato una form senza scegliere un altra ricevuta, quindi 
 						//	 ci ritroviamo con un url presente in tabella (da eliminare) ma un Doc non riempito
-						//	 Lo notiamo dal fatto che se il bottone elimina ï¿½ VISIBILE sulla form (bEliminaVis=false)
+						//	 Lo notiamo dal fatto che se il bottone elimina è VISIBILE sulla form (bEliminaVis=false)
 						//	 siamo nel caso 1 altrimenti se (bEliminaVis=true) siamo nel caso 2
 						if(($_REQUEST['bEliminaVis']=='true') && ($UrlAllegatoVecchio!=ATT_PATH."/")){
 							$urlAttuale=$distinta['UrlRicevuta'];
-							//il bottone ï¿½ visibile...si usa il vecchio
+							//il bottone è visibile...si usa il vecchio
 						}elseif(($_REQUEST['bEliminaVis']=='false') && ($UrlAllegatoVecchio!=ATT_PATH."/"))
-							{	//il bottone ï¿½ invisibile, c'ï¿½ il docPath ma ï¿½ vuoto(cancellato da utente)
+							{	//il bottone è invisibile, c'è il docPath ma è vuoto(cancellato da utente)
 								$urlAttuale='';
 								if(eliminaRicevuta($UrlAllegatoVecchio))
 									$UrlAllegatoVecchio='';
