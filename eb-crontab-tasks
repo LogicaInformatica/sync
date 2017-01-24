@@ -1,1 +1,1 @@
-0,30 * * * 1-5  /usr/bin/ebcronexec.sh /usr/bin/php -f /var/toyota/cnc-dir/cnc/server/batch/cronProcess.php
+0,30 * * * 1-5  /usr/bin/ebcronexec.sh /var/toyota/cnc-dir/cnc/cronProcess.sh
