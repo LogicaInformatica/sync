@@ -4,7 +4,7 @@
 //            quindi mettete fuori dallo "switch" sottostante solo le costanti che sono identiche in tutti gli ambienti
 //            e dentro i case dello "switch" quelle che si differenziano almeno per uno degli ambienti
 //
-$sito = $_SERVER['EB_ENVIRONMENT'];
+$sito = get_cfg_var('EB_ENVIRONMENT');
 switch ($sito) {
 	case 'lbit':
 		define('SITE_NAME', 'Conn@&cut LabIt');
@@ -54,15 +54,16 @@ switch ($sito) {
 		break;
 }
 define('NUM_VERSIONE','1.11.2');
-define('PORTAL_URL',   "{$_SERVER['EB_WEB_PROTOCOL']}://portal{$_SERVER['EB_DNS_SUFFIX']}.{$_SERVER['EB_DNS_DOMAIN']}/");
-define('LINK_URL',   "{$_SERVER['EB_WEB_PROTOCOL']}://cnc{$_SERVER['EB_DNS_SUFFIX']}.{$_SERVER['EB_DNS_DOMAIN']}/");
+define('PORTAL_URL',   get_cfg_var('EB_WEB_PROTOCOL'));//portal{$_SERVER['EB_DNS_SUFFIX']}.{$_SERVER['EB_DNS_DOMAIN']}/");
+define('LINK_URL',   get_cfg_var('EB_WEB_PROTOCOL'));//cnc{$_SERVER['EB_DNS_SUFFIX']}.{$_SERVER['EB_DNS_DOMAIN']}/");
 
 //mysql
-define('MYSQL_SERVER', $_SERVER['EB_MYSQL_HOST']);//mysql-tfsi-lab.cwikgb27tggo.eu-west-1.rds.amazonaws.com');
-define('MYSQL_USER',  $_SERVER['EB_C_DB_USER']);// 'cnclabit');
-define('MYSQL_PASS',   $_SERVER['EB_C_DB_PASS']); //'cnclabit');
+define('MYSQL_SERVER', get_cfg_var('EB_MYSQL_HOST'));//mysql-tfsi-lab.cwikgb27tggo.eu-west-1.rds.amazonaws.com');
+define('MYSQL_USER',  get_cfg_var('EB_C_DB_USER'));// 'cnclabit');
+define('MYSQL_PASS',  get_cfg_var('EB_C_DB_PASS')); //'cnclabit');
 define('MYSQL_SCHEMA', 'db_cnc');
-define('MYSQL_PORT',   $_SERVER['EB_MYSQL_PORT']); //'3306');
+define('MYSQL_PORT',  get_cfg_var('EB_MYSQL_PORT')); //'3306');
+
 
 // Ultimo mese di un anno fiscale
 define('LAST_FY_MONTH', "3");  // Marzo
