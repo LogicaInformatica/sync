@@ -32,7 +32,6 @@ switch ($sito) {
 		define('LOGO_PRODOTTO','<img src="images/logo conn@&cut.jpg">');
 		define('LOGO_SOCIETA','<img src="images/nuovo_logo_TFSI.png">');
 		define('FOOTER','<div style="text-align:center;font-size:10px;color:gray">&copy; 2011-2015 Toyota Financial Services (UK) PLC - P.IVA 05303901002</div>');
-		define('SPECIAL_LINK','DCS.showModificaProvvigione(492466,140946,46)');
 		break;
 	case 'prod':
 		define('SITE_NAME', 'Conn@&cut');
