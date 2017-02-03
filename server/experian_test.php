@@ -24,14 +24,14 @@ try {
 	} else {
 		echo "Invio fallito: $error";
 	}
-   
+    */
 	if (readAllExperianResponses($error)) {
 		echo "Acquisizione OK";
 	} else {
 		echo "Acquisizione fallita: $error";
 	}
-	*/
-	inviaDatiExperian(3);
+
+	//inviaDatiExperian(3);
 } catch(Exception $e) {
 	echo $e->getMessage();
 }
