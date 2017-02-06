@@ -30,12 +30,12 @@ $WEstraMsg  = (empty($_SESSION["GSesErrorMsg"])) ? '':  $_SESSION["GSesErrorMsg"
 $WData= base64_decode( $_POST["FData"]);
 //Li Normalizza
 $WUserData= unserialize($WData);
-
+ 
 $_SESSION= array();
 $_SESSION["SUserData"]= array();
 //Poi metti i dati un Sessione
 $_SESSION["SUserData"]= $WUserData;
-
+ 
 //------------------------------------------------------------------------------
 //Controlla che URl di fin-portal sia valida
 if( geu_isTrustURL($_SESSION['SUserData']['SUrlPortal']) ){

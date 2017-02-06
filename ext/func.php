@@ -442,7 +442,7 @@ function geu_getServerName(){
 define('KGT_USER', 'cso_gtw_prod');
 define('KGT_PASS', 'cso_gtw_prod09');
 //URL assoluto di fin-portal, da usare per le funzioni gateway(cio柳enza sessione PHP)
-define('URL_REMOTE_ANA_FOR_GATEWAY', 'http://portal.tfsi.it/php/r_bridge_gtw.php');
+define('URL_REMOTE_ANA_FOR_GATEWAY', 'https://portal.tfsi.it/php/r_bridge_gtw.php');
 
 //Contatta l'ANA centrale e resistuisce AC_CODE dei clienti
 function getAC_CODEForGateway($IUser='', $IPass=''){
