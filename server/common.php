@@ -34,9 +34,9 @@ $lastError = "";
 // openDb
 // Connessione al DB (non persistente)
 // NB: per disconnettere fare semplicemente mysqli_close(), che 
-//     può anche essere omesso perché a fine script ci pensa 
+//     puï¿½ anche essere omesso perchï¿½ a fine script ci pensa 
 //     il sistema. Notare anche che la connect automaticamente
-//     riusa l'eventuale connessione già disponibile.
+//     riusa l'eventuale connessione giï¿½ disponibile.
 //-------------------------------------------------------------- 
 function openDb() {	// alias di getDbConnection
 	return getDbConnection();
@@ -52,7 +52,7 @@ function getDbConnection()
 			Throw new Exception("Connessione al database non riuscita: ".mysqli_connect_error());				
 		}
 		execute("set @@lc_time_names='it_IT'");
-		execute("SET collation_connection = 'utf8_general_ci'"); // Necessario perché le view sono create da MySql WB in questa collation
+		execute("SET collation_connection = 'utf8_general_ci'"); // Necessario perchï¿½ le view sono create da MySql WB in questa collation
 	}
 	return $connection;
 }
@@ -91,7 +91,7 @@ function getLastError()
 	else 
 	{
 		$last = mysqli_error($connection);
-		if ($last>"") // c'è stato effettivamente un errore MySql
+		if ($last>"") // c'ï¿½ stato effettivamente un errore MySql
 			$lastError = $last;
 		return $lastError; 
 	}
@@ -204,7 +204,7 @@ function getScalar($sql,$notrace=FALSE)
 	if ($conn = getDbConnection()) { 		
 		if ($res = mysqli_query($conn, $sql)) {
 			$item = mysqli_fetch_row($res); 
-			if ($item)	// se non ci sono righe è NULL
+			if ($item)	// se non ci sono righe ï¿½ NULL
 				$item = $item[0];		
 			mysqli_free_result($res);
 		} else if (!($notrace===true))
@@ -250,7 +250,7 @@ function getRows($sql, $type=MYSQLI_ASSOC, &$error='') {
 
 //-----------------------------------------------------------------------
 // getFetchArray
-// Esegue una query e ritorna un array con le righe estratte. Ogni riga è un array, di
+// Esegue una query e ritorna un array con le righe estratte. Ogni riga ï¿½ un array, di
 // default, di tipo associativo
 //-----------------------------------------------------------------------
 function getFetchArray($sql, $type=MYSQLI_ASSOC, &$error='')
@@ -363,7 +363,7 @@ function execute($sql,$traceIfError=true)
 		$result = mysqli_query($conn, $sql);
 		if (!$result && $traceIfError) {
 			$error = getLastError();
-			// Intercetta gli errori di integrita'  referenziale e li espone all'utente in un modo migliore
+			// Intercetta gli errori di integrita'ï¿½ referenziale e li espone all'utente in un modo migliore
 			if (preg_match('/foreign key constraint fails \(.+\.(.+),/',$error,$arr)) {
 				$tab = $arr[1];
 				setLastError("Operazione non consentita perche' esistono dati collegati (nella tabella $tab) a quello che si tenta di cancellare o modificare");
@@ -449,7 +449,7 @@ function rollback()
 //	1) $setClause (byref) clausola da modificare appendendo il nuovo termine
 //  2) $fieldName		  nome del campo
 //  3) $fieldValue		  espressione da assegnare al campo
-//  4) $fieldtype		  N=numerico, S=stringa, D=Data, G=generico (espressione già completa)
+//  4) $fieldtype		  N=numerico, S=stringa, D=Data, G=generico (espressione giï¿½ completa)
 //----------------------------------------------------------------------------------------------
 function  addSetClause(&$setClause,$fieldName,$fieldValue,$fieldType)
 {
@@ -495,7 +495,7 @@ function  addSetClause(&$setClause,$fieldName,$fieldValue,$fieldType)
 //	2) $valList (byref)   lista valori colonne da modificare appendendo il nuovo termine
 //  3) $fieldName		  nome del campo
 //  4) $fieldValue		  espressione da assegnare al campo
-//  5) $fieldtype		  N=numerico, S=stringa, D=Data, G=generico (espressione già completa)
+//  5) $fieldtype		  N=numerico, S=stringa, D=Data, G=generico (espressione giï¿½ completa)
 //----------------------------------------------------------------------------------------------
 function addInsClause(&$colList,&$valList,$fieldName,$fieldValue,$fieldType)
 {
@@ -669,7 +669,7 @@ function returnError($msg,$source,$logSuDb)
 /**
 *	Invia e-mail (versione originale CNC)
 *
-*   NB: il parametro $attachment è l'array di proprietà dato da $_FILES per un file uploaded
+*   NB: il parametro $attachment ï¿½ l'array di proprietï¿½ dato da $_FILES per un file uploaded
 */
 function sendMail($mittente,$destinatario,$subject,$message,$attachment="",$ccDest="")
 {
@@ -721,7 +721,7 @@ function sendMail($mittente,$destinatario,$subject,$message,$attachment="",$ccDe
     {
         if(filesize($physfile)<=0)
         {
-  			setLastError("Non è possibile allegare file di lunghezza zero (".$filename.")");
+  			setLastError("Non ï¿½ possibile allegare file di lunghezza zero (".$filename.")");
   			return false;
         }
         $file = fopen($physfile,'rb');
@@ -745,8 +745,8 @@ function sendMail($mittente,$destinatario,$subject,$message,$attachment="",$ccDe
     $mime_boundary = md5(time());
 
 // NOTA: nonostante il protocollo SMTP preveda il doppio carattere \r\n per l'invio, se si usa questo
-// come new line sotto linux, l'effetto è quello di vederlo ovunque raddoppiato (evidentemente lo fa la
-// funzione mail chiamata al termine). Perciò i salti riga sono messi con la costante MAIL_NEWLINE
+// come new line sotto linux, l'effetto ï¿½ quello di vederlo ovunque raddoppiato (evidentemente lo fa la
+// funzione mail chiamata al termine). Perciï¿½ i salti riga sono messi con la costante MAIL_NEWLINE
 // (da constant.inc) che in Windows vale \r\n e in Linux solo \n.
 
         //&nbsp;crea header SMTP e include il testo del messaggio
@@ -936,10 +936,10 @@ function dateFromString($ISOdate,&$over)
 				$mese = 0+$arr[1];
 				$giorno = 0+$arr[0];
 			} else
-				return $ISOdate; // è già una data
+				return $ISOdate; // ï¿½ giï¿½ una data
 		}
 		
-		// Controllo intervallo di validità per mktime
+		// Controllo intervallo di validitï¿½ per mktime
 		$over = 0;
 		if ($anno>2037) 
 			$over = $anno - 2037;
@@ -965,7 +965,7 @@ function italianDate($data="")
 	if ($data=="")
 		return date("d/m/Y");
 	else {
-		// dateFromString usa mktime che è limitata al gennaio 2038
+		// dateFromString usa mktime che ï¿½ limitata al gennaio 2038
 		// in over vengono messi gli anni eccedenti a quelli utilizzabili
 		$over = 0;
 		$dataConv = date("d/m/Y",dateFromString($data,$over));
@@ -985,7 +985,7 @@ function italianDate($data="")
 //--------------------------------------------------------------------
 function ISODate($data,$long=false)
 {
-	// dateFromString usa mktime che è limitata al gennaio 2038
+	// dateFromString usa mktime che ï¿½ limitata al gennaio 2038
 	// in over vengono messi gli anni eccedenti a quelli utilizzabili
 	$over = 0;
 	if ($long)
@@ -1002,7 +1002,7 @@ function ISODate($data,$long=false)
 //--------------------------------------------------------------
 // getUserName
 // Restituisce lo user name da usare per il campo LastUser del
-// DB, oppure "system" se non si è nel portale web.
+// DB, oppure "system" se non si ï¿½ nel portale web.
 // Se viene passato l'argomento, ci mette la chiave IdUser
 //--------------------------------------------------------------
 function getUserName(&$IdUser="NULL")
@@ -1165,7 +1165,7 @@ function redirect($relativeUrl)
 //**********************************************************************************************************
 function internetTime($timestamp)
 {
-	// dateFromString usa mktime che è limitata al gennaio 2038
+	// dateFromString usa mktime che ï¿½ limitata al gennaio 2038
 	// in over vengono messi gli anni eccedenti a quelli utilizzabili
 	$over = 0;
 	$dataConv = strftime("%Y-%m-%dT%H:%M:%S",dateFromString($timestamp,$over));
@@ -1276,7 +1276,7 @@ function formatCap($cap)
 //**********************************************************************************************************
 // createIban   (by Aldo)
 // Crea il codice IBAN dato in input CAB - ABI - ContoCorrente - SOLO PER ITALIA (IT)
-// Restituisce : 0    se ci sono errori ed l'iban non si può calcolare oppure il codice iban regolarmente calcolato
+// Restituisce : 0    se ci sono errori ed l'iban non si puï¿½ calcolare oppure il codice iban regolarmente calcolato
 //**********************************************************************************************************
 function createIban($abi, $cab, $cc)
 {
@@ -1494,7 +1494,7 @@ function deferMail($mittente,$destinatario,$subject,$message,$ccDest) {
 		$context["notify_mode"] = $savenm; // ripristina
 		return TRUE;
 	} else {
-		return FALSE; // lascia il deferred mode spento, visto che qualcosa è andato storto
+		return FALSE; // lascia il deferred mode spento, visto che qualcosa ï¿½ andato storto
 	}
 }
 
@@ -1517,7 +1517,7 @@ function sendDeferMail() {
 			$body .= "\n<br>$testo";
 		}			
 		echo $body; // anche su console, per le prove
-		$context["notify_mode"] = "immediate"; // ripristina la modalità di invio normale
+		$context["notify_mode"] = "immediate"; // ripristina la modalitï¿½ di invio normale
 		if (sendMail(MAIL_SENDER,getSysParm("ADMIN_MAIL"),"Messaggio da Connecticut sito=$sito",$body,"","")) {
 			execute("UPDATE maildifferita SET DataInvio=NOW() WHERE ProcessName='{$context["process_name"]}'"
 				." AND DataInvio IS NULL AND DataCreazione>CURDATE()-INTERVAL 10 HOUR ORDER BY LastUpd");
@@ -1543,7 +1543,7 @@ function fail($msg,$sendMail=true) {
 		enableForeignKeys(true);
 		closeDb();
 	}
-	// restituisce anche failure, per compatibilità con il vecchio
+	// restituisce anche failure, per compatibilitï¿½ con il vecchio
 	$response = json_encode_plus(array("success"=>false, "failure"=>true, "error"=>$msg));
 	die($response);
 }
@@ -1553,7 +1553,7 @@ function fail($msg,$sendMail=true) {
  *  in formato json nella forma {"success":true, "data": dati}. Opzionalmente, restituisce
  *  anche il numero totale di righe nei dati ritornati
  *  @param {Object} $data qualunque dato da restituire
- *  @param {Number} $total se non nullo, il valore viene restituito nella proprietà "total"
+ *  @param {Number} $total se non nullo, il valore viene restituito nella proprietï¿½ "total"
  */
 function success($data, $total=null) {
 	global $connection,$inTransaction;
@@ -1589,7 +1589,7 @@ function numero_lettere($numero){
 	$centinaia = floor($numero / 100);     // Centinaia
 	$numero -= $centinaia * 100;
 	$decine = floor($numero / 10);       // Decine
-	$unita = $numero % 10;               // Unità
+	$unita = $numero % 10;               // Unitï¿½
 
 	$cifra_lettere = "";
 
@@ -1642,7 +1642,7 @@ function numero_lettere($numero){
 /**
  * calcolaNumeroBuild
  * Determina il numero di BUILD da indicare in coda al numero di versione
- * Il numero è dato dal numero di giorni trascorsi tra l'ultimo aggiornamento di files php/js e la data di inizio della versione,
+ * Il numero ï¿½ dato dal numero di giorni trascorsi tra l'ultimo aggiornamento di files php/js e la data di inizio della versione,
  * indicata dalla define DATA_VERSIONE (se manca, DATA_VERSIONE='2016-06-01')
  */
 function calcolaNumeroBuild() {
@@ -1655,7 +1655,7 @@ function calcolaNumeroBuild() {
 
 /**
  * ultimaDataFile
- * Determina la data di modifica più recente in una directory data, includendo tutti i file che corrispondono ad una data espressione
+ * Determina la data di modifica piï¿½ recente in una directory data, includendo tutti i file che corrispondono ad una data espressione
  * regolare ed eventualmente escludendo quelli che corrispondono ad una seconda espressione regolare
  */
 function ultimaDataFile($folder,$include,$exclude='/***/') {
@@ -1687,9 +1687,9 @@ function doCurl($url,$data=null,$headers=null) {
 		$curl = curl_init();
 	}
 	curl_setopt($curl,CURLOPT_URL,$url);
-	if (constant('PROXY')) {
+	if (constant('PROXY')>'') {
 		curl_setopt($curl, CURLOPT_PROXY, PROXY.':'.PROXYPORT);      
-		if (constant('PROXYUSERPWD'))
+		if (constant('PROXYUSERPWD')>'')
 			curl_setopt($curl, CURLOPT_PROXYUSERPWD, PROXYUSERPWD);
 		trace('PROXY usato per il curl: '.PROXY.':'.PROXYPORT.' userpwd=('.constant('PROXYUSERPWD').')',false);
 	}
@@ -1745,7 +1745,7 @@ function writeProcessLog($process,$text,$level=0)
 		}
 	}
 	$sql = "INSERT INTO processlog (ProcessName,LogMessage,LogLevel) VALUES(".quote_smart($process).",".quote_smart($text).",$level)";
-	execute($sql,false); // evita traccia perchè MySql , va in ricorsione
+	execute($sql,false); // evita traccia perchï¿½ MySql , va in ricorsione
 	
 	if ($level!=-2) {
 		if (hasProcessLogInterrupt($process)) { // ricevuto comando di chiusura

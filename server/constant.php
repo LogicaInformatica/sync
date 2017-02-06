@@ -20,8 +20,8 @@ switch ($sito) {
         break;
 	case 'test':
 		define('SITE_NAME', 'Conn@&cut Test');
-		define('PROXY', "192.168.12.8"); // usato nelle chiamate al DMS
-		define('PROXYPORT', "3128");
+		define('PROXY', ""); // usato nelle chiamate al DMS
+		define('PROXYPORT', "");
 		define('SMS_TEST_NR','dummy'); // NUMERO DESTINATARIO FISSO PER I TEST (Di Falco)
 		define('MAIL_TEST', "giorgio.difalco@gmail.com"); // indica dove vengono mandati tutti i msg di mail
 		define('MAIL_OVERRIDE','giorgio.difalco@gmail.com');
@@ -43,10 +43,10 @@ switch ($sito) {
 		//		define('ADMIN_MAIL',"giorgio.difalco@gmail.com"); // mail dell'amministratore di sistema
 		define('MEN_AT_WORK_PAGE',""); // pagina di avviso per interruzione servizio. Se impostata (es. Avviso.html) non fa entrare nell'app ma rimanda ad essa
 		define('TEXT_NEWLINE', "\r\n");  // salto linea per le righe delle lettere formato testo semplice
-		define('PROXY', "192.168.2.8");
-		define('PROXYPORT', "3128");
-		define('PROXYUSERPWD', "webservers:sette");
-		define('PROXYAUTH', "CURLAUTH_BASIC");
+		define('PROXY', "");
+		define('PROXYPORT', "");
+		define('PROXYUSERPWD', "");
+		define('PROXYAUTH', "");
 		define('LOGO_PRODOTTO','<img src="images/logo conn@&cut.jpg">');
 		define('LOGO_SOCIETA','<img src="images/nuovo_logo_TFSI.png">');
 		define('FOOTER','<div style="text-align:center;font-size:10px;color:gray">&copy; 2011-2015 Toyota Financial Services (UK) PLC - P.IVA 05303901002</div>');
