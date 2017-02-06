@@ -30,6 +30,7 @@ $GATrustURL= array( 'www.fin-portal.svil' ,
                     'portallabit.tfsi.it',
                     'portaltest.tfsi.it' ,
                     'portal.tfsi.it'     ,
+                    "portal".get_cfg_var('EB_DNS_SUFFIX').".".get_cfg_var('EB_DNS_DOMAIN')
                   );
 
 /******************************* FUNZIONI *************************************/
@@ -57,7 +58,7 @@ function geu_getRemoreAnaUrl(){
             $WAnaCentral= $_SESSION['SUserData']['SUrlPortal'] . URL_REMOTE_ANA;
         }
 
-    $WAnaCentral= ( ($WAnaCentral) ? $WAnaCentral : 'https://portal.tfsi.it/php/r_bridge_gtw.php') ;
+    $WAnaCentral= ( ($WAnaCentral) ? $WAnaCentral : get_cfg_var('EB_WEB_PROTOCOL').'://portal'.get_cfg_var('EB_DNS_SUFFIX').".".get_cfg_var('EB_DNS_DOMAIN').'/php/r_bridge_gtw.php') ;
     return $WAnaCentral;
 }
 
@@ -151,16 +152,16 @@ function geu_trasport($IProperties){
   //----------------------------------------------------------------------------
 
   //Controlla se c'è il proxy
-  if($WProxy){
+  /*if($WProxy){
     //Se è stata specificata una porta distinta dal proxy
     if(!empty($WProxy["Port"]))
         $WProxyFull= $WProxy["Url"] .":". $WProxy["Port"];
     else
         $WProxyFull= $WProxy["Url"];
-  }
+  }*/
 
   //Controlla se è HTTPS dall' URL
-  $WIsHttps= (strtolower(substr($WUrl ,0 ,5))=='https') || $ForceHttps ;
+  $WIsHttps = true;//(strtolower(substr($WUrl ,0 ,5))=='https') || $ForceHttps ;
 
 
   //Prepara i Valori POST
