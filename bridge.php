@@ -10,7 +10,7 @@ $PageOk     =  KPAGEOK;
 //Pagina dove si andra' se non e' tutto OK
 $PageError  =  KPAGEKO;
 //------------------------------------------------------------------------------
-if (!isset($_POST["FData"]) && ($sito == 'LOCAL' || $sito == 'LABIT' || $sito == 'TEST'))
+if (!isset($_POST["FData"]) && ($sito == 'LOCAL'))
 {
     $_SESSION= array();
     header("Location: $PageOk");

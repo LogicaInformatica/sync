@@ -281,7 +281,7 @@ function geu_trasport($IProperties){
 function geu_communicator($IProperties){
 	if(stristr( $IProperties['Url'], 'portal') !== FALSE) {
 		if (strtolower(substr($IProperties['Url'] , 0, 5)) =='https' ) {
-			$IProperties['Url'] = 'http' . substr($IProperties['Url'], 5);
+			//$IProperties['Url'] = 'http' . substr($IProperties['Url'], 5);  eliminata 8/2/2017
 		}
 	}
 	

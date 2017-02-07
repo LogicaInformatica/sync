@@ -51,8 +51,7 @@ if ($getUser) {
 		$_SESSION["workflow"]=$_REQUEST['wrkflw'];
 	}
 	
-	if ($_SESSION["sitolocale"] == 1 // entrata da portale labit/test/local
-	|| !isset($_SESSION["sitolocale"]) && ($sito!='PROD' && $sito!='TEST')) {
+	if ($_SESSION["sitolocale"] == 1) {
 		
 		if (isset($_POST["loginUsername"])) {
 			$user = $_POST["loginUsername"];
