@@ -111,7 +111,7 @@ var formPanel = new Ext.form.FormPanel({
             maxLength: 700,
             id: 'nota',
             name: 'nota',
-            readOnly:!CONTEXT.MODIFICA_TESTI
+            readOnly:(CONTEXT.InternoEsterno=='E')
         },{	
         	xtype: 'datefield',
 			format: 'd/m/Y',

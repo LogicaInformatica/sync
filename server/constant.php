@@ -52,7 +52,7 @@ switch ($sito) {
                 define('FOOTER','<div style="text-align:center;font-size:10px;color:gray">&copy; 2011-2015 Toyota Financial Services (UK) PLC - P.IVA 05303901002</div>');
                 break;
 }
-define('NUM_VERSIONE','1.11.7');
+define('NUM_VERSIONE','1.11.8');
 define('PORTAL_URL',   get_cfg_var('EB_WEB_PROTOCOL')."://portal".get_cfg_var('EB_DNS_SUFFIX').".".get_cfg_var('EB_DNS_DOMAIN')."/");
 define('LINK_URL',   get_cfg_var('EB_WEB_PROTOCOL')."://cnc".get_cfg_var('EB_DNS_SUFFIX').".".get_cfg_var('EB_DNS_DOMAIN')."/");
 
@@ -87,7 +87,7 @@ define('LETTER_URL',LINK_URL.'tmp/lettere');            // per i file rotomail
 define('ATT_PATH','/efs/cnc/attachments'); // per allegati
 define('REL_PATH', 'attachments'); // inizio URL relativo per allegati
 define('TMP_REL_PATH','tmp');      // inizio URL relativo per file in tmp
-define('TEMPLATE_PATH',dirname(__FILE__).'/../templates'); // per i templates di email, lettere ecc.
+define('TEMPLATE_PATH','/efs/cnc/templates'); // per i templates di email, lettere ecc.
 
 // URL da richiamare per le funzioni di lista del DMS: i parametri sono: (1) codice pratica senza prefisso, (2) prefisso LE/CO
 define('DMS_API_LIST_URL',get_cfg_var('EB_WEB_PROTOCOL')."://desired".get_cfg_var('EB_DNS_SUFFIX').".".get_cfg_var('EB_DNS_DOMAIN').'/php/k2/sf/k2/web/app_dev.php/api/document/list/%s/%s');
