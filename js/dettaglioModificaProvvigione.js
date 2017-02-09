@@ -129,7 +129,7 @@ DCS.DettaglioModifica = Ext.extend(Ext.TabPanel, {
 			var PagatoTotale = {xtype:'displayfield', anchor:'80%', height:24, name:'ImpPagatoTotale', fieldLabel: 'Incasso tot.(con viaggianti)', style: 'text-align:right;font-weight:bold'};
 			var Interessi	 = {xtype:'displayfield', anchor:'80%', height:24, name:'ImpInteressi', fieldLabel: 'Interessi di mora inc.', style: 'text-align:right;font-weight:bold'};
 			var Spese		 = {xtype:'displayfield', anchor:'80%', height:24, name:'ImpSpese', fieldLabel: 'Spese di recupero inc.', style: 'text-align:right;font-weight:bold'};
-			var RataViaggiante   = {xtype:'checkbox', anchor:'80%', height:24, name:'FlagRataViaggiante', id:'FlagRataViaggiante', fieldLabel: 'Rata viaggiante sì/no', style: 'text-align:right;font-weight:bold', disabled: true};
+			var RataViaggiante   = {xtype:'checkbox', anchor:'80%', height:24, name:'FlagRataViaggiante', id:'FlagRataViaggiante', fieldLabel: 'Rata viaggiante s&igrave;/no', style: 'text-align:right;font-weight:bold', disabled: true};
 		
 			// Campi nascosti usati nella funzione di save
 			var DataFineAffido	   = {xtype:'hidden', id:'hiddenDataLotto', name:'DataLotto'};
@@ -167,7 +167,7 @@ DCS.DettaglioModifica = Ext.extend(Ext.TabPanel, {
 //				valueField: 'idDataLotto'
 //			};
 
-			var RataViaggianteMod   = {xtype:'checkbox', anchor:'80%', height:24, name:'FlagRataViaggianteMod', id:'FlagRataViaggianteMod', fieldLabel: 'Modifica viaggiante sì/no', style: 'text-align:right;font-weight:bold'};
+			var RataViaggianteMod   = {xtype:'checkbox', anchor:'80%', height:24, name:'FlagRataViaggianteMod', id:'FlagRataViaggianteMod', fieldLabel: 'Modifica viaggiante s&igrave;/no', style: 'text-align:right;font-weight:bold'};
 			var space               = {xtype: 'displayfield', height:24};
 
 			// Importi
