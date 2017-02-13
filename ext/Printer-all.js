@@ -470,7 +470,7 @@ Ext.ux.Printer.GridPanelRenderer = Ext.extend(Ext.ux.Printer.BaseRenderer, {
 				align: column.align,
 				dataIndex: column.dataIndex,
 				format: column.format,
-				header: column.header.replace(/<br>/g,' '),
+				header: (column.header||'').replace(/<br>/g,' '),
 				width: column.width
 			});
 		});
@@ -616,9 +616,9 @@ Ext.ux.Printer.GridPanelRenderer = Ext.extend(Ext.ux.Printer.BaseRenderer, {
     var columns = [];
     
   	Ext.each(grid.getColumnModel().config, function(col) {
-		if (col.printable!=false && (
-				(this.funType=='XLS' && col.exportable!=false) ||
-  	  			(this.funType!='XLS' && col.hidden!=true))
+		if (col.printable!==false && (
+				(this.funType=='XLS' && col.exportable!==false) ||
+  	  			(this.funType!='XLS' && col.hidden!==true))
 			)
 		columns.push(col);
   	}, this);
