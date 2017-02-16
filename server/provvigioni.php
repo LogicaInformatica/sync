@@ -240,12 +240,19 @@ function saveModifica()
 	$IdContratto   = $_REQUEST["idContratto"];
 	$NumRata	   = $_REQUEST["numRata"];
 	$DataFineAffido = $_POST["DataLotto"];
-	$CapAffidato   = cleanNumber($_POST["CapAffidatoMod"])-cleanNumber($_POST["ImpCapitaleAffidato"]);
-	$TotAffidato   = cleanNumber($_POST["TotAffidatoMod"])-cleanNumber($_POST["ImpTotaleAffidato"]);
-	$Pagato		   = cleanNumber($_POST["PagatoMod"])-cleanNumber($_POST["ImpPagato"]);
-	$PagatoTotale  = cleanNumber($_POST["PagatoTotaleMod"])-cleanNumber($_POST["ImpPagatoTotale"]);
-	$Interessi	   = cleanNumber($_POST["InteressiMod"])-cleanNumber($_POST["ImpInteressi"]);
-	$Spese		   = cleanNumber($_POST["SpeseRecuperoMod"])-cleanNumber($_POST["ImpSpese"]);
+	$CapAffidatoMod = cleanNumber($_POST["CapAffidatoMod"]);
+	$TotAffidatoMod = cleanNumber($_POST["TotAffidatoMod"]);
+	$PagatoMod	    = cleanNumber($_POST["PagatoMod"]);
+	$PagatoTotaleMod  = cleanNumber($_POST["PagatoTotaleMod"]);
+	$InteressiMod	  = cleanNumber($_POST["InteressiMod"]);
+	$SpeseMod		  = cleanNumber($_POST["SpeseRecuperoMod"]);
+
+	$CapAffidato   = $CapAffidatoMod-cleanNumber($_POST["ImpCapitaleAffidato"]);
+	$TotAffidato   = $TotAffidatoMod-cleanNumber($_POST["ImpTotaleAffidato"]);
+	$Pagato		   = $PagatoMod-cleanNumber($_POST["ImpPagato"]);
+	$PagatoTotale  = $PagatoTotaleMod-cleanNumber($_POST["ImpPagatoTotale"]);
+	$Interessi	   = $InteressiMod-cleanNumber($_POST["ImpInteressi"]);
+	$Spese		   = $SpeseMod-cleanNumber($_POST["ImpSpese"]);
 	$TipoCorrezione = $_POST["FlagCancellazione"]=='on' ? 'D':'M';
 	if ($_POST["FlagRataViaggianteMod"]=='on' && $_POST["FlagRataViaggiante"]!='Y')
 		$Viaggiante = 1;  // diffRataViaggiante = +1
@@ -258,17 +265,17 @@ function saveModifica()
 	// CONTROLLI
 	if ($TipoCorrezione=='M')
 	{
-		if ($Pagato>$PagatoTotale)
+		if ($PagatoMod>$PagatoTotaleMod)
 		{
 			$resp["success"] = false;
-			$resp["msg"]   = "Non si pu� specificare un incasso totale (inclusivo di eventuali rate viaggianti) minore dell'incasso (IPR)";
+			$resp["msg"]   = "Non si pu&ograve; specificare un incasso totale (inclusivo di eventuali rate viaggianti) minore dell'incasso (IPR)";
 			echo json_encode_plus($resp);	
 			return;
 		}
-		if ($CapAffidato>$TotAffidato)
+		if ($CapAffidatoMod>$TotAffidatoMod)
 		{
 			$resp["success"] = false;
-			$resp["msg"]   = "Non si pu� specificare un totale affidato minore del capitale affidato";
+			$resp["msg"]   = "Non si pu&ograve; specificare un totale affidato minore del capitale affidato";
 			echo json_encode_plus($resp);	
 			return;
 		}
