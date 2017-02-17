@@ -5559,7 +5559,7 @@ function creaPdfDaHtml($html,$filePath) {
 		$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 		
 		// dalla cartella tcpdf punta indietro alla cartella images
-		$pdf->setHeaderData("../../images/headerLettera.jpg","170" /* larghezza in mm */
+		$pdf->setHeaderData("headerLettera.jpg","170" /* larghezza in mm */
 				,'','',array(0,0,0),array(255,255,255));
 		$pdf->setPrintFooter(false); // evita riga di footer
 		
