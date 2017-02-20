@@ -69,15 +69,15 @@
 	    	DCS.menu_insoluti = menu_insoluti;
 
     	if (CONTEXT.MENU_GP_CORR)
-	    	menu_insoluti.add({xtype: 'btnsubmenu',text: 'Correnti',		panel: getPraticheCorrenti});			 // getPraticheCorrenti ï¿½ una funzione in common.js
+	    	menu_insoluti.add({xtype: 'btnsubmenu',text: 'Correnti',		panel: getPraticheCorrenti});			 // getPraticheCorrenti è una funzione in common.js
     	if (CONTEXT.MENU_GP_STRLEG)
-	    	menu_insoluti.add({xtype: 'btnsubmenu',text: 'Stragiudiziale/Legale',	panel: getPraticheStrLeg, param:'STRLEG'});		// getPraticheCorrenti ï¿½ una funzione in common.js
+	    	menu_insoluti.add({xtype: 'btnsubmenu',text: 'Stragiudiziale/Legale',	panel: getPraticheStrLeg, param:'STRLEG'});		// getPraticheCorrenti è una funzione in common.js
  		if (CONTEXT.MENU_GP_LIN)
 			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Lavorazione interna',  	panel: DCS.PraticheLavorInt.create});
  		if (CONTEXT.MENU_GP_SLE)
 			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Stati legali',  	panel: DCS.PraticheStatiLegali.create});
-		/*if (CONTEXT.MENU_GP_SSTG)
-			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Stati stragiudiziali',  	panel: DCS.PraticheStatiStragiudiziali.create});*/
+		if (CONTEXT.MENU_GP_SSTG)
+			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Stati stragiudiziali',  	panel: DCS.PraticheStatiStragiudiziali.create});
  		if (CONTEXT.MENU_GP_EST)
 			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Estinti con debito',  	panel: DCS.PraticheEstinte.create});
 		if (CONTEXT.MENU_GP_PR)
@@ -91,9 +91,9 @@
 		if (CONTEXT.MENU_GP_SINT)
 			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Sintesi',					panel: DCS.PraticheSintesi, param: 1});
 		if (CONTEXT.MENU_GP_SCAD)
-			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Scadenzario',				panel: getScadenzarioDBT});	// getScadenzarioDBT ï¿½ una funzione in common.js
+			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Scadenzario',				panel: getScadenzarioDBT});	// getScadenzarioDBT è una funzione in common.js
 		if (CONTEXT.MENU_SCAD_STR)
-			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Scadenzario STR/LEG',		panel:  getScadenzarioSTR, param:'STRLEG'}); // getScadenzarioSTR ï¿½ una funzione in common.js	
+			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Scadenzario STR/LEG',		panel:  getScadenzarioSTR, param:'STRLEG'}); // getScadenzarioSTR è una funzione in common.js	
 		if (CONTEXT.MENU_GP_COM)
 			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Comunicazioni',			panel: DCS.Comunicazioni.createComm, id: 'voceMenuComunicazioni'});	
 		if (CONTEXT.MENU_GP_SVA)
@@ -155,12 +155,14 @@
 			menu_gestPratiche_Agenzia.add({xtype: 'btnsubmenu',text: 'Grafici DBT',		panel: DCS.Charts.Tabs.create,param:2});
 		if (CONTEXT.MENU_AZI_SPEC_E)
 			menu_gestPratiche_Agenzia.add({xtype: 'btnsubmenu',text: 'Azioni con convalida',panel: DCS.PraticheAzioniSpeciali});
-    	
+    	if(CONTEXT.MENU_GPA_IMP)
+    		menu_gestPratiche_Agenzia.add({xtype:'btnsubmenu', text: 'Importa Note',  panel: DCS.ImportNote.create});
+    		
     	//----------------SOTTOMENU GESTIONE INCASSI PER OPERATORE INTERNO ------------------
     	var menu_incassi = new DCS.Menu ({title: 'Gestione incassi',items: []});
     	if (CONTEXT.MENU_INC_VAL_CORR)
 			menu_incassi.add({xtype: 'btnsubmenu',text: 'Incassi valori',				panel: DCS.IncassiValori.create});
-		// Voci di menï¿½ che puntano solo a files
+		// Voci di menù che puntano solo a files
 		menu_incassi.add({xtype: 'button',text: 'Bonifici sospesi',		cls: 'btn-submenu',handler: DCS.Incassi.showBonificiSospesi});
 		menu_incassi.add({xtype: 'button',text: 'Bollettini smarriti',	cls: 'btn-submenu',	handler: DCS.Incassi.showBollettiniSmarriti});
 
