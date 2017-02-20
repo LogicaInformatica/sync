@@ -238,9 +238,9 @@ function showgridDettaglioProcesso(IdLotto, processName, files) {
     wnd.show();
     wnd.on({
         'beforeclose': function() {
-            if (intervalDettaglioProcesso) {
-                clearInterval(intervalDettaglioProcesso);
-                intervalDettaglioProcesso = null;
+            if (DCS.intervalDettaglioProcesso) {
+                clearInterval(DCS.intervalDettaglioProcesso);
+                DCS.intervalDettaglioProcesso = null;
                 // Lancia il comando di interruzione del processo
                 Ext.Ajax.request({
                     url: 'server/funzioniWizard.php',
