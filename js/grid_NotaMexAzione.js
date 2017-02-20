@@ -22,10 +22,10 @@ DCS.FormNotaMex = function(){
 	var rootN;
 	var storeRel;
 	var kidsN;
-// viene reso visibile il panel visibilità solo agli utenti interni
+// viene reso visibile il panel visibilitï¿½ solo agli utenti interni
 	VisibilHidden = (CONTEXT.InternoEsterno=='E'); // gli utenti esterni non vedono la sezione destinatario
-	// visibilità flag riservato ed impostazione del valore della checkbox
-	// per default il valore è true, ma nel caso di utenti non abilitati
+	// visibilitï¿½ flag riservato ed impostazione del valore della checkbox
+	// per default il valore ï¿½ true, ma nel caso di utenti non abilitati
 	// imposto false	
 	var RiservatoHidden=true;
 	var ValueRiservato=false;
@@ -141,7 +141,7 @@ DCS.FormNotaMex = function(){
 				if((risp>0)||(rootN!=null)){
 					var rNode=rootN;
 					var isRootSon = rootN.substring(0,1);
-					if(isRootSon=='x'){rNode=null;}
+					if(isRootSon=='x'){rNode=0;}
 					var strSql = "select distinct tabella.IdUtente as IdUtente,u.nomeutente as NomeUtente from";
 					strSql =	strSql+" (select Distinct IdUtente from nota where idnotaprecedente="+rNode;
 					strSql =	strSql+" Union all";
@@ -220,7 +220,7 @@ DCS.FormNotaMex = function(){
 			if(idNota==0){
 				//nuova comunicazione o risposta
 				//elementiRadio = [{boxLabel: 'Utente',  name: 'TipoDestinatario', id:'TipoDestU', inputValue: 'U', checked: true}];
-				if(rootN==null){
+				if(rootN==null || !/\d+/.test(rootN)) { // se nullo o non numerico (a volte accade)
 					//creazione
 					var IdP;
 					if(CONTEXT.InternoEsterno=='E'){
@@ -405,7 +405,7 @@ DCS.FormNotaMex = function(){
 			
 			buttonAlign: 'left',
 			buttons: [{
-				text: 'Vedi pratica',
+				text: 'Vedi contratto',
 				hidden: hiddenBtnContratto,
 				disabled: hiddenBtnContratto,
 				handler: function() {
@@ -528,7 +528,7 @@ DCS.FormNotaMex = function(){
 										switch (resp.NP) {
 											case '0':
 												var isRootSon = rootN.substring(0,1);
-												if(isRootSon=='x'){//se è figlio di radice
+												if(isRootSon=='x'){//se ï¿½ figlio di radice
 													if(((Ext.getCmp('IdUtente').getValue()==CONTEXT.IdUtente)||(CONTEXT.profiles[1]!=undefined))&&(rec[0].get('IdNotaPrecedente')==null)){
 														Ext.getCmp('btnEl').setVisible(true);
 														Ext.getCmp('btnEl').setDisabled(false);
@@ -664,7 +664,7 @@ DCS.FormNotaMex = function(){
 			if(rootN!=null){
 				var isRootSon = rootN.substring(0,1);
 				var rootVar='';
-				if(isRootSon=='x'){//se è figlio di radice
+				if(isRootSon=='x'){//se ï¿½ figlio di radice
 					rootVar=0;
 				}else{
 					rootVar=rootN;
@@ -672,8 +672,8 @@ DCS.FormNotaMex = function(){
 			}else{
 				rootVar=0;
 			}
-			//controlla se è una risposta di base o se stiamo facendo 
-			//una risposta ad un thread già popolato con altri operatori.
+			//controlla se ï¿½ una risposta di base o se stiamo facendo 
+			//una risposta ad un thread giï¿½ popolato con altri operatori.
 			Ext.Ajax.request({
 				url: 'server/AjaxRequest.php', 
 	    		params : {	task: 'read',

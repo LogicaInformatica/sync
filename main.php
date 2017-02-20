@@ -220,6 +220,7 @@ echo "\n<script>",
 <script type="text/javascript" src="js/tabs_PraticheSvalutate.js"></script>
 <script type="text/javascript" src="js/tabs_PraticheSituazione.js"></script>
 <script type="text/javascript" src="js/tabs_PraticheStatiLegali.js"></script>
+<script type="text/javascript" src="js/tabs_PraticheStatiStragiudiziali.js"></script>
 <script type="text/javascript" src="js/tabs_PraticheRinegoziate.js"></script>
 <script type="text/javascript" src="js/tabs_PratichePianoRientro.js"></script>
 <script type="text/javascript" src="js/tabs_ProcedureLista.js"></script>
@@ -259,6 +260,7 @@ echo "\n<script>",
 <script type="text/javascript" src="js/sceltaModelli.js"></script>
 <script type="text/javascript" src="js/eliminaAvviso.js"></script>
 <script type="text/javascript" src="js/avvisoAgenzia.js"></script>
+<script type="text/javascript" src="js/importNote.js"></script>
 <script type="text/javascript" src="js/parametroSistema.js"></script>
 <script type="text/javascript" src="js/tabs_PraticheAzioniSpeciali.js"></script>
 <script type="text/javascript" src="js/dettaglioAzioneSpeciale.js"></script>
@@ -286,6 +288,7 @@ echo "\n<script>",
 <script type="text/javascript" src="js/grid_TipoCategorieConfigurabili.js"></script>
 <script type="text/javascript" src="js/grid_StatoRecuperoConfigurabili.js"></script>
 <script type="text/javascript" src="js/grid_StatiLegaliConfigurabili.js"></script>
+<script type="text/javascript" src="js/grid_StatiStragiudizialiConfigurabili.js"></script>
 <script type="text/javascript" src="js/grid_TipoAllegatoConfigurabili.js"></script>
 <script type="text/javascript" src="js/grid_TipoAzioniConfigurabili.js"></script>
 <script type="text/javascript" src="js/grid_TipoEsitoConfigurabili.js"></script>
@@ -297,6 +300,7 @@ echo "\n<script>",
 <script type="text/javascript" src="js/grid_TipoMovimentoDecodifica.js"></script>
 <script type="text/javascript" src="js/grid_FasciaRecuperoRegole.js"></script>
 <script type="text/javascript" src="js/grid_DettaglioRateProvvigione.js"></script>
+<script type="text/javascript" src="js/grid_dettaglioProcesso.js"></script>
 <script type="text/javascript" src="js/grid_PianoRateazione.js"></script>
 
 <script type="text/javascript" src="ux/menu/EditableItem.js"></script>
@@ -399,21 +403,21 @@ echo "\n<script>",
 		//----------------------------------------------------------------------------
 		// Gestione della sessione scaduta 
 		//----------------------------------------------------------------------------
-		// Crea un delayedTask che entra allo scadere del timeout
-		var timeoutTask = new Ext.util.DelayedTask ( function() 
-				{
+		DCS.emetteMessaggioSessioneScaduta = function() {
 			Ext.MessageBox.show({
 				   title: "Sessione scaduta",
 				   msg: "La sessione corrente &egrave; scaduta per prolungata inattivit&agrave;. Per motivi di sicurezza, &egrave; necessario ripetere il login.",
 				   buttons: Ext.Msg.OK,
 				   icon: Ext.Msg.INFO,
-				   fn: function(btn,text,opts)
-				   {
+				   fn: function(btn,text,opts) {
 					   document.location.replace("<?php echo PORTAL_URL;?>");
 				   }
-				});
-				});
-				
+			});
+		}
+		
+		// Crea un delayedTask che entra allo scadere del timeout
+		var timeoutTask = new Ext.util.DelayedTask ( DCS.emetteMessaggioSessioneScaduta );
+
 		var restartTimeout = function(conn, options) 
 		{
 			// esclude la particolare chiamata per il mantenimento della sessione fisica

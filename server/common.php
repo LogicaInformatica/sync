@@ -363,7 +363,7 @@ function execute($sql,$traceIfError=true)
 		$result = mysqli_query($conn, $sql);
 		if (!$result && $traceIfError) {
 			$error = getLastError();
-			// Intercetta gli errori di integrita'ï¿½ referenziale e li espone all'utente in un modo migliore
+			// Intercetta gli errori di integrita' referenziale e li espone all'utente in un modo migliore
 			if (preg_match('/foreign key constraint fails \(.+\.(.+),/',$error,$arr)) {
 				$tab = $arr[1];
 				setLastError("Operazione non consentita perche' esistono dati collegati (nella tabella $tab) a quello che si tenta di cancellare o modificare");
@@ -641,8 +641,8 @@ function writeLog($tipo,$source,$msg,$CodEvento)
 {
 	global $context;
 	$nomeUtente = getUserName($IdUtente);
-	if (!$IdUtente) { // non registra se IdUtente ? null (accade alla cancellazione totale di utenti, credo se
-			// l'utente ? ancora loggato
+	if (!$IdUtente) { // non registra se IdUtente ï¿½ null (accade alla cancellazione totale di utenti, credo se
+			// l'utente ï¿½ ancora loggato
 		trace('WriteLog chiamata con messaggio '.quote_smart($msg).' e IdUtente NULL',false);
 		return;
 	}
@@ -1039,8 +1039,8 @@ function getUserName(&$IdUser="NULL")
 //            4) query, a partire dalla parola FROM inclusa
 //            5) (opzionale) listener specializzato per l'evento select
 //            6) (opzionale) allow-blanks (default "false", mettere "true" se si vuole permettere riga blank)
-//            7) (opzionale) extended (true se extendedComboBox - cio? con selezione multipla)
-//            8) (opzionale) preload  (true se deve essere caricata all'inizio, cio? definita con lazyInit:false)
+//            7) (opzionale) extended (true se extendedComboBox - cioï¿½ con selezione multipla)
+//            8) (opzionale) preload  (true se deve essere caricata all'inizio, cioï¿½ definita con lazyInit:false)
 //            9) (opzionale) valore iniziale
 //           10) width
 //*****************************************************************************************************************
@@ -1642,7 +1642,7 @@ function numero_lettere($numero){
 /**
  * calcolaNumeroBuild
  * Determina il numero di BUILD da indicare in coda al numero di versione
- * Il numero ï¿½ dato dal numero di giorni trascorsi tra l'ultimo aggiornamento di files php/js e la data di inizio della versione,
+ * Il numero Ã¨ dato dal numero di giorni trascorsi tra l'ultimo aggiornamento di files php/js e la data di inizio della versione,
  * indicata dalla define DATA_VERSIONE (se manca, DATA_VERSIONE='2016-06-01')
  */
 function calcolaNumeroBuild() {
@@ -1655,7 +1655,7 @@ function calcolaNumeroBuild() {
 
 /**
  * ultimaDataFile
- * Determina la data di modifica piï¿½ recente in una directory data, includendo tutti i file che corrispondono ad una data espressione
+ * Determina la data di modifica piÃ¹ recente in una directory data, includendo tutti i file che corrispondono ad una data espressione
  * regolare ed eventualmente escludendo quelli che corrispondono ad una seconda espressione regolare
  */
 function ultimaDataFile($folder,$include,$exclude='/***/') {
@@ -1687,9 +1687,9 @@ function doCurl($url,$data=null,$headers=null) {
 		$curl = curl_init();
 	}
 	curl_setopt($curl,CURLOPT_URL,$url);
-	if (constant('PROXY')>'') {
+	if (constant('PROXY')) {
 		curl_setopt($curl, CURLOPT_PROXY, PROXY.':'.PROXYPORT);      
-		if (constant('PROXYUSERPWD')>'')
+		if (constant('PROXYUSERPWD'))
 			curl_setopt($curl, CURLOPT_PROXYUSERPWD, PROXYUSERPWD);
 		trace('PROXY usato per il curl: '.PROXY.':'.PROXYPORT.' userpwd=('.constant('PROXYUSERPWD').')',false);
 	}
@@ -1745,7 +1745,7 @@ function writeProcessLog($process,$text,$level=0)
 		}
 	}
 	$sql = "INSERT INTO processlog (ProcessName,LogMessage,LogLevel) VALUES(".quote_smart($process).",".quote_smart($text).",$level)";
-	execute($sql,false); // evita traccia perchï¿½ MySql , va in ricorsione
+	execute($sql,false); // evita traccia perché se MySql è KO , va in ricorsione
 	
 	if ($level!=-2) {
 		if (hasProcessLogInterrupt($process)) { // ricevuto comando di chiusura
@@ -1757,7 +1757,7 @@ function writeProcessLog($process,$text,$level=0)
 
 /**
  * hasProcessLogInterrupt
- * Torna TRUE se nel processlog, per il processo dato, ?tata registrata una richiesta di interruzione (LogLevel=-2)
+ * Torna TRUE se nel processlog, per il processo dato, è stata registrata una richiesta di interruzione (LogLevel=-2)
  */
 function hasProcessLogInterrupt($process) {
 	return rowExistsInTable('processlog','LogLevel=-2 AND ProcessName='.quote_smart($process));

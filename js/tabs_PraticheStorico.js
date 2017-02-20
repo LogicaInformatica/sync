@@ -74,6 +74,7 @@ DCS.GridPraticheStorico = Ext.extend(DCS.GridPratiche, {
 			        	{dataIndex:'LastUpd',width:60,xtype:'datecolumn', format:'d/m/y',	header:'Ultima variaz.',align:'left', filterable: true, groupable:true, sortable:true},
 			        	{dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false},
 			        	{dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+{dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
 			        	{dataIndex:'prodotto',	width:120,	header:'Prodotto',filterable:true,sortable:true,groupable:true},
 			        	{dataIndex:'AbbrStatoContratto', width:40,	header:'Stato Prat.',hidden:this.hideStato,filterable:true,sortable:true,groupable:true},
 			        	{dataIndex:'TitoloAttributo'   , width:80, header:'Attributo', exportable:true,groupable:true},

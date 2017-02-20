@@ -126,14 +126,14 @@ DCS.Charts.Sintesi = Ext.extend(Ext.Panel, {
 					Ext.getCmp(this.task+'_title').update('<h1>' + record.data.FY + ' - ' + record.data.mese  + 
 							'<br><font size=2>'+ this.titlePanel+'</font></h1>');
 		
-					// rilascia quelli già allocati
+					// rilascia quelli gi� allocati
 					var g = FusionCharts(this.task+"_chartId"); /* sufficiente per FusionChart vers.3, non per la 2 */
 					if (g) g.dispose();
 					var g2 = FusionCharts(this.task+"_chartId2");
 					if (g2) g2.dispose();
 
 					g = new FusionCharts("FusionCharts/"+DCS.Charts.tipi[this.itipo]+".swf", this.task+"_chartId", "100%", "90%", "0", "1" );
-					// non va: è asincrono anche se la guida non lo dice
+					// non va: � asincrono anche se la guida non lo dice
 					//g.setXMLUrl("server/charts/sintesi.php?type=stack&mese="+record.data.num+"&task="+this.task);
 
 					Ext.Ajax.request({

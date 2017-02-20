@@ -597,4 +597,27 @@ function Custom_Duration($IdContratto,$IdRegolaProvvigione,$dataInizioAffido)
 	return FALSE; // applica le regole standard
 }
 
-
+//------------------------------------------------------------------------------
+// Custom_Import_Check
+// Applica una regola custom di controllo ad un campo di input all'import
+// Ritorna: FALSE se il valore è errato
+//          il campo $reason in tal caso deve contenere un testo con il motivo dell'errore
+//------------------------------------------------------------------------------
+function Custom_Import_Check($table,$column,$value,&$reason) {
+	global $context;
+	trace(print_r($context,true),false);
+	if($table == "contratto" && $column == "CodContratto"){
+		$idReparto = $context["IdReparto"];
+		$idAgenzia = getScalar("SELECT IdAgenzia FROM contratto WHERE codContratto =".quote_smart($value));
+		if($idReparto == $idAgenzia){
+			return true;
+		}else{
+			$reason = "la pratica $value non appartiene all'agenzia";
+			return false;
+		}
+	}else{
+		return true;
+	}
+	
+	
+}

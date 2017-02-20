@@ -128,15 +128,15 @@ DCS.moduliMain = function(){
 		setButton(tabrow6,1,'Nazioni',				DCS.NazioniDec.create,			CONTEXT.MENU_CONF_NAZ);
 		setButton(tabrow7,1,'Prodotti',				DCS.Prodotto.create,			CONTEXT.MENU_ANA_PRO);
 		setButton(tabrow8,1,'Province',				DCS.ProvinceDec.create,			CONTEXT.MENU_CONF_PROV);
-		setButton(tabrow1,2,'Regioni',				DCS.RegioniDec.create,			CONTEXT.MENU_CONF_REG);
-		setButton(tabrow2,2,'Stati del contratto',	DCS.StatoContrattoDec.create,	CONTEXT.MENU_ANA_SC);
-		setButton(tabrow3,2,'Stati dell\'utente',	DCS.StatoUtenza.create,			CONTEXT.MENU_CONF_STAU);
-		setButton(tabrow4,2,'Stati di recupero',	DCS.StatoRecuperoConf.create,	CONTEXT.MENU_CONF_SRE);
-		setButton(tabrow5,2,'Stati di rinegoziazione',	null/*DCS.StatoRinegoziazione.create*/,	CONTEXT.MENU_CONF_RINE);
-		setButton(tabrow6,2,'Stati legali',			DCS.StatoLegaleConf.create,	CONTEXT.MENU_CONF_SLEG);
-		setButton(tabrow7,2,'Stati piano di rientro',	null/*DCS.StatoPiano.create*/,	CONTEXT.MENU_CONF_PIANO);
+		setButton(tabrow9,1,'Regioni',				DCS.RegioniDec.create,			CONTEXT.MENU_CONF_REG);
+		setButton(tabrow1,2,'Stati del contratto',	DCS.StatoContrattoDec.create,	CONTEXT.MENU_ANA_SC);
+		setButton(tabrow2,2,'Stati dell\'utente',	DCS.StatoUtenza.create,			CONTEXT.MENU_CONF_STAU);
+		setButton(tabrow3,2,'Stati di recupero',	DCS.StatoRecuperoConf.create,	CONTEXT.MENU_CONF_SRE);
+		setButton(tabrow4,2,'Stati di rinegoziazione',	null/*DCS.StatoRinegoziazione.create*/,	CONTEXT.MENU_CONF_RINE);
+		setButton(tabrow5,2,'Stati legali',			DCS.StatoLegaleConf.create,	CONTEXT.MENU_CONF_SLEG);
+		setButton(tabrow6,2,'Stati piano di rientro',	null/*DCS.StatoPiano.create*/,	CONTEXT.MENU_CONF_PIANO);
+		setButton(tabrow7,2,'Stati stragiudiziali',	DCS.StatoStragiudizialeConf.create,	CONTEXT.MENU_GP_SSTG);
 		setButton(tabrow8,2,'Tipi di allegato',		DCS.TipoAllegato.create,		CONTEXT.MENU_CONF_TALL);
-		/*setButton(tabrow9,2,'Stati stragiudiziali',			DCS.StatoStragiudizialeConf.create,	CONTEXT.MENU_GP_SSTG);*/
 		setButton(tabrow1,3,'Tipi di azione',		DCS.TipoAzioni.create,			CONTEXT.MENU_CONF_TAZ);
 		setButton(tabrow2,3,'Tipi di esito',		DCS.TEsitoConf.create,			CONTEXT.MENU_CONF_TES);
 		setButton(tabrow3,3,'Tipi di forzatura',	DCS.TipoSpeciale.create,		CONTEXT.MENU_CONF_TFOR);
@@ -168,7 +168,7 @@ DCS.moduliMain = function(){
 				 title:'Tabelle di decodifica', 
 				 border: true, 
 				 anchor:'98%',
-				 items: [tabrow1,vspace,tabrow2,vspace,tabrow3,vspace,tabrow4,vspace,tabrow5,vspace,tabrow6,vspace,tabrow7,vspace,tabrow8,vspace]
+				 items: [tabrow1,vspace,tabrow2,vspace,tabrow3,vspace,tabrow4,vspace,tabrow5,vspace,tabrow6,vspace,tabrow7,vspace,tabrow8,vspace,tabrow9]
 				}]
 		};
 		

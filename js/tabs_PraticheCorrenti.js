@@ -13,7 +13,7 @@ DCS.GridPraticheCorrenti = Ext.extend(DCS.GridPratiche, {
 					{name: 'prodotto'},
 					{name: 'numPratica'},
 					{name: 'IdCliente', type: 'int'},
-					{name: 'cliente'},
+					{name: 'cliente'},{name: 'CodCliente'},
 					{name: 'rata', type: 'int'},
 					{name: 'insoluti',type: 'int'},
 					{name: 'giorni', type: 'int'},
@@ -84,6 +84,7 @@ DCS.GridPraticheCorrenti = Ext.extend(DCS.GridPratiche, {
 	        	{dataIndex:'DataCambioStato',width:40,xtype:'datecolumn', format:'d/m/y',	header:'Data stato',align:'left', filterable: true, groupable:true, sortable:true},
 	        	{dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false},
 	        	{dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+{dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
 	        	{dataIndex:'prodotto',	width:120,	header:'Prodotto',filterable:true,sortable:true,groupable:true},
 //	        	{dataIndex:'rata',		width:30,	header:'N.rata',align:'right',filterable:false,sortable:true},
 //	        	{dataIndex:'insoluti',	width:30,	header:'N.ins.',align:'right',filterable:false,sortable:true,groupable:true},
@@ -145,6 +146,7 @@ DCS.GridPraticheCorrenti = Ext.extend(DCS.GridPratiche, {
 	        	{dataIndex:'DataCambioStato',width:40,xtype:'datecolumn', format:'d/m/y',	header:'Data stato',align:'left', filterable: true, groupable:true, sortable:true},
 	        	{dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false},
 	        	{dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+{dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
 	        	{dataIndex:'prodotto',	width:120,	header:'Prodotto',filterable:true,sortable:true,groupable:true},
 	        	{dataIndex:'insoluti',	width:30,	header:'N.ins.',align:'right',filterable:false,sortable:true,groupable:true},
 	        	{dataIndex:'importo',	width:45,	header:'Deb. Tot', xtype:'numbercolumn',format:'0.000,00/i',align:'right',filterable:true,sortable:true},
@@ -271,6 +273,7 @@ DCS.GridPraticheCorrenti = Ext.extend(DCS.GridPratiche, {
 		        	{dataIndex:'DataCambioStato',width:40,xtype:'datecolumn', format:'d/m/y',	header:'Data stato',align:'left', filterable: true, groupable:true, sortable:true},
 		        	{dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false},
 		        	{dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+{dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
 		        	{dataIndex:'prodotto',	width:120,	header:'Prodotto',filterable:true,sortable:true,groupable:true},
 		        	{dataIndex:'rata',		width:30,	header:'N.rata',align:'right',filterable:false,sortable:true},
 		        	{dataIndex:'insoluti',	width:30,	header:'N.ins.',align:'right',filterable:false,sortable:true,groupable:true},
@@ -346,6 +349,7 @@ DCS.GridPraticheCorrenti = Ext.extend(DCS.GridPratiche, {
 	        	{dataIndex:'DataCambioStato',width:40,xtype:'datecolumn', format:'d/m/y',	header:'Data stato',align:'left', filterable: true, groupable:true, sortable:true},
 	        	{dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false},
 	        	{dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+{dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
 	        	{dataIndex:'prodotto',	width:120,	header:'Prodotto',filterable:true,sortable:true,groupable:true},
 	        	{dataIndex:'rata',		width:30,	header:'N.rata',align:'right',filterable:false,sortable:true},
 	        	{dataIndex:'insoluti',	width:30,	header:'N.ins.',align:'right',filterable:false,sortable:true,groupable:true},
@@ -459,7 +463,7 @@ DCS.GridPraticheCorrenti = Ext.extend(DCS.GridPratiche, {
 			console.log("inSIN "+locFilters.getFilter('AbbrClasse').options[k]);
 		}*/
 		
-		//Imposta la visibilità delle colonne a seconda della configurazione effettuata sul submain
+		//Imposta la visibilitï¿½ delle colonne a seconda della configurazione effettuata sul submain
 		columns = setColumnVisibility(columns);
 		
 		Ext.apply(this,{

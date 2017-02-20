@@ -97,7 +97,7 @@ DCS.GridSintesiProroghe = Ext.extend(Ext.grid.GridPanel, {
 							actionColumn.items[8].tooltip = 'Nessuna nota';
 	                    	return 'senza_note';
 	                	}
-	                	else if (nn<0) // solo note già lette
+	                	else if (nn<0) // solo note giï¿½ lette
 	                	{
 							actionColumn.items[8].tooltip = (nn==-1)?'1 nota gi&agrave; letta':((-nn)+' note gi&agrave; lette');
 	                    	return 'con_note';
@@ -121,7 +121,7 @@ DCS.GridSintesiProroghe = Ext.extend(Ext.grid.GridPanel, {
 					{name: 'prodotto'},
 					{name: 'numPratica'},
 					{name: 'IdCliente', type: 'int'},
-					{name: 'cliente'},
+					{name: 'cliente'},{name: 'CodCliente'},
 					{name: 'rata', type: 'int'},
 					{name: 'insoluti',type: 'int'},
 					{name: 'giorni', type: 'int'},
@@ -162,6 +162,7 @@ DCS.GridSintesiProroghe = Ext.extend(Ext.grid.GridPanel, {
 				{dataIndex:'ColorState',width:30, header:'Stato',align:'left', groupable:false, sortable:false},			    
 	        	{dataIndex:'numPratica',width:65,	header:'N.Pratica', align:'left', filterable: true,sortable:true},
 	        	{dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+{dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
 	        	{dataIndex:'Telefono',	width:60,	header:'Telefono',filterable:false,sortable:false},
 	        	{dataIndex:'CodiceFiscale', width:70, header:'Codice Fiscale',hidden:true,hideable:true,exportable:true},
 	        	{dataIndex:'Indirizzo', width:70, header:'Indirizzo',hidden:true,hideable:true,exportable:true},
