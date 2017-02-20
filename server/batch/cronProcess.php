@@ -13,6 +13,7 @@ require_once("mailsOverride.php");
 require_once('funzioniStorico.php');
 require_once("estrattoSpeseRecupero.php");
 require_once("../funzioni_experian.php");
+require_once("../funzioni_euroinvestigation.php");
 ini_set("memory_limit","2048M");
 
 try

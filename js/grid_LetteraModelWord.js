@@ -192,7 +192,7 @@ DCS.FormLetteraModelWord = function(){
 					load: function(store,record,option){
 						Ext.getCmp('tipoM').setValue(record[0].get('TipoModello'));
 						Ext.getCmp('nomeLOD').setValue(record[0].get('TitoloModello'));
-						Ext.getCmp('nomeLFile').setValue('<a href="'+CONTEXT.TemplateUrl+encodeURI(record[0].get('FileName'))+'">'+record[0].get('FileName')+'</a>');
+						//Ext.getCmp('nomeLFile').setValue('<a href="'+CONTEXT.TemplateUrl+encodeURI(record[0].get('FileName'))+'">'+record[0].get('FileName')+'</a>');
 						Ext.getCmp('nomeLFile').setValue('<a href="'+CONTEXT.LinkUrl+'server/apriModelloWord.php?IdModello='+record[0].get('IdModello')+'">'+record[0].get('FileName')+'</a>');
 						Ext.getCmp('comboAllegatoL').setValue(record[0].get('IdTipoAllegato'));
 						Ext.getCmp('condLettera').setValue(record[0].get('condizione'));

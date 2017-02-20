@@ -112,7 +112,7 @@ try {
 		trace("Produzione riga degli header di colonna",false);
 		// Riga con gli header di colonna
 		foreach ($columns as $col) {
-			echo str_replace("<br>"," ",$col->header).';';
+			echo str_replace("<br>"," ",html_entity_decode(convertToUTF8($col->header))).';';
 		}
 		echo "\n";
 		
@@ -136,11 +136,15 @@ try {
 					}else{
 						$values[] = "";
 					}
-				}else if ($fld=='CAP' || $col->xtype=='string' || $v=='') { // 'string' � un xtype inventato per l'occasione
+				}else if ($fld=='CAP' || $col->xtype=='string' || $v=='') { // 'string' è un xtype inventato per l'occasione
 					$values[] = '"'.str_replace('"','""',$v).'"';
 				}else{
-					if (preg_match("/^(\d)*(\.{0,1})(\d)*$/", $v)) {  // �  un numero valido formato inglese
-						$values[] = str_replace('.',',',$v); // mette con virgola italiana
+					if (preg_match("/^(\d)*(\.{0,1})(\d)*$/", $v)) {  // è  un numero valido formato inglese
+					 	if (preg_match('/(iva|cod.*fisc|c\..*f\.)/i',$fld) and preg_match('/^[0-9]{11}$/',$v) ) { // è una partita IVA
+							$values[] = '"'.html_entity_decode('&nbsp;').str_replace('"','""',$v).'"'; //mette un nbsp in testa per evitare che Excel formatti il campo come numerico
+ 						} else { // non e' una partita IVA 
+					 		$values[] = str_replace('.',',',$v); // mette con virgola italiana
+ 						}						
 					} else if ($col->align=='right') { // qualcosa allineato a destra?
 						if (preg_match("/^((\d{1,3}\.(\d{3}\.)*\d{3}|\d{1,3}),\d+)$/", $v)) {	// numero decimale con separatori italiani
 							$v = str_replace('.','',$v); // salva con virgola italiana ma senza separatore di migliaia
@@ -248,12 +252,16 @@ try {
 					}else{
 						echo '<Cell><Data ss:Type="String"></Data></Cell>';
 					}
-				}else if ($fld=='CAP' || $col->xtype=='string' || $v=='') { // 'string' � un xtype inventato per l'occasione
+				}else if ($fld=='CAP' || $col->xtype=='string' || $v=='') { // 'string' è un xtype inventato per l'occasione
 					echo '<Cell><Data ss:Type="String">'.htmlspecialchars(html_entity_decode($v)).'</Data></Cell>';
 				}else{
-					if (preg_match("/^(\d)*(\.{0,1})(\d)*$/", $v))   // �  un numero valido
-						echo '<Cell ss:StyleID="dec"><Data ss:Type="Number">'.$v.'</Data></Cell>';
-					else if ($col->align=='right')   // qualcosa allineato a destra?
+					if (preg_match("/^(\d)*(\.{0,1})(\d)*$/", $v)) {  // è  un numero valido
+ 						if (preg_match('/(iva|cod.*fisc|c\..*f\.)/i',$fld) and preg_match('/^[0-9]{11}$/',$v) ) { // è una partita IVA
+							echo '<Cell><Data ss:Type="String">'.$v.'</Data></Cell>';
+ 						} else { // non e' una partita IVA 
+							echo '<Cell ss:StyleID="dec"><Data ss:Type="Number">'.$v.'</Data></Cell>';
+						}
+					} else if ($col->align=='right')   // qualcosa allineato a destra?
 					{
 						if (preg_match("/^((\d{1,3}\.(\d{3}\.)*\d{3}|\d{1,3}),\d+)$/", $v)) {	// numero decimale con separatori italiani
 							echo '<Cell ss:StyleID="dec">';
@@ -268,7 +276,6 @@ try {
 					} else {
 						echo '<Cell><Data ss:Type="String">'.htmlspecialchars(html_entity_decode($v)).'</Data></Cell>';
 					}
-
 				}
 			}
 		}

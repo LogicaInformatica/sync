@@ -590,7 +590,7 @@ DCS.DettaglioPratica = Ext.extend(Ext.TabPanel, {
 			sortInfo:{field: 'numPratica', direction: "ASC"}
 		});
 		        
-		// True se l'altro contratto può essere aperto perché affidato alla stessa agenzia o perche l'operatore è interno
+		// True se l'altro contratto puï¿½ essere aperto perchï¿½ affidato alla stessa agenzia o perche l'operatore ï¿½ interno
 		var flgAssegnato = '1';
 		if (CONTEXT.InternoEsterno == 'E') {
 			flgAssegnato = "ifnull((pc.IdAgenzia="+CONTEXT.IdReparto+" OR " + CONTEXT.IdReparto + 
@@ -610,7 +610,7 @@ DCS.DettaglioPratica = Ext.extend(Ext.TabPanel, {
 		var datiGenerali = new DCS.PraticaDatiGenerali();
 		
 		datiPianoRientro = new Ext.form.FormPanel({
-			title:'Piano rientro',		//il titolo è usato per testare il tab
+			title:'Piano rientro',		//il titolo ï¿½ usato per testare il tab
 			id: 'panelPianoRientro',
 			layout: 'fit',
 			items: [DCS.PianoRientro(keyIdContratto)]
@@ -619,7 +619,7 @@ DCS.DettaglioPratica = Ext.extend(Ext.TabPanel, {
 		//----------------------------------------------------------------------------------------------------------------
 				
 		var datiGeneraliSecondari = new Ext.form.FormPanel({
-			title:'Dettagli pratica',		//il titolo è usato per testare il tab
+			title:'Dettagli pratica',		//il titolo ï¿½ usato per testare il tab
 //			autoHeight: true,
 			frame: true,
 			bodyStyle:'margin: 0; padding:5px 5px 0',
@@ -930,7 +930,7 @@ DCS.DettaglioPratica = Ext.extend(Ext.TabPanel, {
 			items: [
   				datiGenerali.create(this.idContratto,this.cliente, frmRecapito, datiGeneraliSecondari, datiExperian,this.isStorico)
 			,{
-				xtype:'form', title:'Altri soggetti',	//il titolo è usato per testare il tab
+				xtype:'form', title:'Altri soggetti',	//il titolo ï¿½ usato per testare il tab
 				layout:'fit',
 				items:[gridAltriSoggetti]
 			},
@@ -989,7 +989,7 @@ DCS.DettaglioPratica = Ext.extend(Ext.TabPanel, {
 						if (rec.get('flagAssegnato')==1)
 							showPraticaDetail(rec.get('IdContratto'),rec.get('numPratica'),rec.get('IdCliente'),rec.get('cliente'),rec.get('Telefono'),this.store,rowIndex,this.isStorico);
 						else
-							Ext.Msg.alert("Informazione","Il contratto non è assegnato all'Agenzia");
+							Ext.Msg.alert("Informazione","Il contratto non ï¿½ assegnato all'Agenzia");
 					}
 				}
 			},
@@ -1141,7 +1141,7 @@ DCS.PraticaDatiGenerali = function(){
 					});
 
 			var formPratica = new Ext.form.FormPanel({
-				title:'Dati generali',		//il titolo è usato per testare il tab
+				title:'Dati generali',		//il titolo ï¿½ usato per testare il tab
 //				autoHeight: true,
 				frame: true,
 				bodyStyle: 'padding:5px 5px 0',
@@ -1360,10 +1360,10 @@ DCS.PraticaDatiGenerali = function(){
 						var pianoR = r[0].get('IdPianoRientro');
 						var appAzione = r[0].get('TitoloAzione');
 						var IdExperian = r[0].get('IdExperian');
-												
-						// Se si chiude molto rapidamente la finestra, può capitare che la callback entri con la finestra ormai chiusa: controlla questo caso
+						
+						// Se si chiude molto rapidamente la finestra, puÃ² capitare che la callback entri con la finestra ormai chiusa: controlla questo caso
 						if (!Ext.getCmp('fsStato')) return;
-
+						
 						if(!(app==null) && !(appAzione==null)) Ext.getCmp('fsStato').setTitle('Stato recupero (Categoria: ' +  app +') (Ultima azione: '+ appAzione +')');
 					    else {
 							if (!(app==null)) Ext.getCmp('fsStato').setTitle('Stato recupero (Categoria: ' +  app +')');

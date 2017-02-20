@@ -105,7 +105,7 @@ DCS.FormVistaNote = function(){
 																                    				DCS.FormNotaMex.showDetailNoteMex(idPratica,numPratica,resp.TipoNota,idNodo,0,'',Node.parentNode.id,win,store);
 																                    			}else{
 																                    				Ext.MessageBox.alert('Accesso negato','Non puoi modificare questo messaggio, per vedere la pratica premi il tasto "Vedi pratica", in basso a sinistra');
-													                    						}
+																                    			}
 																                    		}
 											                    					}
 											                    				}

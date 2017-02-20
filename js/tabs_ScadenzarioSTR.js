@@ -9,7 +9,7 @@ DCS.GridScadenzarioSTR = Ext.extend(DCS.GridPratiche, {
 					{name: 'prodotto'},
 					{name: 'numPratica'},
 					{name: 'IdCliente', type: 'int'},
-					{name: 'cliente'},
+					{name: 'cliente'},{name: 'CodCliente'},
 					{name: 'rata', type: 'int'},
 					{name: 'insoluti',type: 'int'},
 					{name: 'giorni', type: 'int'},
@@ -73,6 +73,7 @@ DCS.GridScadenzarioSTR = Ext.extend(DCS.GridPratiche, {
 			    {dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false},
 				{xtype:'datecolumn', format:'d/m/Y', dataIndex:'DataFineAffido',	width:60,	header:'Fine affido', groupable:true, filterable:false,sortable:true},
 	        	{dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+{dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
 	        	{dataIndex:'prodotto',	width:120,	header:'Prodotto',filterable:true,sortable:true,groupable:true},
 	        	{dataIndex:'ImpCapitaleAffidato',	width:70,	header:'Cap. affidato', xtype:'numbercolumn',format:'0.000,00/i',align:'right',filterable:true,sortable:true,exportable:true,hidden:true,hideable:true,stateful:false},
 	        	{dataIndex:'ImpCapitale',	width:70,	header:'Capitale', xtype:'numbercolumn',format:'0.000,00/i',align:'right',filterable:true,sortable:true,exportable:true, hidden:true,stateful:false},
@@ -118,6 +119,7 @@ DCS.GridScadenzarioSTR = Ext.extend(DCS.GridPratiche, {
 				{dataIndex:'DataScadenza',xtype:'datecolumn', format:'d/m/Y', width:60,	header:'Scadenza', groupable:true, filterable:false,sortable:true},
 				{dataIndex:'Azione', width:100,	header:'Azione', groupable:true, filterable:true,sortable:true},
 	        	{dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+{dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
 	        	{dataIndex:'prodotto',	width:120,	header:'Prodotto',filterable:true,sortable:true,groupable:true},
 	        	{dataIndex:'ImpCapitaleAffidato',	width:70,	header:'Cap. affidato', xtype:'numbercolumn',format:'0.000,00/i',align:'right',filterable:true,sortable:true,exportable:true,hidden:true,hideable:true,stateful:false},
 	        	{dataIndex:'ImpCapitale',	width:70,	header:'Capitale', xtype:'numbercolumn',format:'0.000,00/i',align:'right',filterable:true,sortable:true,exportable:true, hidden:true,stateful:false},
@@ -161,6 +163,7 @@ DCS.GridScadenzarioSTR = Ext.extend(DCS.GridPratiche, {
 			columns = [
 			    {dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false},
 	        	{dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+{dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
 			    {xtype:'datecolumn', format:'d/m/Y', dataIndex:'DataSaldoStralcio',	width:60,	header:'Data saldo', groupable:true, filterable:false,sortable:true},
 	        	{dataIndex:'ImpSaldoStralcio', width:70, header:'Imp. Saldo e stralcio', xtype:'numbercolumn',format:'0.000,00/i',align:'right',hidden:false,exportable:true,stateful:false},
 	        	{dataIndex:'ImpDebitoResiduo', width:70, header:'Debito residuo', xtype:'numbercolumn',format:'0.000,00/i',align:'right',hidden:false,exportable:true,stateful:false},
@@ -203,7 +206,7 @@ DCS.GridScadenzarioSTR = Ext.extend(DCS.GridPratiche, {
 	        	{dataIndex:'StatoInDBT', width:110, header:'Stato in DBT',hidden:true,hideable:true,exportable:true,stateful:false}];
 		}		
 		
-		//Imposta la visibilità delle colonne a seconda della configurazione effettuata sul submain
+		//Imposta la visibilitï¿½ delle colonne a seconda della configurazione effettuata sul submain
 		columns = setColumnVisibility(columns);
 		
 		Ext.apply(this,{
