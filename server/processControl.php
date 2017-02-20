@@ -29,6 +29,9 @@ function doMain()
 		break;
 	case "cmdUnix":cmdUnix();
 		break;
+	case "esegueImportProcessor":
+		esegueImportProcessor();
+		break;
 	default:
 		echo "{failure:true, task: '$task', messaggio:'$task sconosciuto'}";
 	}
@@ -100,11 +103,10 @@ function cmdUnix(){
 	extract($_REQUEST);
 	$infofile = json_decode($info, true);
 	foreach ($infofile as $numFile=>$f){
-		$comando = getScalar("SELECT Comando FROM moduloimport WHERE IdModulo =".$f['IdModulo']);//nome programma che verr� eseguito
+		$comando = getScalar("SELECT Comando FROM moduloimport WHERE IdModulo =".$f['IdModulo']);//nome programma che verr� eseuito
 		$cmd = "php -d display_errors=on -f ".__DIR__."/$comando {$IdLotto} {$f['IdModulo']} \"{$f['filePath']}\" $oper \"$processName\" $numFile {$context['Userid']}";
 		trace("Esecuzione del comando Unix: $cmd",false);
 		exec($cmd, $output, $ret);
-		trace("codice ritorno:".$ret);
 		if (count($output)>0) {
 			trace("Output del programma: \n".print_r($output,true),false);
 		}
@@ -130,7 +132,80 @@ function cmdUnix(){
 	// e ne restituisce l'elenco al chiamante
 	if ($oper=='p') {
 		$result = array();
-		foreach ( array("cliente","contratto","garante","recapito","posizione","movimento","storiarecupero") as $table) {
+		foreach ( array("cliente","contratto","garante","recapito","posizione","movimento") as $table) {
+			if (rowExistsInTable("temp_import_$table","IdLotto=$IdLotto")) {
+				$result[] = $table;
+			}
+		}
+	} else {
+		$result = null;
+	}
+	success($result);
+}
+
+/*
+ * funzione esegueImportProcessor
+ * Nuova funzione per eseguire il programma di import senza usare il comando exec di Unix, che provoca problemi nell'autorizzazione a leggere i files
+ * (su alcuni server, sui quali l'utente che crea i file [apache] non ha i poteri per mettere chown 0)
+ * In questa versione, la chiamata avviene includendo il particolare file php e chiamando la funzione importProcessorMain, che è necessario sia
+ * contenuta in ogni importProcessor (così come lo è in quello standard). PER ORA E' NECESSARIO CHE IN UNA DATA ELABORAZIONE SI USI SOLO UNO STESSO
+ * importProcessor per TUTTI i file del gruppo, altrimenti la "import" carica funzione duplicata e va quindi in errore sul secondo import
+ * 
+ * L'importProcessor viene chiamato in tre fasi consecutive (tipi di operazione):
+ * 1a fase: v: verifica
+ * 2a fase: p: precaricamento nelle tabelle transitorie temp_import_*****
+ * 3a fase: l: caricamento nelle tabelle definitive (modalità "rimpiazza")
+ * 			u: caricamento nelle tabelle definitive (modalità "aggiorna")
+ *
+ * In ogni fase processa ciascuno degli N files caricati
+ * 
+ * PARAMETRI (ricevuti da form):
+ * - comando: nome del programma da eseguire, ad es. importProcessor.php
+ * - IdLotto: Id del lotto che si sta elaborando
+ * - oper: tipo di operazione v/p/l/u (vedi commento sopra)
+ * - processName: nome convenzionale dato al processo (stringa generata random) per riconoscerne le righe in processlog
+ */
+
+function esegueImportProcessor(){
+	extract($_REQUEST);
+	$infofile = json_decode($info, true);
+	foreach ($infofile as $numFile=>$f){
+		$comando = getScalar("SELECT Comando FROM moduloimport WHERE IdModulo =".$f['IdModulo']); // nome file php che verrà eseguito
+		
+		try {
+			
+			trace("Caricamento del modulo di import {$f['IdModulo']}, programma=$comando",false);
+			include_once $comando;
+			trace("Caricamento riuscito",false);
+			
+			importProcessorMain($IdLotto,$f['IdModulo'],$f['filePath'],$oper,$processName,$numFile);
+			trace("Elaborazione completata",false);
+		} catch(Exception $e) {
+			$error = $e->getMessage();
+			writeProcessLog($processName, $error, 1);
+			writeProcessLog($processName, "Elaborazione interrotta a causa dell'errore indicato nel messaggio precedente", -1);
+			writeLog("APP","Importazione lotto",$error,"IMP_LOTTO");
+		}			
+	}
+	switch($oper) {
+		case 'v':
+			$msg = "<b>Fine verifica</b>. Se non sono state segnalate anomalie gravi, puoi usare il pulsante 'Caricamento preliminare' per caricare i dati nelle tabelle transitorie";
+			break;
+		case 'p':
+			$msg = "<b>Fine caricamento preliminare</b>. Se non sono state segnalate anomalie gravi, puoi usare il pulsante 'Caricamento finale' per caricare i dati nelle tabelle definitive,"
+			." oppure il tasto 'Anteprima delle tabelle' per vedere i dati caricati.";
+			break;
+		case 'l':
+		case 'u':
+			$msg = "<b>Fine aggiornamento lotto</b>. Se non sono state segnalate anomalie gravi, i dati del lotto sono adesso visibili con le funzioni ordinarie di DCSys";
+			break;
+	}
+	writeProcessLog($processName, $msg, -1);
+	// Se si tratta di un run di tipo "p" (precaricamento), determina quali tabelle risultano caricate con dati di questo lotto
+	// e ne restituisce l'elenco al chiamante
+	if ($oper=='p') {
+		$result = array();
+		foreach ( array("cliente","contratto","garante","recapito","posizione","movimento") as $table) {
 			if (rowExistsInTable("temp_import_$table","IdLotto=$IdLotto")) {
 				$result[] = $table;
 			}

@@ -7,6 +7,8 @@
 // Crea namespace DCS
 Ext.namespace('DCS');
 
+DCS.intervalDettaglioProcesso = null;
+
 DCS.dettaglioProcesso = function(IdLotto,TipoImport,processName,files){
 	var select = "SELECT * FROM processlog where ProcessName='"+processName+"'";
 	var dsDettProc = new Ext.data.Store({
@@ -161,14 +163,15 @@ DCS.dettaglioProcesso = function(IdLotto,TipoImport,processName,files){
 	//avvia il refresh automatico
 	avviaRefreshAutomatico = function() {
 		// la variabile intervalDettaglioProcesso e' a livello globale, in modo da essere usata nella beforeclose in dettaglioImport.js
-		intervalDettaglioProcesso = setInterval(
+		if (DCS.intervalDettaglioProcesso==null) {
+			DCS.intervalDettaglioProcesso = setInterval(
 				function(){
 					dsDettProc.reload({
 						callback: function(r){
 							if(r.length == 0 || r[r.length-1].get('LogLevel')== -1){ // l'ultimo messaggio nel processlog e' un messaggio di terminazione
-								if(intervalDettaglioProcesso) {
-									clearInterval(intervalDettaglioProcesso);
-									intervalDettaglioProcesso = null;
+								if(DCS.intervalDettaglioProcesso) {
+									clearInterval(DCS.intervalDettaglioProcesso);
+									DCS.intervalDettaglioProcesso = null;
 								}
 							}
 							// posiziona la griglia in modo che si vede l'ultima riga
@@ -176,21 +179,22 @@ DCS.dettaglioProcesso = function(IdLotto,TipoImport,processName,files){
 						}
 					});
 				},5000);
+		}
 	},
 	
 	eseguiFase1 = function() {
 		avviaRefreshAutomatico();
 		Ext.Ajax.request({
 			url : 'server/processControl.php' , 
-			params: {task: 'cmdUnix', processName: processName, IdLotto: IdLotto, info: JSON.stringify(files), oper: 'v'},// il parametro info riceve dati del file dal success del task importFile  
+			params: {task: 'esegueImportProcessor', processName: processName, IdLotto: IdLotto, info: JSON.stringify(files), oper: 'v'},// il parametro info riceve dati del file dal success del task importFile  
 			method: 'POST',
 			timeout: 3600000,
 			success: function ( result, request ) {
 				DCS.hideMask();
-				eval("res = "+result.responseText);
-				if(intervalDettaglioProcesso) {
-					clearInterval(intervalDettaglioProcesso);
-					intervalDettaglioProcesso = null;
+				//eval("res = "+result.responseText);
+				if(DCS.intervalDettaglioProcesso) {
+					clearInterval(DCS.intervalDettaglioProcesso);
+					DCS.intervalDettaglioProcesso=null;
 				}
 				// Disabilita il pulsante "Interrompi ed abilita il pulsante "Caricamento dati: passo 1" in caso di successo
 				Ext.getCmp('stopProcess').hide();
@@ -216,7 +220,7 @@ DCS.dettaglioProcesso = function(IdLotto,TipoImport,processName,files){
 		 Ext.getCmp('btnRipeti').hide();
 		 Ext.Ajax.request({
 				url : 'server/processControl.php' , 
-				params: {task: 'cmdUnix', processName: processName, IdLotto: IdLotto, info: JSON.stringify(files), oper: 'p'},// il parametro info riceve dati del file dal success del task importFile  
+				params: {task: 'esegueImportProcessor', processName: processName, IdLotto: IdLotto, info: JSON.stringify(files), oper: 'p'},// il parametro info riceve dati del file dal success del task importFile  
 				method: 'POST',
 				timeout: 3600000,
 				success: function ( result, request ) {
@@ -226,10 +230,10 @@ DCS.dettaglioProcesso = function(IdLotto,TipoImport,processName,files){
 					btnRipeti.show();
 					btnRipeti.funzioneDaRipetere = function() {eseguiFase2(btn);};
 	
-					eval("res = "+result.responseText);
-					if(intervalDettaglioProcesso) {
-						clearInterval(intervalDettaglioProcesso);
-						intervalDettaglioProcesso = null;
+					//eval("res = "+result.responseText);
+					if(DCS.intervalDettaglioProcesso) {
+						clearInterval(DCS.intervalDettaglioProcesso);
+						DCS.intervalDettaglioProcesso = null;
 					}
 					
 					dsDettProc.reload({ // aggiorna la lista
@@ -264,7 +268,7 @@ DCS.dettaglioProcesso = function(IdLotto,TipoImport,processName,files){
 		 Ext.Ajax.request({
 				url : 'server/processControl.php' , 
 				timeout: 3600000,
-				params: {task: 'cmdUnix', processName: processName, IdLotto: IdLotto, info: JSON.stringify(files), 
+				params: {task: 'esegueImportProcessor', processName: processName, IdLotto: IdLotto, info: JSON.stringify(files), 
 					oper: btn.tipoImport=='R'?'l':'u'},
 				method: 'POST',
 				success: function ( result, request ) {
@@ -273,10 +277,10 @@ DCS.dettaglioProcesso = function(IdLotto,TipoImport,processName,files){
 					btnRipeti.show();
 					btnRipeti.funzioneDaRipetere = function() {eseguiFase3(btn);};
 					DCS.hideMask();
-					eval("res = "+result.responseText);
-					if(intervalDettaglioProcesso) {
-						clearInterval(intervalDettaglioProcesso);
-						intervalDettaglioProcesso = null;
+					//eval("res = "+result.responseText);
+					if(DCS.intervalDettaglioProcesso) {
+						clearInterval(DCS.intervalDettaglioProcesso);
+						DCS.intervalDettaglioProcesso=null;
 					}
 					dsDettProc.reload({
 						callback: function(r){
