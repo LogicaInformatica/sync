@@ -307,7 +307,7 @@ function creaFileLettere($array,$IdModello)
 		
 		// Invia mail all'amministratore con il link al file zip
 		$zipUrl = LETTER_URL."/$fileName";
-		sendMail("cnc".$sito."@toyota-fs.com",getSysParm("LETTERE_MAIL"),"File zip prodotto per stampa massiva lettere",
+		sendMail(MAIL_SENDER,getSysParm("LETTERE_MAIL"),"File zip prodotto per stampa massiva lettere",
 				"Il file zip contenente tutte le lettere generate in formato PDF e' scaricabile a questo indirizzo: <a href='$zipUrl'>$zipUrl</a>");
 		
   	} else {
@@ -346,7 +346,7 @@ function creaFileLettere($array,$IdModello)
 		$file["name"] = $fileName;
 		$file["type"] = filetype($newFile);
 	  
-		sendMail("cnc".$sito."@toyota-fs.com",getSysParm("LETTERE_MAIL"),"File '$nomeModello' prodotto per stampa Rotomail","Vedi allegato",$file);
+		sendMail(MAIL_SENDER,getSysParm("LETTERE_MAIL"),"File '$nomeModello' prodotto per stampa Rotomail","Vedi allegato",$file);
   	}
  	  
 	return TRUE;

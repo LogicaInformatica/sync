@@ -614,7 +614,7 @@ function trace($msg,$backTrace=TRUE,$sendMail=FALSE)
 			}
 			if ($sendMail) // inviare una mail all'amministratore
 			{
-				 sendMail("cnc".$sito."@toyota-fs.com",getSysParm("ADMIN_MAIL"),"Messaggio da Connecticut sito=$sito",$msg);
+				 sendMail(MAIL_SENDER,getSysParm("ADMIN_MAIL"),"Messaggio da Connecticut sito=$sito",$msg);
 			}
 //SCA			@chmod(LOG_PATH."/trace.txt",0777); // caso mai l'avesse creato adesso
 			return $trace_file;

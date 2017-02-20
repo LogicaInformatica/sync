@@ -34,7 +34,7 @@ function estrattoSpeseRecupero()
 	$title = "Estratto Spese di Recupero ".date('d/m/Y');
 	$msg   = "Estratto delle spese di recupero maturate al ".date('d/m/Y')."<br>"
 			."Sono incluse tutte le pratiche con debito totale maggiore o uguale a 26 euro e spese di recupero maggiori di zero.";
-	sendMail("cnc".$sito."@toyota-fs.com",getSysParm("SPESE_REC_MAIL"),$title,$msg,$allegato);
+	sendMail(MAIL_SENDER,getSysParm("SPESE_REC_MAIL"),$title,$msg,$allegato);
 	
 	// Registra su log l'avvenuta esecuzione 
 	writeLog("ESTRATTO","estrattoSpeseRecupero.php","Produzione estratto spese di recupero","estrattoSpeseRecupero");
