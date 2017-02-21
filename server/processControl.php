@@ -171,7 +171,13 @@ function esegueImportProcessor(){
 	$infofile = json_decode($info, true);
 	foreach ($infofile as $numFile=>$f){
 		$comando = getScalar("SELECT Comando FROM moduloimport WHERE IdModulo =".$f['IdModulo']); // nome file php che verrà eseguito
-		
+		if(!$comando){
+			$error = "Manca la definizione del modulo con id=".$f['IdModulo'];
+			writeProcessLog($processName, $error, 1);
+			writeProcessLog($processName, "Elaborazione interrotta a causa dell'errore indicato nel messaggio precedente", -1);
+			writeLog("APP","Importazione lotto",$error,"IMP_LOTTO");
+			return;
+		}
 		try {
 			
 			trace("Caricamento del modulo di import {$f['IdModulo']}, programma=$comando",false);
