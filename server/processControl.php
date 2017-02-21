@@ -198,12 +198,11 @@ function esegueImportProcessor(){
 			$msg = "<b>Fine verifica</b>. Se non sono state segnalate anomalie gravi, puoi usare il pulsante 'Caricamento preliminare' per caricare i dati nelle tabelle transitorie";
 			break;
 		case 'p':
-			$msg = "<b>Fine caricamento preliminare</b>. Se non sono state segnalate anomalie gravi, puoi usare il pulsante 'Caricamento finale' per caricare i dati nelle tabelle definitive,"
-			." oppure il tasto 'Anteprima delle tabelle' per vedere i dati caricati.";
+			$msg = "<b>Fine caricamento preliminare</b>. Se non sono state segnalate anomalie gravi, puoi usare il pulsante 'Caricamento finale' per caricare i dati nelle tabelle definitive";
 			break;
 		case 'l':
 		case 'u':
-			$msg = "<b>Fine aggiornamento lotto</b>. Se non sono state segnalate anomalie gravi, i dati del lotto sono adesso visibili con le funzioni ordinarie di DCSys";
+			$msg = "<b>Fine aggiornamento lotto</b>. Se non sono state segnalate anomalie gravi, i dati sono adesso visibili con le funzioni ordinarie di DCSys";
 			break;
 	}
 	writeProcessLog($processName, $msg, -1);
