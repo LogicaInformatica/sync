@@ -38,7 +38,7 @@ try {
 		$processName 	= $_REQUEST['process'];
 		$numFile	 	= $_REQUEST['numFile'];
 		$IdUtente = $_REQUEST['userid'];
-		$debug = true; // variabile globale testata dalla writeProcessLog per decidere di enetere un echo
+		$debug = false; // variabile globale testata dalla writeProcessLog per decidere di enetere un echo
 	} else {	
 		$idLotto = $argv[1];
 		$idModulo = $argv[2];
