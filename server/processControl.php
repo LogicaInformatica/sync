@@ -167,7 +167,6 @@ function cmdUnix(){
  */
 
 function esegueImportProcessor(){
-	global $trasf,$processName,$filePath,$idLotto,$idModulo,$debug,$connection,$wizardColumns,$tipoOperazione,$numFile;
 	extract($_REQUEST);
 	$infofile = json_decode($info, true);
 	foreach ($infofile as $numFile=>$f){
@@ -182,9 +181,6 @@ function esegueImportProcessor(){
 		try {
 			
 			trace("Caricamento del modulo di import {$f['IdModulo']}, programma=$comando",false);
-			$_REQUEST['id'] = $f['IdModulo'];
-			$_REQUEST['numFile'] = $numFile;
-			$_REQUEST['file'] = $f['filePath'];
 			include_once $comando;
 			trace("Caricamento riuscito",false);
 			
