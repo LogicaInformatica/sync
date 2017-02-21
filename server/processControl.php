@@ -167,6 +167,7 @@ function cmdUnix(){
  */
 
 function esegueImportProcessor(){
+	global $trasf,$processName,$filePath,$idLotto,$idModulo,$debug,$connection,$wizardColumns,$tipoOperazione,$numFile;
 	extract($_REQUEST);
 	$infofile = json_decode($info, true);
 	foreach ($infofile as $numFile=>$f){
