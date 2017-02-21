@@ -32,10 +32,10 @@ try {
 	// Acquisisce i parametri di input
 	if ($_REQUEST['id']) { // se chiamato per debug da browser, riceve i parametri nella query string
 		$idModulo 		= $_REQUEST['id'];
-		$idLotto 		= $_REQUEST['lotto'];
+		$idLotto 		= $_REQUEST['IdLotto'];
 		$filePath 		= $_REQUEST['file'];
 		$tipoOperazione = $_REQUEST['oper'];
-		$processName 	= $_REQUEST['process'];
+		$processName 	= $_REQUEST['processName'];
 		$numFile	 	= $_REQUEST['numFile'];
 		$IdUtente = $_REQUEST['userid'];
 		$debug = false; // variabile globale testata dalla writeProcessLog per decidere di enetere un echo

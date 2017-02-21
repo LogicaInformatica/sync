@@ -183,6 +183,7 @@ function esegueImportProcessor(){
 			
 			trace("Caricamento del modulo di import {$f['IdModulo']}, programma=$comando",false);
 			$_REQUEST['id'] = $f['IdModulo'];
+			$_REQUEST['numFile'] = $numFile;
 			$_REQUEST['file'] = $f['filePath'];
 			include_once $comando;
 			trace("Caricamento riuscito",false);
