@@ -450,7 +450,7 @@ function saveNewRecord(){
 
 function stornoLotto($idLotto){
 
-	if (!$idLotto) $idLotto = $_REQUEST['idLotto'];
+	if (!$idLotto && $_REQUEST['idLotto']) $idLotto = $_REQUEST['idLotto'];
 	beginTrans();
 	// Cancella provvigioni e assegnazioni, create da programmi che non effettuano la creazione delle righe di storno
 	if (!execute($sql="DELETE FROM notautente WHERE IdNota IN (SELECT IdNota FROM nota WHERE IdContratto IN (SELECT IdContratto FROM temp_import_contratto WHERE IdLotto=$idLotto))")) {
