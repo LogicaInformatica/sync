@@ -452,7 +452,11 @@ function stornoLotto($idLotto){
 
 	if (!$idLotto && $_REQUEST['idLotto']) $idLotto = $_REQUEST['idLotto'];
 	beginTrans();
-	// Cancella provvigioni e assegnazioni, create da programmi che non effettuano la creazione delle righe di storno
+	
+        // Parte disabilitata per la versione TOYOTA, che usa solo l'import di note=storiarecupero
+        /*
+
+        // Cancella provvigioni e assegnazioni, create da programmi che non effettuano la creazione delle righe di storno
 	if (!execute($sql="DELETE FROM notautente WHERE IdNota IN (SELECT IdNota FROM nota WHERE IdContratto IN (SELECT IdContratto FROM temp_import_contratto WHERE IdLotto=$idLotto))")) {
 		if (function_exists('erroreProcesso'))
 			erroreProcesso(getLastError()." SQL: $sql");
@@ -498,7 +502,7 @@ function stornoLotto($idLotto){
 		else 
 			return false;
 	}
-	
+	*/
 	// Conserva gli ID dei contratti del lotto, prima di stornare tutti i riferimenti
 	$ids = getColumn($sql="SELECT DISTINCT IdContratto FROM temp_import_contratto WHERE IdLotto=$idLotto AND IdContratto IS NOT NULL");
 	if (getLastError()>'') {
@@ -516,9 +520,13 @@ function stornoLotto($idLotto){
 		}
 	}
 	commit();
+        
+        
 	// Riaggiorna la situazione contabile di tutti i contratti del lotto
+        // Parte disabilitata per la versione TOYOTA, che usa solo l'import di note=storiarecupero
+        /*
 	aggiornaSituazioneContabile(null,$idLotto,$ids);
-	
+        */
 	// Storno completato: elimina tutte le righe utilizzate
 	if (!execute("DELETE FROM stornolotto WHERE IdLotto=$idLotto"))
 		return false;

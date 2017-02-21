@@ -168,7 +168,7 @@ DCS.ImportNote = function() {
                 //buttons
                 buttons: [{
                         text: 'Esegui',
-                        idLotto: 0,
+                        idLotto: CONTEXT.IdReparto, // fa in modo di distinguere i lotti delle diverse agenzia
                         handler: function(btn) {
                             var processName = Math.random();
                             if (!(Ext.getCmp('docPath1').getValue() > '')) {
