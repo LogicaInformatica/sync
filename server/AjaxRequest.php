@@ -147,6 +147,12 @@ function aggiornaAllegati($IdContratto) {
 	list($cod,$prefix) = getRow("SELECT SUBSTR(CodContratto,3),SUBSTR(CodContratto,1,2) FROM contratto WHERE IdContratto=$IdContratto",MYSQLI_NUM);
 	if ($prefix=='LO') $prefix='CO';
 	
+    // Toglie il suffisso dai codici di subentro, del tipo LEXXXX-2
+    $p = strpos($cod,"-");
+    if ($p!==false) {
+        $cod = substr($cod,0,$p);
+    }
+    
 	$url = sprintf(DMS_API_LIST_URL,$cod,$prefix);
 	trace("Legge lista documenti dal Documentale web: $url",false);
 	
