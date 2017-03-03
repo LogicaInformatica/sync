@@ -52,8 +52,8 @@ switch ($sito) {
                 define('FOOTER','<div style="text-align:center;font-size:10px;color:gray">&copy; 2011-2015 Toyota Financial Services (UK) PLC - P.IVA 05303901002</div>');
                 break;
 }
-define('NUM_VERSIONE','1.11.13');
-define('DATA_VERSIONE','2017-02-15');
+define('NUM_VERSIONE','1.11.14');
+define('DATA_VERSIONE','2017-03-03');
 
 define('PORTAL_URL',   get_cfg_var('EB_WEB_PROTOCOL')."://portal".get_cfg_var('EB_DNS_SUFFIX').".".get_cfg_var('EB_DNS_DOMAIN')."/");
 define('LINK_URL',   get_cfg_var('EB_WEB_PROTOCOL')."://cnc".get_cfg_var('EB_DNS_SUFFIX').".".get_cfg_var('EB_DNS_DOMAIN')."/");
