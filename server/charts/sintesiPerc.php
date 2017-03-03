@@ -55,7 +55,7 @@ if ($mese%100 > getSysParm("LAST_FY_MONTH","3")) {
 }
 // una o piu' righe di target (se e' un periodo con target misti dovuti ad un cambio in corso)
 $v = fetchValuesArray("SELECT DISTINCT Valore FROM target t where $fy BETWEEN FY AND ENDFY "
-     ." AND '$mese' BETWEEN DATE_FORMAT(dataini,'%Y%m') AND DATE_FORMAT(datafin,'%Y%m') and valore>0 and ".str_replace("&deg;","°",$where));
+     ." AND '$mese' BETWEEN DATE_FORMAT(dataini,'%Y%m') AND DATE_FORMAT(datafin,'%Y%m') and valore>0 and $where");
 if (count($v)>0) 
 {
 	$strXML .= "<trendLines>";

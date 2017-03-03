@@ -88,7 +88,7 @@ foreach ($strDataSet as $i => $value) {
 // una o piu' righe di target (se e' un periodo con target misti dovuti ad un cambio in corso)
 if (isset($_REQUEST['task']))
 {	
-	$v = fetchValuesArray("SELECT DISTINCT Valore FROM target t where ".str_replace("&deg;","°",$where)." $anno BETWEEN FY AND ENDFY ");
+	$v = fetchValuesArray("SELECT DISTINCT Valore FROM target t where $where $anno BETWEEN FY AND ENDFY ");
 	if (count($v)>0) 
 	{
 		$strXML .= "<trendLines>";
