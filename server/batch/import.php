@@ -4,12 +4,12 @@ require_once('processImportedFiles.php');
 //----------------------------------------------------------------------------------------------------------------------
 // import
 // Scopo: 		Ricevitore dei file di import dai servizi Windows 
-// Funzionamento: riceve un file, lo controlla e lo salva nel folder che sarà poi processato dal cron-job
+// Funzionamento: riceve un file, lo controlla e lo salva nel folder che sarï¿½ poi processato dal cron-job
 // Argomenti:	type:	Tipo di file (ad es. "clienti")
 //              from:   sistema mittente (ad es. TFSI)
 //              id:     identificativo univoco del file, secondo il mittente
 //
-// Risposta:	U\t messaggio			validazione file OK (l'elaborazione è asincrona in background)
+// Risposta:	U\t messaggio			validazione file OK (l'elaborazione ï¿½ asincrona in background)
 //	     		K\t messaggio			KO: errore di validazione
 //----------------------------------------------------------------------------------------------------------------------
 $pageurl = $_SERVER["REQUEST_URI"]; // nome pagina con parametri
@@ -20,6 +20,7 @@ $pageurl = $_SERVER["REQUEST_URI"]; // nome pagina con parametri
 $type = $_REQUEST["type"].$_REQUEST["TYPE"];
 $from = $_REQUEST["from"].$_REQUEST["FROM"];
 $id   = $_REQUEST["id"].$_REQUEST["ID"];
+trace("entrata import.php con from=$from,type=$type,id=$id",false);
  
 if ($type=="")
 	returnError("Parametro 'type' assente",$pageurl,FALSE);
@@ -45,7 +46,7 @@ $filepath = $files["filename"]["tmp_name"]; // file temporaneo creato dal sistem
 if (!$filepath) 
 	returnError("File upload fallito: ".print_r($files["filename"],true)." max_upload_filesize=".ini_get('upload_max_filesize'),$pageurl,FALSE);
 
-if($type!='allegato') // il file ricevuto dal sistema mittente non è un allegato
+if($type!='allegato') // il file ricevuto dal sistema mittente non ï¿½ un allegato
 {			
 		// Legge le righe e verifica che siano JSON ok
 		$file = fopen($filepath,'r');
@@ -61,7 +62,7 @@ if($type!='allegato') // il file ricevuto dal sistema mittente non è un allegato
 		}
 		if (!feof($file)) 
 			returnError("File upload fallito per errore nella lettura del file temporaneo $filepath (dopo $nrows righe)",$pageurl,FALSE);
-		// L'ultima riga è il record finale che contiene il conto delle righe: controlla
+		// L'ultima riga ï¿½ il record finale che contiene il conto delle righe: controlla
 		$rows = $json->rows;
 		if ($rows == NULL)
 			returnError("Il file ricevuto non contiene un record di chiusura valido",$pageurl,FALSE);
@@ -86,10 +87,12 @@ if($type!='allegato') // il file ricevuto dal sistema mittente non è un allegato
 			trace("File $type ricevuto e convalidato; $nrows righe salvate in $newfile",FALSE);
 			die("U\tFile ricevuto e convalidato; $nrows righe salvate in $newfile");
 		}
-		else
+		else {
+			trace("K\tErrore nella writeImportLog",false);
 			die("K\tErrore nella writeImportLog");
+        }
 }
-else   // il file inviato dal sistema mittente è un allegato
+else   // il file inviato dal sistema mittente e' un allegato
 {
 	if (!writeImportLog($from,$type,$id,"N"))  // registra come nuovo arrivo
 		die("K\tErrore nella writeImportLog");
