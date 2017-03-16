@@ -4,7 +4,7 @@ require_once("commonbatch.php");
 // confermaEsito
 // Scopo: 		Imposta = C (confermato) lo status su ImportLog per le righe corrispondenti al batch indicato
 //                
-// Argomenti:		from:	sigla del committente (cioè del sistema legacy che ha inviato i dati; valori attuali TFIS e TKGI)
+// Argomenti:		from:	sigla del committente (cioï¿½ del sistema legacy che ha inviato i dati; valori attuali TFIS e TKGI)
 //                  type:   tipofile (uguale a quello passato alla import.php)
 //
 // Risposta: nessuna
@@ -15,6 +15,7 @@ require_once("commonbatch.php");
 //----------------------------------------------------------------------------------------------------------------------
 $from = strtoupper($_REQUEST["from"].$_REQUEST["FROM"]);
 $type = $_REQUEST["type"].$_REQUEST["TYPE"];
+trace("entrata confermaeEsito.php con from=$from,type=$type",false);
 
 if ($from=="")
 	die ("K\tParametro 'from' assente\nT\t1");
