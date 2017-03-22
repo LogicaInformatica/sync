@@ -423,7 +423,7 @@ Ext.ux.Printer.GridPanelRenderer = Ext.extend(Ext.ux.Printer.BaseRenderer, {
 	exportFromServer: function(grid,expAll,title) {
 		var me = this;
 		// Determina se la griglia ha righe selezionate (se non si tratta di un tasto "Esporta tutto")
-		if (!expAll && grid.getSelectionModel && grid.getSelectionModel()) {
+		if (!expAll && grid.getSelectionModel && grid.getSelectionModel() && grid.getSelectionModel().getSelections) {
 			var selectedRows = grid.getSelectionModel().getSelections();
 			if (selectedRows.length>0) {
 				// PROCEDE SOLO SE I RECORD CONTENGONO IDCONTRATTO
