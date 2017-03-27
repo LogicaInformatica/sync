@@ -6,7 +6,7 @@ require_once('commonbatch.php');
 // Argomenti:	from:   sistema mittente (ad es. TFSI)
 //              func:   =allegati (contratti che richiedono allegati) default se func manca
 //                      =recupero (contratti di cui si chiedono i movimenti)
-// Risposta:	U\t messaggio			La lista dei contratti è stata creata
+// Risposta:	U\t messaggio			La lista dei contratti ï¿½ stata creata
 //	     		K\t messaggio			KO: errore nella creazione lista contratti
 //----------------------------------------------------------------------------------------------------------------------
 $pageurl = $_SERVER["REQUEST_URI"]; // nome pagina con parametri
@@ -16,7 +16,7 @@ $pageurl = $_SERVER["REQUEST_URI"]; // nome pagina con parametri
 //-------------------------------------------------------
 $from = $_REQUEST["from"].$_REQUEST["FROM"];
 $func = $_REQUEST["func"].$_REQUEST["FUNC"];
-
+trace("Chiamata listaContratti func: $func",false);
 //controlla l'argomento from arrivato dal chiamante
 if ($from=="")
 	returnError("Parametro 'from' assente",$pageurl,FALSE);
@@ -56,6 +56,7 @@ try
 	                        		 from allegato a join tipoallegato t on a.IdTipoAllegato=t.IdTipoAllegato
 	                            	and t.CodTipoAllegato IN ('CON','DOC') and a.IdUtente IS NULL where a.lastupd>s.dataevento))";
 	}	   
+    trace("Esegue query: $strQyery",false);
 	$list =  join(',',fetchValuesArray($strQyery));
 	trace("Lista contratti: $list",false);
 	echo("U\t".$list);
