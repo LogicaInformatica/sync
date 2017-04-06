@@ -10,7 +10,7 @@ DCS.GridPraticheAffidate = Ext.extend(DCS.GridPratiche, {
 					{name: 'prodotto'},
 					{name: 'numPratica'},
 					{name: 'IdCliente', type: 'int'},
-					{name: 'cliente'},
+					{name: 'cliente'},{name: 'CodCliente'},
 					{name: 'rata', type: 'int'},
 					{name: 'insoluti',type: 'int'},
 					{name: 'giorni', type: 'int'},

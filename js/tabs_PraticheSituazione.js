@@ -18,7 +18,7 @@ DCS.GridPraticheSituazione = Ext.extend(DCS.GridPratiche, {
 					{name: 'prodotto'},
 					{name: 'numPratica'},
 					{name: 'IdCliente', type: 'int'},
-					{name: 'cliente'},
+					{name: 'cliente'},{name: 'CodCliente'},
 					{name: 'ImpInsoluto', type: 'float'},
 					{name: 'CapitaleResiduo', type: 'float'},  
 					{name: 'ImpCapitale', type: 'float'},
@@ -50,6 +50,7 @@ DCS.GridPraticheSituazione = Ext.extend(DCS.GridPratiche, {
 		columns = [
         	{dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false},
         	{dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+{dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
         	{dataIndex:'prodotto',	width:120,	header:'Prodotto',filterable:true,sortable:true,groupable:true},
         	{dataIndex:'ImpInsoluto',	width:40,	header:'Tot.Insoluto', xtype:'numbercolumn',format:'0.000,00/i',align:'right',filterable:true,sortable:true},
         	{dataIndex:'PercSvalutazione',	hidden:true, width:25,	header:'% Sval.', xtype:'numbercolumn', format:'000,00 %/i',align:'right',filterable:true,sortable:true},

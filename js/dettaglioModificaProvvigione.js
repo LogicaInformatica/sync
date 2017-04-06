@@ -95,7 +95,7 @@ DCS.DettaglioModifica = Ext.extend(Ext.TabPanel, {
 					    	    			formModifica.getForm().clearInvalid(); // evita validatori, visto che sta cancellando
 					    	    			callServer(this,"deleteModifica");
 					    	    		}
-					    			},this); // l'ultimo parametro è lo scope, che viene passato a callServer
+					    			},this); // l'ultimo parametro ï¿½ lo scope, che viene passato a callServer
 						},scope:this
 					});
 			
@@ -145,7 +145,7 @@ DCS.DettaglioModifica = Ext.extend(Ext.TabPanel, {
 
 			// Campi di input
 //			
-//			// Data del lotto (combobox che mostra solo le date che è possibile impostare)
+//			// Data del lotto (combobox che mostra solo le date che ï¿½ possibile impostare)
 //			var DataLottoMod = {xtype: 'combo',
 //				fieldLabel: 'spostata in',
 //				hiddenName: 'DataLottoMod',
@@ -236,7 +236,7 @@ DCS.DettaglioModifica = Ext.extend(Ext.TabPanel, {
 											Ext.getCmp("InteressiMod").setValue("0");
 											Ext.getCmp("SpeseRecuperoMod").setValue("0");
 										}
-										else // non più cancellazione rata: rimette i valori di default
+										else // non piï¿½ cancellazione rata: rimette i valori di default
 										{
 											var rec = dsStoreModifica.getRange(0,0)[0];
 											Ext.getCmp("FlagRataViaggianteMod").setValue(rec.json.FlagRataViaggianteMod);
@@ -287,7 +287,7 @@ DCS.DettaglioModifica = Ext.extend(Ext.TabPanel, {
 						Ext.getCmp('FlagRataViaggiante').setValue(r[0].json.FlagRataViaggiante=='Y');
 						Ext.getCmp('FlagRataViaggianteMod').setValue(r[0].json.FlagRataViaggianteMod=='Y');
 						Ext.getCmp('hiddenFlagRataViaggiante').setValue(r[0].json.FlagRataViaggiante);
-						Ext.getCmp('FlagCancellazione').setValue(r[0].json.TipoCorrezione=='D'); // è una cancellazione
+						Ext.getCmp('FlagCancellazione').setValue(r[0].json.TipoCorrezione=='D'); // ï¿½ una cancellazione
 						Ext.getCmp('hiddenDataLotto').setValue(r[0].json.DataLotto); 
 						Ext.getCmp('hiddenImpCapAffidato').setValue(r[0].json.ImpCapitaleAffidato);
 						Ext.getCmp('hiddenImpTotAffidato').setValue(r[0].json.ImpTotaleAffidato);
@@ -297,7 +297,7 @@ DCS.DettaglioModifica = Ext.extend(Ext.TabPanel, {
 						Ext.getCmp('hiddenImpSpese').setValue(r[0].json.ImpSpese);
 						if (!(r[0].json.TipoCorrezione>''))
 						{
-							Ext.getCmp('btnElimina').setDisabled(true); // se è una nuova correzione, disabilita il bottone "elimina"
+							Ext.getCmp('btnElimina').setDisabled(true); // se ï¿½ una nuova correzione, disabilita il bottone "elimina"
 							Ext.getCmp('ultimaModifica').hide();	
 						}
 						else

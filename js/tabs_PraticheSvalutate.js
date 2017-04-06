@@ -24,7 +24,7 @@ DCS.GridPraticheSvalutate = Ext.extend(DCS.GridPratiche, {
 							{name: 'prodotto'},
 							{name: 'numPratica'},
 							{name: 'IdCliente', type: 'int'},
-							{name: 'cliente'},
+							{name: 'cliente'},{name: 'CodCliente'},
 							{name: 'importo', type: 'float'},
 							{name: 'ImpInteressiMora', type: 'float'},
 							{name: 'ImpSpeseRecupero', type: 'float'},
@@ -65,6 +65,7 @@ DCS.GridPraticheSvalutate = Ext.extend(DCS.GridPratiche, {
 	        	{dataIndex:'DataCambioStato',width:40,xtype:'datecolumn', format:'d/m/y',	header:'Data stato',align:'left', filterable: true, groupable:true, sortable:true},
 	        	{dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false},
 	        	{dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+{dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
 	        	{dataIndex:'prodotto',	width:120,	header:'Prodotto',filterable:true,sortable:true,groupable:true},
 	        	{dataIndex:'importo',	width:40,	header:'Deb. Tot', xtype:'numbercolumn',format:'0.000,00/i',align:'right',filterable:true,sortable:true},
 	        	{dataIndex:'PercSvalutazione',	width:25,	header:'% Sval.', xtype:'numbercolumn', format:'000,00 %/i',align:'right',filterable:true,sortable:true,hidden:false},
@@ -160,7 +161,7 @@ DCS.GridPraticheSvalutate = Ext.extend(DCS.GridPratiche, {
 			    			//rimozione
 			    			//console.log("Rimuove indice: "+deleteArr[h]);
 			    			Ext.getCmp(idObj).getStore().remove(Ext.getCmp(idObj).getStore().getAt(deleteArr[h]-h));
-							//se nn è nella selezione viene rimosso con 
+							//se nn ï¿½ nella selezione viene rimosso con 
 							//riallineamento dell'indice interno a deleteArr
 			    		}
 			    		//ora lo store della griglia corrisponde a quello da stampare
@@ -254,7 +255,7 @@ DCS.GridSvalStor = Ext.extend(Ext.grid.GridPanel, {
 		     	  {name: 'Prodotto'},
 		    	  {name: 'CodContratto'},
                   {name: 'IdCliente', type: 'int'},
-		    	  {name: 'Cliente'},
+		    	  {name: 'cliente'},{name: 'CodCliente'},
 		    	  {name: 'ImpDebito',  type: 'float'},
                   {name: 'PercSvalutazione', type: 'float'},
 		    	  {name: 'Svalutazione', type: 'float'}
@@ -399,9 +400,9 @@ DCS.archiviaSvalutazione = function()
 				 {
 					var jsonData = Ext.util.JSON.decode(result.responseText);
 					if (jsonData.success)
-					{	// Se è andato bene, può darsi che serva un nuovo tab per il fiscal year in corso
+					{	// Se ï¿½ andato bene, puï¿½ darsi che serva un nuovo tab per il fiscal year in corso
 						Ext.MessageBox.alert('', jsonData.error);
-						if (jsonData.isnew) // indica che è stata una nuova archivazione
+						if (jsonData.isnew) // indica che ï¿½ stata una nuova archivazione
 						{
 							var grid = new DCS.GridSvalStor({
 								stateId: 'PraSvalutateYear',

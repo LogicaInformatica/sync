@@ -389,16 +389,20 @@ function writeHistory($idAzione,$descrEvento,$idContratto,$nota,$esito="NULL",$i
 // Legge l'eventuale data di default dalla tabella Automatismo
 // $idazione: id della tabella azione
 // $default: una espressione MySql come ad es. "NOW()+INTERVAL 2 DAY", oppure omesso
+// &$numGiorni: restituisce il numero di giorni calcolato
 //------------------------------------------------------------------------
-function getDefaultDate($idazione,$default)
+function getDefaultDate($idazione,$default,&$numGiorni)
 {	
-	$default = getScalar("SELECT Comando FROM automatismo a, azioneautomatica aa"
+	$defaultFromDb = getScalar("SELECT Comando FROM automatismo a, azioneautomatica aa"
 	. " WHERE a.idAutomatismo=aa.idAutomatismo AND NOW() BETWEEN aa.DataIni AND aa.DataFin"
-	. " AND aa.IdAzione=$idazione");
+	. " AND aa.IdAzione=$idazione AND TipoAutomatismo='scadenzadefault'");
 
-	if (!($default>"")){ // se c'è è una espressione MySql come ad es. "NOW()+INTERVAL 2 DAY"
-		$gSett=date('N');
-		$GG=$gSett+3;     // default 3 giorni da adesso, ma il chiamante può specificarlo
+	if ($defaultFromDb) { // trovata una regola sul DB
+		$default = $defaultFromDb;
+	}
+	if ($default=="") { // usa un default generale (sconsigliato) 
+		$gSett = date('N');
+		$GG = $gSett+3;     // default 3 giorni da adesso, ma il chiamante può specificarlo
 		switch($GG){
 			case 6: $gSett=$GG+2;
 				break;
@@ -407,26 +411,33 @@ function getDefaultDate($idazione,$default)
 			default: $gSett=3;
 		}
 		$default = "CURDATE() + INTERVAL $gSett DAY";
-	}else{
-		//controllo della caduta del giorno ed aggiustamento
-		$arr = explode(' ',$default);
-		for($i=0;$i<count($arr);$i++){
-			if(is_numeric($arr[$i])){
-				$gSett=date('N');
-				$GG=$gSett+$arr[$i];
-				switch($GG){
-					case 6: $arr[$i]=$arr[$i]+2;
-						break;
-					case 7: $arr[$i]=$arr[$i]+1;
-						break;
+	}else{ // c'e' e' una espressione MySql come ad es. "NOW()+INTERVAL 2 DAY" oppure una data come 9999-12-31
+		if (preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/',$default)) { // c'è una data costante, non deve aggiustare nulla (NOTA, la data deve essere tra apici)
+			// prosegue
+		} else {
+			//controllo della caduta del giorno ed aggiustamento
+			$arr = explode(' ',$default);
+			for($i=0;$i<count($arr);$i++){
+				if(is_numeric($arr[$i])){
+					$gSett=date('N');
+					$GG=$gSett+$arr[$i];
+					switch($GG){
+						case 6: $arr[$i]=$arr[$i]+2;
+							break;
+						case 7: $arr[$i]=$arr[$i]+1;
+							break;
+					}
 				}
 			}
+			$default=implode(' ',$arr);
 		}
-		$default=implode(' ',$arr);
 	}
 	
-	return getScalar("SELECT $default");
+	$row = getRow("SELECT $default AS newdate,DATEDIFF($default,CURDATE()) AS numdays");
+	$numGiorni = $row['numdays'];
+	return $row['newdate'];
 }
+
 //------------------------------------------------------------------------
 // getForzaturaAffidoCorrente
 // Legge l'eventuale forzatura di affido registrata
@@ -5559,7 +5570,7 @@ function creaPdfDaHtml($html,$filePath) {
 		$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 		
 		// dalla cartella tcpdf punta indietro alla cartella images
-		$pdf->setHeaderData("headerLettera.jpg","170" /* larghezza in mm */
+		$pdf->setHeaderData("../../images/headerLettera.jpg","170" /* larghezza in mm */
 				,'','',array(0,0,0),array(255,255,255));
 		$pdf->setPrintFooter(false); // evita riga di footer
 		

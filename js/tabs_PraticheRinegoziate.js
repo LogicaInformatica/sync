@@ -7,7 +7,7 @@ DCS.GridPraticheRinegoziate = Ext.extend(DCS.GridPratiche, {
 					{name: 'prodotto'},
 					{name: 'numPratica'},
 					{name: 'IdCliente', type: 'int'},
-					{name: 'cliente'},
+					{name: 'cliente'},{name: 'CodCliente'},
 					{name: 'rata', type: 'int'},
 					{name: 'insoluti',type: 'int'},
 					{name: 'giorni', type: 'int'},
@@ -51,6 +51,7 @@ DCS.GridPraticheRinegoziate = Ext.extend(DCS.GridPratiche, {
 		        {dataIndex:'DataFineAffido',width:60,xtype:'datecolumn', format:'d/m/y', header:'Fine affido',align:'center', resizable:true, groupable:true, sortable:true, hidden:false},
 	        	{dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false},
 	        	{dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+{dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
 	        	{dataIndex:'prodotto',	width:120,	header:'Prodotto',filterable:true,sortable:true,groupable:true},
 	        	{dataIndex:'StatoRinegoziazione', width:120, header:'Stato Rinegoziazione', filterable:true,sortable:true,groupable:true,hidden:false},
 				{dataIndex:'rata',		width:30,	header:'N.rata',align:'right',filterable:false,sortable:true},
@@ -141,8 +142,8 @@ DCS.GridPraticheRinegoziate = Ext.extend(DCS.GridPratiche, {
 					   text: 'Rimuovi selezionate',
 					   tooltip: 'Rimuove dalla lista le pratiche selezionate',
 					   handler: rimuovePratiche,
-					   sm: this.SelmTPratiche, // aggiunge proprietà custom per passare la colonna di selezione 
-					   gstore: this.store // aggiunge proprietà custom per passare lo store
+					   sm: this.SelmTPratiche, // aggiunge proprietï¿½ custom per passare la colonna di selezione 
+					   gstore: this.store // aggiunge proprietï¿½ custom per passare lo store
 					});
 				toolBar.insert(5,'-');
 			}
@@ -157,8 +158,8 @@ DCS.GridPraticheRinegoziate = Ext.extend(DCS.GridPratiche, {
 				   tooltip: 'Esporta su excel i dati contenuti in tutte le griglie',
 				   handler: function(){Ext.ux.Printer.exportXLS(this,1);},
 				   scope: this,
-				   sm: this.SelmTPratiche, // aggiunge proprietà custom per passare la colonna di selezione 
-				   gstore: this.store // aggiunge proprietà custom per passare lo store
+				   sm: this.SelmTPratiche, // aggiunge proprietï¿½ custom per passare la colonna di selezione 
+				   gstore: this.store // aggiunge proprietï¿½ custom per passare lo store
 				});
 			toolBar.insert(5,'-');
 			

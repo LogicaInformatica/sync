@@ -13,6 +13,7 @@ require_once("mailsOverride.php");
 require_once('funzioniStorico.php');
 require_once("estrattoSpeseRecupero.php");
 require_once("../funzioni_experian.php");
+require_once("../funzioni_euroinvestigation.php");
 ini_set("memory_limit","2048M");
 
 try
@@ -86,7 +87,7 @@ function eseguiAutomatismiEvento($IdEvento)
 				$res = getScalar("SELECT ".$value["Condizione"]);
 				$doIt = ($res==1); 
 				if (!$doIt)
-					trace("Automatismo non eseguito perché la condizione non è soddisfatta",FALSE);
+					trace("Automatismo non eseguito perchï¿½ la condizione non ï¿½ soddisfatta",FALSE);
 			}
 			else
 				$doIt = TRUE;
@@ -263,8 +264,8 @@ function elaboraLettere()
 
 /**
  * creaFileLettere
- * Crea un file contenente tutte le lettere predisposte per l'invio massivo. Se sono di tipo txt, il file è semplicemente una concatenazione
- * di files; se sono di tipo pdf, il file è uno zip che le contiene tutte. Invia poi una mail di notifica agli utenti predefiniti
+ * Crea un file contenente tutte le lettere predisposte per l'invio massivo. Se sono di tipo txt, il file ï¿½ semplicemente una concatenazione
+ * di files; se sono di tipo pdf, il file ï¿½ uno zip che le contiene tutte. Invia poi una mail di notifica agli utenti predefiniti
  * @param {Array} $array lista degli ID degli "allegati" da concatenare
  * @param {Number} $IdModello ID del modello da cui sono prodotte le lettere
  */
@@ -564,7 +565,7 @@ function provaSMS()
 
 //================================================================================
 // cleanOkImportedFiles()     (by Aldo)
-// Cancella i files importati andati a buon fine (cartella okFiles) più vecchi di un mese
+// Cancella i files importati andati a buon fine (cartella okFiles) piï¿½ vecchi di un mese
 //================================================================================
 function cleanOkImportedFiles()
 {
@@ -597,7 +598,7 @@ function cleanOkImportedFiles()
 // callUrl 
 // Esegue con CURL la chiamata ad un URL residente nella cartella server/batch
 //================================================================================
-////// NOTA 13/12/2013: sembra giusti ma dà sempre FALSE. per ora non utilizzato
+////// NOTA 13/12/2013: sembra giusti ma dï¿½ sempre FALSE. per ora non utilizzato
 function callUrl($url)
 {
 	try {

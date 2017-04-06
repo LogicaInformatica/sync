@@ -251,7 +251,6 @@ DCS.Allegato = function(idContratto, codContratto, isStorico) {
      // trigger the data store load
     DCS.showMask("Lettura lista documenti allegati...");
     dsAllegato.load();
-
     DCS.hideMask();
     
 	return grid;

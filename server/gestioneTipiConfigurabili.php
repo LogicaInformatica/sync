@@ -73,6 +73,11 @@ function readGrid()
 			$ordine="IdStatoLegale asc";
 			$campoTitolo="TitoloStatoLegale";
 			break;
+		case 'statoStragiudConf':
+			$query = "statostragiudiziale";
+			$ordine="IdStatoStragiudiziale asc";
+			$campoTitolo="TitoloStatoStragiudiziale";
+			break;
 	}
 	$counter = getScalar("SELECT count(*) FROM $query");
 	if ($counter == NULL)
@@ -203,6 +208,22 @@ function aggiornaTipo()
 			if($indexTab==0)
 				$_POST['isNew']=true;
 			break;
+		case 'statoStragiudConf':
+			//variabili
+			$tab = 'statostragiudiziale';
+			$idField = 'IdStatoStragiudiziale';
+			$codField = 'CodStatoStragiudiziale';
+			$titleName = 'statostragiudiziale';
+			$codMexName = 'STATO STRAGIUDIZIALE';
+			$neww = Array();
+			$neww[]='Nuovo';
+			$neww[]='salvato';
+			//campi tab
+			$titField = 'TitoloStatoStragiudiziale';
+			$isAlfaOmega=false;
+			if($indexTab==0)
+				$_POST['isNew']=true;
+				break;
 		case 'statorecuperoConf':
 			//variabili
 			$tab = 'statorecupero';
@@ -420,6 +441,14 @@ function delete()
 			$chkField= 'TitoloStatoLegale';
 			$titleName = 'statolegale';
 			$titField = 'TitoloStatoLegale';
+			break;
+		case 'statoStragiudConf':
+			//variabili
+			$tab='statostragiudiziale';
+			$idField = 'IdStatoStragiudiziale';
+			$chkField= 'TitoloStatoStragiudiziale';
+			$titleName = 'statostragiudiziale';
+			$titField = 'TitoloStatoStragiudiziale';
 			break;
 		case 'statorecuperoConf':
 			//variabili
