@@ -9,7 +9,7 @@ e p.c.
 @T
 Brand: %CodBrand%
  
-Totale: ‚Ç¨ %ImpInsolutoIT%
+Totale: Ä %ImpInsolutoIT%
 
 Roma, %Oggi%
 								
@@ -20,7 +20,7 @@ Rata	Scadenza	Importo
 %Modello.SubModDEO% 
 
 
-Interessi di mora: ‚Ç¨ %ImpInteressiMoraIT%  - Spese di recupero: ‚Ç¨ %ImpSpeseRecuperoIT%    Totale: ‚Ç¨ %TotaleSoloDebito%
+Interessi di mora: Ä %ImpInteressiMoraIT%  - Spese di recupero: Ä %ImpSpeseRecuperoIT%    Totale: Ä %TotaleSoloDebito%
 
 Gentile Cliente,
 in relazione al contratto di finanziamento n. %CodContratto%/%CodProdotto%  da lei  stipulato  con  la  
@@ -36,31 +36,31 @@ dalla  data di ricevimento della presente, utilizzando una delle seguenti modali
 
 -   Pagamento presso una delle oltre 32.000 ricevitorie  del Lotto, tabaccherie  e  bar  della
     rete LOTTOMATICA,  utilizzando il codice a barre sul retro della  presente  lettera  ( per
-    importi fino a ‚Ç¨1.500 di cui massimo ‚Ç¨999,99 in contanti);
+    importi fino a Ä1.500 di cui massimo Ä999,99 in contanti);
 
 -   Pagamento a mezzo  Carta di Credito tramite il  portale  della  Toyota  Financial Services
-    https://www.tfsi.it/.  Dopo  aver  selezionato  l‚Äôarea  ‚ÄúAccesso Clienti‚Äù  -  dove  non  √®
-    necessario registrarsi - fare clic su ‚ÄúPaga rata scaduta con carta di credito‚Äù e compilare
+    https://www.tfsi.it/.  Dopo  aver  selezionato  líarea  ìAccesso Clientiî  -  dove  non  Ë
+    necessario registrarsi - fare clic su ìPaga rata scaduta con carta di creditoî e compilare
     i campi con i dati richiesti.
 
 La informiamo inoltre che,  continuando l'attuale  stato  di  insolvenza, saremo  tenuti a  comunicare 
 il ritardo nei  pagamenti ai  sistemi di informazione creditizia ai sensi degli articoli  4 del Codice 
-Deontologico sulla privacy, 125 comma 3 del Decreto Legislativo 1¬∞ settembre 1993 e della Circolare di 
+Deontologico sulla privacy, 125 comma 3 del Decreto Legislativo 1∞ settembre 1993 e della Circolare di 
 Banca di Italia n.139 del 11/2/1991 e s.m.i.. La segnalazione presso le suddette  banche dati potrebbe  
-avere  riflessi negativi per l‚Äôaccesso al credito.
+avere  riflessi negativi per líaccesso al credito.
 
 Qualora avesse gia' provveduto al relativo saldo  e/o avesse  attivato la  procedura  per l'estinzione
 anticipata, la preghiamo di considerare nulla la presente comunicazione.
 
-Per qualsiasi chiarimento potr√† contattare l'agenzia %Agenzia%  da noi incaricata all'indirizzo e-mail 
-%EmailAgenzia% oppure al numero %TelAgenzia% dal Luned√¨ al Venerd√¨ 
+Per qualsiasi chiarimento potr‡ contattare l'agenzia %Agenzia%  da noi incaricata all'indirizzo e-mail 
+%EmailAgenzia% oppure al numero %TelAgenzia% dal LunedÏ al VenerdÏ 
 dalle  ore 09:00 alle ore 18:00.
 
                                        	                       Distinti saluti
                                                            Ufficio Recupero Crediti
 
-Le interessa una rata meno impegnativa?  La  soluzione √®  a portata di mano!  Ci  contatti  subito  al 
-numero o all‚Äôindirizzo e-mail sopra indicati ed insieme troveremo il modo migliore per venire incontro
+Le interessa una rata meno impegnativa?  La  soluzione Ë  a portata di mano!  Ci  contatti  subito  al 
+numero o allíindirizzo e-mail sopra indicati ed insieme troveremo il modo migliore per venire incontro
 alle sue attuali esigenze (proposta non valida per i contratti leasing).
 
 
