@@ -7,7 +7,7 @@ require_once("workflowFunc.php");
 //----------------------------------------------------------------
 // Custom_Assignment
 // Assegna un operatore ad una pratica secondo criteri custom
-// Ritorna: FALSE se non può stabilire a chi assegnare e demanda
+// Ritorna: FALSE se non puï¿½ stabilire a chi assegnare e demanda
 //               la cosa alle regole standard
 //          0    se decide di non assegnare ad alcuno
 //          IdUtente   se assegnato
@@ -28,7 +28,7 @@ function Custom_Assignment($IdContratto)
 //----------------------------------------------------------------
 // Custom_AgentAssignment
 // Assegna un operatore esterno ad una pratica secondo criteri custom
-// Ritorna: FALSE se non può stabilire a chi assegnare e demanda
+// Ritorna: FALSE se non puï¿½ stabilire a chi assegnare e demanda
 //               la cosa alle regole standard
 //          0    se decide di non assegnare ad alcuno
 //          IdUtente   se assegnato
@@ -50,7 +50,7 @@ function Custom_AgentAssignment($IdContratto)
 //----------------------------------------------------------------
 // Custom_Delegation
 // Affida una pratica ad un'agenzia secondo criteri custom
-// Ritorna: FALSE se non può stabilire a chi assegnare e demanda
+// Ritorna: FALSE se non puï¿½ stabilire a chi assegnare e demanda
 //               la cosa alle regole standard
 //          0    se decide di non assegnare ad alcuno
 //          IdAgenzia   se affidato
@@ -132,7 +132,7 @@ function Custom_Delegation($IdContratto,&$msgForHistory,&$idRegolaProvvigione,$I
 				$idRegolaProvvigione = $dati["IdRegolaProvvigione"];	 
 				$durataProvv = $dati["durata"];
 				trace("Affidamento forzato all'agenzia $IdAgenzia (cod=$idRegolaProvvigione) perche' recupero su rifinanziamento",FALSE);
-				$msgForHistory = "Affidamento forzato a City (24) perché contratto di rifinanziamento (prodotto PO o PR) andato a recupero";		
+				$msgForHistory = "Affidamento forzato a City (24) perchï¿½ contratto di rifinanziamento (prodotto PO o PR) andato a recupero";		
 				return $IdAgenzia;
 			}
 		}
@@ -172,13 +172,13 @@ function Custom_Delegation($IdContratto,&$msgForHistory,&$idRegolaProvvigione,$I
 		}
 		
 		//-----------------------------------------------------------------------------------
-		// Gestione flotte (accorpamenti): se il cliente ha altri contratti già affidati, 
+		// Gestione flotte (accorpamenti): se il cliente ha altri contratti giï¿½ affidati, 
 		// affida alla stessa
 		// agenzia. Questo sfrutta il fatto che, nella "affidaTutti" le classificazioni 
-		// vengono affidate in ordine di gravità decrescente
+		// vengono affidate in ordine di gravitï¿½ decrescente
 		//-----------------------------------------------------------------------------------
 		
-		// 28/8/2012: prima controlla se il contratto è destinato alla gestione flotte vera e propria:
+		// 28/8/2012: prima controlla se il contratto ï¿½ destinato alla gestione flotte vera e propria:
 		// in tal caso, nnon fa l'accorpamento, che potrebbe portarlo su agenzia non appropriata
 		$flotte = getScalar("SELECT COUNT(*) FROM v_cond_affidamento c WHERE IdContratto=$IdContratto AND ragionesociale>''  
 			and 1<(select count(*) from contratto where ifnull(idclasse,1) not in (1,18) and idcliente=c.idcliente)
@@ -197,7 +197,7 @@ function Custom_Delegation($IdContratto,&$msgForHistory,&$idRegolaProvvigione,$I
 		$gravita   = $dati["Ordine"];
 		if ($IdAgenzia>0)
 		{
-			trace("Contratto già affidato, l'affido non viene modificato",FALSE);
+			trace("Contratto giï¿½ affidato, l'affido non viene modificato",FALSE);
 			return $IdAgenzia;
 		}
 		if (fuoriRecupero($IdContratto))
@@ -213,8 +213,8 @@ function Custom_Delegation($IdContratto,&$msgForHistory,&$idRegolaProvvigione,$I
 
 		if ($IdStatoRecupero==25 || $IdStatoRecupero==27) // attesa STR / PAP
 			return FALSE; 	
-		// Determina se ci sono altri contratti dello stesso cliente, già affidati, non positivi e in classi > 2
-		// e peggiori o della stessa gravità alla classe attuale 
+		// Determina se ci sono altri contratti dello stesso cliente, giï¿½ affidati, non positivi e in classi > 2
+		// e peggiori o della stessa gravitï¿½ alla classe attuale 
 		// Inoltre devono essere affidati ad un codice provvigione compatibile con il tipo prodotto
 		// (leasing o loan)
 		$condFam = substr($dati["CodContratto"],0,2)=="LO"?1:2;
@@ -235,7 +235,7 @@ function Custom_Delegation($IdContratto,&$msgForHistory,&$idRegolaProvvigione,$I
 				AND c.IdClasse!=18 AND c.IdClasse>2 AND cl.Ordine>=$gravita";
 
 		// Per l'ultima condizione, verifica sia la regola provvigionale sia la regola d'affidamento,
-		// perché quella provvigionale può non aver specificata la restrizione sulla fam. prodotto)
+		// perchï¿½ quella provvigionale puï¿½ non aver specificata la restrizione sulla fam. prodotto)
 		// NB: le regole provv. devono essere ancora valide alla data del nuovo affido, che viene qui calcolata
 		//     per default come 30 gg dalla data di oggi (quindi in pratica si verificano le regole valide per lotti
 		//     che finiscono da qui a un mese).
@@ -265,7 +265,7 @@ function Custom_Delegation($IdContratto,&$msgForHistory,&$idRegolaProvvigione,$I
 			$durataProvv = $dati["durata"];
 			trace("Affidamento forzato all'agenzia $IdAgenzia (cod=$idRegolaProvvigione) come altro contratto dello stesso cliente",FALSE);
 			$msgForHistory = "Affidamento forzato alla stessa agenzia delle altre pratiche dello stesso cliente";		
-/* eliminato perché risolto in generale nella assignAgent
+/* eliminato perchï¿½ risolto in generale nella assignAgent
 			// Aggiorna il campo IdAgente, in modo che l'assegnazione all'agente sia bypassata e lasci lo stesso
 			// Se poi l'affido non viene fatto, il campo viene resettato
 		//	if ($IdAgente>0) // potrebbe essere una pratica non affidata ad agente
@@ -287,7 +287,7 @@ function Custom_Delegation($IdContratto,&$msgForHistory,&$idRegolaProvvigione,$I
 //----------------------------------------------------------------
 // Custom_Classification
 // Classifica una pratica secondo criteri custom
-// Ritorna: FALSE se non può stabilire la classificazione e demanda
+// Ritorna: FALSE se non puï¿½ stabilire la classificazione e demanda
 //               la cosa alle regole standard
 //          0    se decide di non classificare
 //          IdClasse   se assegnata alla classe ritornata
@@ -303,7 +303,7 @@ function Custom_Classification($IdContratto)
 		//-----------------------------------------------------------------------------------------------------------
 		if ($pratica["ImpRataFinale"]>0) // prevede una rata finale
 		{
-			// Controlla se la rata finale è insoluta
+			// Controlla se la rata finale ï¿½ insoluta
 			if (rowExistsInTable("insoluto","IdContratto=$IdContratto AND NumRata>" . 
 			       ($pratica["NumRate"]-1) . " AND ImpInsoluto>10"))
 			{
@@ -326,13 +326,13 @@ function Custom_Classification($IdContratto)
 					return getScalar("SELECT IdClasse FROM classificazione WHERE CodClasse='PDR1'"); 
 				} // se invece e' recidiva, segue la strada normale
 			}
-//			else // più di un insoluto: segue la strada normale (di solito è in lav.interna)
+//			else // piï¿½ di un insoluto: segue la strada normale (di solito ï¿½ in lav.interna)
 		}
 		
 		//-----------------------------------------------------------------------------------------------------------
 		// Imposta classificazione per comodato d'uso e altri contratti per dipendenti Toyota
 		//-----------------------------------------------------------------------------------------------------------
-		if (in_array($IdProdotto,array(83,84,166,84,100,219,221)))  // comodato d'uso e altri prodotti per i dipendenti Toyota
+		if (in_array($IdProdotto,array(83,84,166,84,100,219,221,408)))  // comodato d'uso e altri prodotti per i dipendenti Toyota
 		{
 			trace("Custom_Classification: comodato",FALSE);
 			return getScalar("SELECT IdClasse FROM classificazione WHERE CodClasse='COM'"); 
@@ -348,14 +348,14 @@ function Custom_Classification($IdContratto)
 			if ($row["tecnici"]==1 && $row["nontecnici"]==0)  // solo 1 insoluto tecnico
 			{
                 if ($pratica["Giorni"]<=30 && $pratica["FlagRecupero"]!='Y') // fino a 30 gg non recidivo
-                //if ($pratica["IdClasse"]==NULL && $pratica["FlagRecupero"]!='Y') // è la prima volta in assoluto
+                //if ($pratica["IdClasse"]==NULL && $pratica["FlagRecupero"]!='Y') // ï¿½ la prima volta in assoluto
                 {
 					//trace("Custom_Classification: insoluto tecnico T00",FALSE);
 					//return getScalar("SELECT IdClasse FROM classificazione WHERE CodClasse='T00'"); /* torna il codice di classificazione "insoluto tecnico" */	             
 					trace("Custom_Classification: insoluto tecnico T30",FALSE);
 					return getScalar("SELECT IdClasse FROM classificazione WHERE CodClasse='T30'"); /* torna il codice di classificazione "insoluto tecnico" */	             
 				}
-				// Passa da T00 a T01 se è T00 da almeno 5 giorni
+				// Passa da T00 a T01 se ï¿½ T00 da almeno 5 giorni
 //				else if ($pratica["CodClasse"]=="T00")
 //				{
 //	//			 	if (ISODate($pratica["DataCambioClasse"])<=ISODate(mktime(0,0,0,date("n"),date("j")-5,date("Y"))))
@@ -363,7 +363,7 @@ function Custom_Classification($IdContratto)
 //						trace("Custom_Classification: insoluto tecnico T01",FALSE);
 //						return getScalar("SELECT IdClasse FROM classificazione WHERE CodClasse='T01'"); /* torna il codice di classificazione "insoluto tecnico" */	             
 //					}
-//					else // T00 da poco: rimane com'è
+//					else // T00 da poco: rimane com'ï¿½
 //					{
 //						return $pratica["IdClasse"];			
 //					}
@@ -385,7 +385,7 @@ function Custom_Classification($IdContratto)
 //------------------------------------------------------------------------------
 // Custom_List
 // Crea i dati per una lista custom (all'interno di praticheCorrenti.php)
-// Ritorna: FALSE se quella data non è una lista riconosciuta
+// Ritorna: FALSE se quella data non ï¿½ una lista riconosciuta
 // Argomenti: $task		task=nome in codice della lista
 //            $join     join da inserire nella SELECT
 //            (byRef) $query  pezzo della query da eseguire
@@ -448,7 +448,7 @@ function Custom_Return($IdContratto,$IdAgenzia,$CodRegolaProvvigione,$dataInizio
 			trace("Custom_Return: rientrata da SETEL 27/FIDES L2/OSIRC L3/OSIRC 2A ma non messa in stato DBT causa affido forzato: ".print_r($IdAffidoForzato,TRUE),FALSE);
 	}
 	//--------------------------------------------------------------------------------------
-	// Dopo il rientro da stragiudiziale, se è stata registrata una PDP perdita di possesso
+	// Dopo il rientro da stragiudiziale, se ï¿½ stata registrata una PDP perdita di possesso
 	// e non ci sono richieste di riaffido, passa la pratica in write off
 	//--------------------------------------------------------------------------------------
 	if (rowExistsInTable("storiarecupero s JOIN azione a ON s.IdAzione=a.IdAzione AND CodAzione='PDP'
@@ -456,7 +456,7 @@ function Custom_Return($IdContratto,$IdAgenzia,$CodRegolaProvvigione,$dataInizio
 	                     "s.IdContratto=$IdContratto AND azs.stato!='R'"))
 	{ //esiste una registrazione valida di perdita di possesso
 		$prossimoAffido = getScalar("SELECT IdAffidoForzato FROM assegnazione WHERE IdContratto=$IdContratto AND DataFin='$dataFineAffido'");
-		if (!($prossimoAffido>'')) // non c'è forzatura di riaffido
+		if (!($prossimoAffido>'')) // non c'ï¿½ forzatura di riaffido
 		{
 			if (impostaStato("WRKPROPWO",$IdContratto))
  				trace("Passaggio automatico in WriteOff per presenza di un'azione PDP su idContratto=$IdContratto",FALSE);
@@ -467,8 +467,8 @@ function Custom_Return($IdContratto,$IdAgenzia,$CodRegolaProvvigione,$dataInizio
 	else
 	{
 		//--------------------------------------------------------------------------------------
-		// Dopo il rientro da stragiudiziale step 1, se c'è stato un incasso forza il riaffido
-		// alla stessa agenzia, a meno che non ci sia già una richiesta di riaffido pendente
+		// Dopo il rientro da stragiudiziale step 1, se c'ï¿½ stato un incasso forza il riaffido
+		// alla stessa agenzia, a meno che non ci sia giï¿½ una richiesta di riaffido pendente
 		//--------------------------------------------------------------------------------------
 		$row 	= getRow("SELECT FasciaRecupero,IdRegolaProvvigione FROM regolaprovvigione WHERE CodRegolaProvvigione='$CodRegolaProvvigione' AND DataFin>CURDATE()");
 		$fascia = $row["FasciaRecupero"];
@@ -477,7 +477,7 @@ function Custom_Return($IdContratto,$IdAgenzia,$CodRegolaProvvigione,$dataInizio
 		{
 			$IdAffidoForzato = getScalar("SELECT IdAffidoForzato FROM assegnazione WHERE IdContratto=$IdContratto"
 				." AND IdAgenzia=$IdAgenzia AND DataFin='".ISODate($dataFineAffido)."'");
-			if (!($IdAffidoForzato>0)) // non c'è stata già una forzatura
+			if (!($IdAffidoForzato>0)) // non c'ï¿½ stata giï¿½ una forzatura
 			{
 				// Calcola il pagato nell'intero periodo di affido STR
 				$pagato = getScalar("SELECT sum(ImpPagato-ImpIncassoImproprio) FROM storiainsoluto WHERE IdContratto=$IdContratto"
@@ -537,14 +537,14 @@ function Custom_Search($sField,&$where_search,$schema=MYSQL_SCHEMA)
 				$where_search = "v.numPratica = '".$sField."'";
 				break;
 			case 'LE': 
-				$where_search = "v.numPratica LIKE '".$sField."%'"; // perché può esserci il trattino finale "-2"
+				$where_search = "v.numPratica LIKE '".$sField."%'"; // perchï¿½ puï¿½ esserci il trattino finale "-2"
 				break;
 		}
 	}
 	
 	if ($where_search=="") // nessuno dei casi precedenti
 	{
-		// tolta ricerca su num pratica, perché gestita dai casi precedenti
+		// tolta ricerca su num pratica, perchï¿½ gestita dai casi precedenti
 		//$where_search = "numPratica LIKE '%".$sField."%'"; 
 		// Determina la lista di IdCliente che soddisfano i criteri (nome o rag. sociale)
 		$clienti = fetchValuesArray("SELECT IdCliente FROM $schema.cliente WHERE IFNULL(Nominativo,RagioneSociale) LIKE '%".$sField."%'");
@@ -572,7 +572,7 @@ function Custom_Search($sField,&$where_search,$schema=MYSQL_SCHEMA)
 //------------------------------------------------------------------------------
 function Custom_Duration($IdContratto,$IdRegolaProvvigione,$dataInizioAffido)
 {
-	// non vale più dal 2015
+	// non vale piï¿½ dal 2015
 	/*
 	$CodRegolaProvvigione = getScalar("SELECT CodRegolaProvvigione FROM regolaprovvigione WHERE IdRegolaProvvigione=0$IdRegolaProvvigione");
 	if ($CodRegolaProvvigione=='26' // IRC stragiudiziale step 2, 180 giorni se maggiore di 10K o irreperibile
@@ -600,7 +600,7 @@ function Custom_Duration($IdContratto,$IdRegolaProvvigione,$dataInizioAffido)
 //------------------------------------------------------------------------------
 // Custom_Import_Check
 // Applica una regola custom di controllo ad un campo di input all'import
-// Ritorna: FALSE se il valore è errato
+// Ritorna: FALSE se il valore ï¿½ errato
 //          il campo $reason in tal caso deve contenere un testo con il motivo dell'errore
 //------------------------------------------------------------------------------
 function Custom_Import_Check($table,$column,$value,&$reason) {
