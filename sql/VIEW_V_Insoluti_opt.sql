@@ -25,7 +25,7 @@ Numrate - (period_diff(EXTRACT(YEAR_MONTH FROM curdate()),EXTRACT(YEAR_MONTH FRO
 co.IdStatoRinegoziazione AS FlagRinegoziazione,v.StatoRinegoziazione,
 DescrBene,CodBene,FormDettaglio,IdCOntrattoDerivato,DataChiusura,StatoLegale,co.IdStatoLegale,co.IdStatoStragiudiziale,Garanzie,
 IFNULL(co.ImpInsoluto,IF(IdAgenzia>0,ImpSpeseRecupero,0)+IF(rp.FlagInteressiMora='Y',ImpInteressiMora,0))
-+ImpPagato AS ImpDebitoIniziale
++ImpPagato AS ImpDebitoIniziale, v.CodCliente
 from contratto co
 join _opt_insoluti v ON v.IdContratto=co.IdContratto
 left join regolaripartizione rp ON rp.IdRegolaProvvigione=co.IdRegolaProvvigione;
