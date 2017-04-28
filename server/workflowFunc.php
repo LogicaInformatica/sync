@@ -61,12 +61,12 @@ function getActions($Contracts,$consideraStatoRecupero=true,$consideraProfilo=tr
 	if ($isNote) {
 		$sql .= " AND a.IdAzione IN (SELECT IdAzione FROM azionetipoazione WHERE IdTipoAzione IN (12,13))";
 	} else {
-	//	if (count($Contracts)>1) // più di un contratto selezionato?
-	//		$sql .= " AND FlagMultipla='Y'"; // filtra solo le azioni che possono essere eseguite su più contratti
+	//	if (count($Contracts)>1) // piï¿½ di un contratto selezionato?
+	//		$sql .= " AND FlagMultipla='Y'"; // filtra solo le azioni che possono essere eseguite su piï¿½ contratti
 	}
 
-	if (count($Contracts)>1) // più di un contratto selezionato?
-		$sql .= " AND FlagMultipla='Y'"; // filtra solo le azioni che possono essere eseguite su più contratti
+	if (count($Contracts)>1) // piï¿½ di un contratto selezionato?
+		$sql .= " AND FlagMultipla='Y'"; // filtra solo le azioni che possono essere eseguite su piï¿½ contratti
 	
 	$sql .= " ORDER BY sa.IdAzione,sa.Ordine,sa.IdStatoAzione";
 	$actionAll = getFetchArray($sql);
@@ -97,18 +97,18 @@ function getActions($Contracts,$consideraStatoRecupero=true,$consideraProfilo=tr
 //-------------------------------------------------------------------------------------
 function actionsAllowedOnContract($actionAll,$contract,$consideraStatoRecupero=true)
 {
-	global $context; // può servire nella Condizione registrata sul DB
+	global $context; // puï¿½ servire nella Condizione registrata sul DB
 	$actions = array();
 	$sql = "SELECT 1 FROM v_contratto_workflow v WHERE IdContratto=$contract";
 	$lastAddition = "";
 	foreach($actionAll as $element) // loop sulle righe di statoAzione
 	{
 		$IdAzione = $element['IdAzione'];
-		if (array_key_exists($IdAzione,$actions)) // azione già segnata come consentita
+		if (array_key_exists($IdAzione,$actions)) // azione giï¿½ segnata come consentita
 			continue; // passa alla successiva riga di StatoAzione
 		
 		$addition = "";
-		// Test sulla famiglia prodotto: da cambiare se si cicla più di due livelli
+		// Test sulla famiglia prodotto: da cambiare se si cicla piï¿½ di due livelli
 		if ($element['IdFamiglia']!=null)
 			$addition .= " AND (IdFamiglia=".$element['IdFamiglia']." OR IdFamigliaParent=".$element['IdFamiglia'].")";
 		if ($element['IdStatoContratto']!=null)
@@ -129,9 +129,9 @@ function actionsAllowedOnContract($actionAll,$contract,$consideraStatoRecupero=t
 			$addition .= " AND ($condizione)"; 
 		}
 		// Esegue la SELECT sulla pratica condizionata a tutte le condizioni definite per la specifica Azione
-		// Se il risultato è non vuoto, include l'IdStatoAzione e il titolo azione nel risultato
-		// Se esistono più righe per azione in statoAzione, considera solo la prima soddisfatta
-		// 2013-12-06: ottimizza non ripetendo la query se è uguale alla precedente OK
+		// Se il risultato ï¿½ non vuoto, include l'IdStatoAzione e il titolo azione nel risultato
+		// Se esistono piï¿½ righe per azione in statoAzione, considera solo la prima soddisfatta
+		// 2013-12-06: ottimizza non ripetendo la query se ï¿½ uguale alla precedente OK
 		if ($addition=="" || $addition==$lastAddition || getScalar($sql.$addition)==1)  // il contratto soddisfa tutte le condizioni
 		{  // azione consentita
 			if (!array_key_exists($IdAzione,$actions))
@@ -193,7 +193,7 @@ function readAllActions(&$flat,$isNote,$isEmGrid,$includiSTR,$includiLEG,$isStor
 
 //---------------------------------------------------------------------------------------
 // getApprovers
-// Restituisce un array di utenti che possono approvare (o più precisamente, eseguire
+// Restituisce un array di utenti che possono approvare (o piï¿½ precisamente, eseguire
 // l'azione indicata su) il contratto dato in base alle caratteristiche del contratto 
 // e dei profili utente 
 // Argomenti: 1) id del contratto  2) codice dell'azione di approvazione
@@ -210,7 +210,7 @@ function getApprovers($idcontratto,$nextAzione)
 								." JOIN utente u ON pu.IdUtente=u.IdUtente"
 								." WHERE CodAzione='$nextAzione'");
 		// per ogni profilo utente controlla che il contratto rientri nei parametri del profiloUtente
-		// Se sì, aggiunge all'array restituito
+		// Se sï¿½, aggiunge all'array restituito
 		foreach ($profili as $profutente)
 		{
 			if ($profutente["IdFamiglia"]) // condizione sulla famiglia di prodotto
@@ -287,7 +287,7 @@ function getApproversAtStep($Contracts,$fromState)
 								." WHERE IdAzione IN ($IdAzioni)");
 			// per ogni profilo utente/utente abilitato ad una delle azioni ammesse
 			// controlla che il contratto rientri nei parametri del profiloUtente
-			// Se sì, aggiunge l'utente all'array restituito
+			// Se sï¿½, aggiunge l'utente all'array restituito
 			foreach ($profili as $profutente)
 			{
 				if ($profutente["IdFamiglia"]) // condizione sulla famiglia di prodotto
@@ -402,7 +402,7 @@ function getDefaultDate($idazione,$default,&$numGiorni)
 	}
 	if ($default=="") { // usa un default generale (sconsigliato) 
 		$gSett = date('N');
-		$GG = $gSett+3;     // default 3 giorni da adesso, ma il chiamante può specificarlo
+		$GG = $gSett+3;     // default 3 giorni da adesso, ma il chiamante puï¿½ specificarlo
 		switch($GG){
 			case 6: $gSett=$GG+2;
 				break;
@@ -412,7 +412,7 @@ function getDefaultDate($idazione,$default,&$numGiorni)
 		}
 		$default = "CURDATE() + INTERVAL $gSett DAY";
 	}else{ // c'e' e' una espressione MySql come ad es. "NOW()+INTERVAL 2 DAY" oppure una data come 9999-12-31
-		if (preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/',$default)) { // c'è una data costante, non deve aggiustare nulla (NOTA, la data deve essere tra apici)
+		if (preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/',$default)) { // c'ï¿½ una data costante, non deve aggiustare nulla (NOTA, la data deve essere tra apici)
 			// prosegue
 		} else {
 			//controllo della caduta del giorno ed aggiustamento
@@ -481,7 +481,7 @@ function assegnaOperatore($contratto,$newop,$writeHist=false)
 				rollback();
 				return FALSE;
 			}
-			// Se il contratto non era già assegnato e lo stato lo consente, mette in stato OPE
+			// Se il contratto non era giï¿½ assegnato e lo stato lo consente, mette in stato OPE
 			if ($dati["CodStatoRecupero"]==null || $dati["CodStatoRecupero"]=='NOR')
 			{
 				$statoOPE = getScalar("SELECT IdStatoRecupero FROM statorecupero WHERE CodStatoRecupero='OPE'");
@@ -533,7 +533,7 @@ function assegnaTeam($contratto,$newop,$writeHist=false)
 				rollback();
 				return FALSE;
 			}
-			// Se il contratto non era già assegnato e lo stato lo consente, mette in stato OPE
+			// Se il contratto non era giï¿½ assegnato e lo stato lo consente, mette in stato OPE
 			if ($dati["CodStatoRecupero"]==null || $dati["CodStatoRecupero"]=='NOR')
 			{
 				$statoOPE = getScalar("SELECT IdStatoRecupero FROM statorecupero WHERE CodStatoRecupero='OPE'");
@@ -623,7 +623,7 @@ function affidaAgenzia($contratto,$newag,$dataFineAffido,$writeHist=false,$dataI
 		if (!$newag)
 			$newag = "NULL";
 		
-		// Se la pratica è in affido su agenzia diversa, la revoca; se è la stessa non fa nulla
+		// Se la pratica ï¿½ in affido su agenzia diversa, la revoca; se ï¿½ la stessa non fa nulla
 		beginTrans();
 		$dati = getRow("SELECT IdAgenzia,IdRegolaProvvigione,DataInizioAffido FROM contratto c"
 		 ." WHERE IdContratto=$contratto");
@@ -649,7 +649,7 @@ function affidaAgenzia($contratto,$newag,$dataFineAffido,$writeHist=false,$dataI
 				$cambiaProvv = TRUE;		
 			}
 		}
-		else if ($IdAgenzia) // attualmente è affidato: revoca, prima di riassegnare
+		else if ($IdAgenzia) // attualmente ï¿½ affidato: revoca, prima di riassegnare
 		{
 			if (!revocaAgenzia($contratto,TRUE,"REV"))
 			{
@@ -732,7 +732,7 @@ function affidaAgenzia($contratto,$newag,$dataFineAffido,$writeHist=false,$dataI
 		}
 
 		//-----------------------------------------------------------------------------
-		// Se è presente una riga di assegnazione per lav.interna la "chiude"
+		// Se ï¿½ presente una riga di assegnazione per lav.interna la "chiude"
 		//-----------------------------------------------------------------------------
 		if (!chiudeAffidamentoInterno($contratto))
 		{
@@ -740,14 +740,14 @@ function affidaAgenzia($contratto,$newag,$dataFineAffido,$writeHist=false,$dataI
 			return FALSE;
 	    }
 		
-		if ($IdAgenzia!=$newag) // non è solo un cambio cod. provv
+		if ($IdAgenzia!=$newag) // non ï¿½ solo un cambio cod. provv
 		{
 			//-----------------------------------------------------------------------------
 			// Registra l'affido nella tabella Assegnazione
 			//-----------------------------------------------------------------------------
 			// Nota dal 13/3/14: SpeseIncasso in v_dettaglio_insoluto non tiene conto delle eventuali spese
 			// calcolate nelle rate positivizzate in storiainsoluto, come fa invece la aggiornaCampiDerivati.
-			// Ma questo non è un problema qui, perché si sta iniziano l'affido e non ci sono ancora quindi
+			// Ma questo non ï¿½ un problema qui, perchï¿½ si sta iniziano l'affido e non ci sono ancora quindi
 			// rate portate in storiainsoluto
 			$dati = getRow("SELECT IdOperatore,IdClasse,InteressiMora,SpeseIncasso FROM v_dettaglio_insoluto WHERE IdContratto=$contratto");
 			$colList = ""; // inizializza lista colonne
@@ -815,7 +815,7 @@ function affidaAgenzia($contratto,$newag,$dataFineAffido,$writeHist=false,$dataI
 		// Se la pratica era in classe EXIT, ricalcola la classificazione corretta
 		toglieClasseExit($contratto); 
 		
-		// Aggiorna i campi derivati, perché possono essere cambiate i flags per spese e idm
+		// Aggiorna i campi derivati, perchï¿½ possono essere cambiate i flags per spese e idm
 	    if (!aggiornaCampiDerivati($contratto))
 		{
 			rollback();
@@ -926,9 +926,9 @@ function revocaAgenzia($contratto,$writeHist=false,$tipoAzione="REV",&$error)
 				if (!execute("UPDATE contratto SET IdAgente=NULL,IdRegolaProvvigione=NULL,CodRegolaProvvigione=NULL WHERE IdContratto=$contratto"))
 					return FALSE;
 			trace($error="Revoca richiesta su pratica non affidata: nessuna operazione eseguita",FALSE);
-			return ""; // revoca nulla, non c'è affido
+			return ""; // revoca nulla, non c'ï¿½ affido
 		}
-		// Se è un affido senza rientro (gestione legale) non ha effetto
+		// Se ï¿½ un affido senza rientro (gestione legale) non ha effetto
 		if ($tipoAzione=="RIE" && $dati["FlagNoRientro"]=='Y')
 		{
 			trace("Fine affido che non prevede il rientro: pratica lasciata assegnata a ".$dati["TitoloAgenzia"],FALSE);
@@ -940,7 +940,7 @@ function revocaAgenzia($contratto,$writeHist=false,$tipoAzione="REV",&$error)
 		beginTrans();
 		
 		//-----------------------------------------------------------------------------
-		// Storicizza le rate di insoluto in StoriaInsoluto, senza però toglierle
+		// Storicizza le rate di insoluto in StoriaInsoluto, senza perï¿½ toglierle
 		// da Insoluto, visto che non sono chiuse
 		//-----------------------------------------------------------------------------
 		$rate = fetchValuesArray("SELECT NumRata FROM insoluto WHERE IdContratto=$contratto");
@@ -955,8 +955,8 @@ function revocaAgenzia($contratto,$writeHist=false,$tipoAzione="REV",&$error)
 		}
 
 		//-------------------------------------------------------------------------------------------------
-		// Se è una revoca esplicita, elimina le eventuali positività già registrate in storia insoluto,
-		// trasformandole in righe di revoca (altrimenti l'agenzia continua a vederle come positività)
+		// Se ï¿½ una revoca esplicita, elimina le eventuali positivitï¿½ giï¿½ registrate in storia insoluto,
+		// trasformandole in righe di revoca (altrimenti l'agenzia continua a vederle come positivitï¿½)
 		//-------------------------------------------------------------------------------------------------
 		if ($tipoAzione=="REV")
 		{
@@ -970,9 +970,9 @@ function revocaAgenzia($contratto,$writeHist=false,$tipoAzione="REV",&$error)
 		}
 		
 		//-------------------------------------------------------------------------------------------------
-		// Se lo stato attuale non è "affidata" (perché è in uno stato di workflow), la revoca non provoca
+		// Se lo stato attuale non ï¿½ "affidata" (perchï¿½ ï¿½ in uno stato di workflow), la revoca non provoca
 		// un cambio di stato, ma cambia il contenuto del campo IdStatoRecuperoPrecedente in modo che rifletta
-		// il fatto che la pratica non è più in affido
+		// il fatto che la pratica non ï¿½ piï¿½ in affido
 		//-------------------------------------------------------------------------------------------------
 		if ($CodStatoRecupero!='AGE' && $CodStatoRecupero!='STR1' && $CodStatoRecupero!='STR2' 
 		&& $CodStatoRecupero!='LEG' && $CodStatoRecupero!='AFR') // non in stato semplicemente "affidato"
@@ -984,15 +984,15 @@ function revocaAgenzia($contratto,$writeHist=false,$tipoAzione="REV",&$error)
 		$IdAffidamento = $rowass["IdAssegnazione"];
 		$IdAffidoForzato = $rowass["IdAffidoForzato"];
 		//-------------------------------------------------------------------------------------------------
-		// Se è una revoca esplicita, lo mette in stato di lavorazione interna, in modo che il motore
+		// Se ï¿½ una revoca esplicita, lo mette in stato di lavorazione interna, in modo che il motore
 		// non effettui automaticamente un nuovo affido. In questo caso, viene anche cancellata la riga
-		// in assegnazione, che non deve più contribuire alla visibilità né alle provvigioni
+		// in assegnazione, che non deve piï¿½ contribuire alla visibilitï¿½ nï¿½ alle provvigioni
 		//-------------------------------------------------------------------------------------------------
 		if ($tipoAzione=="REV")
 		{
 			if ($nuovostato != "*") 	// era in stato semplicemente "affidato"
 			{
-				if ($IdAffidoForzato!=null && $IdAffidoForzato!=0 && $IdAffidoForzato!=-1) // c'è un forzatura di affido
+				if ($IdAffidoForzato!=null && $IdAffidoForzato!=0 && $IdAffidoForzato!=-1) // c'ï¿½ un forzatura di affido
 					$nuovostato = $CodStatoRecupero=='AGE'?'ATT':'ATS'; // mette in attesa
 				else // nessuna forzatura di affido					
 					$nuovostato = "INT";	// va in lavorazione interna
@@ -1044,9 +1044,9 @@ function revocaAgenzia($contratto,$writeHist=false,$tipoAzione="REV",&$error)
 			// 1/12/2011: Se richiesto affido forzato, va necessariamente in stato "in attesa di affido"
 			if ($IdAffidoForzato>0) // forzatura standard
 			{
-				trace("Pratica messa in attesa di affido perché esiste una forzatura",FALSE);
+				trace("Pratica messa in attesa di affido perchï¿½ esiste una forzatura",FALSE);
 				if ($CodStatoRecupero=="AGE")
-					$nuovostato = "ATT"; // messo in attesa perché sarà forzato
+					$nuovostato = "ATT"; // messo in attesa perchï¿½ sarï¿½ forzato
 				else
 					$nuovostato = "ATS"; // in attesa affido STR/LEG
 			}
@@ -1057,12 +1057,12 @@ function revocaAgenzia($contratto,$writeHist=false,$tipoAzione="REV",&$error)
 				// classe a recupero e con affido: deve essere messa in attesa
 				// (basterebbe il secondo test, ma e' successo che qualche riga con flagrecupero=N avesse il NoAffido=Y, invece di NULL
 				$inattesa = $dati["FlagRecupero"]=='Y' && $dati["FlagNoAffido"]!='Y'; 
-				// in recupero se il debito è maggiore di 26
+				// in recupero se il debito ï¿½ maggiore di 26
 				$inrecupero = ($dati["Debito"]>=26);
 				// classe che prevede il recupero (non ad es. BP <7 giorni o <20gg)
 				$classeRecupero = $dati["FlagRecupero"]=='Y';
 				
-				// indica se è in stato DBT su OCS
+				// indica se ï¿½ in stato DBT su OCS
 				$inDBT = $dati["DataDbt"]>"";
 				//$stato = ($CodStatoRecupero=='STR2')?'ATP':($strleg?'ATS':($inrecupero?($inattesa?"ATT":"OPE"):"NOR"));
 
@@ -1080,7 +1080,7 @@ function revocaAgenzia($contratto,$writeHist=false,$tipoAzione="REV",&$error)
 				if ($nuovostato != "*") // in stato semplicemente "affidato" oppure 
 					$nuovostato = $stato;
 				else // era in qualche stato particolare (WF)
-					if ($inDBT && strpos($CodStatoRecupero,"DBT")!==FALSE) // workflow di dbt: può uscirne
+					if ($inDBT && strpos($CodStatoRecupero,"DBT")!==FALSE) // workflow di dbt: puï¿½ uscirne
 						$nuovostato = $stato;
 					else // altro workflow: ricorda dove andare a fine workflow
 						$nuovoStatoPrecedente = $stato;
@@ -1133,7 +1133,7 @@ function revocaAgenzia($contratto,$writeHist=false,$tipoAzione="REV",&$error)
 			}
 			if ($tipoAzione=="REV") // nella revoca manuale provvede a ricalcolare i campi derivati
 			{                       // nei rientri invece lo fa il chiamante			
-				// Aggiorna i campi derivati, perché possono essere cambiate i flags per spese e idm
+				// Aggiorna i campi derivati, perchï¿½ possono essere cambiate i flags per spese e idm
 	    		if (!aggiornaCampiDerivati($contratto))
 				{
 					$error = getLastError();
@@ -1167,10 +1167,10 @@ function revocaAgenzia($contratto,$writeHist=false,$tipoAzione="REV",&$error)
 
 //---------------------------------------------------------------------------------
 // rendePositivo
-// Mette in stato di positività un contratto (per incassi arrivati)
-// NB: il parametro $totale indice se è una positività totale, che produce
+// Mette in stato di positivitï¿½ un contratto (per incassi arrivati)
+// NB: il parametro $totale indice se ï¿½ una positivitï¿½ totale, che produce
 //     la storicizzazione di tutti gli insoluti 
-// NB: il beginTran/commit è nelle funzioni chiamanti
+// NB: il beginTran/commit ï¿½ nelle funzioni chiamanti
 //---------------------------------------------------------------------------------
 function rendePositivo($contratto,$totale)
 {
@@ -1185,11 +1185,11 @@ function rendePositivo($contratto,$totale)
 		
 		$dati = getRow("Select IdAgenzia,IdAgente,DataInizioAffido,DataFineAffido,IdClasse,IdStatoRecupero from contratto where IdContratto = $contratto");
 
-		// Modifica del 18/12/2011: se il contratto è già positivo, procede comunque, in modo che la storicizzaInsoluto provveda
+		// Modifica del 18/12/2011: se il contratto ï¿½ giï¿½ positivo, procede comunque, in modo che la storicizzaInsoluto provveda
 		// ad inserire/aggiornare le righe (su un contratto positivo possono arrivare, lasciandolo positivo, nuovi movimenti
 		// a debito (<5) o a credito.
 		// Modificato il 20/9/16 per evitare infinite registrazioni sui fuori recupero
-		if ($classe==$dati["IdClasse"]  // già  classe=POS, oppure ceduto/stornato oppure fuori recupero
+		if ($classe==$dati["IdClasse"]  // giï¿½  classe=POS, oppure ceduto/stornato oppure fuori recupero
 		or $dati["IdClasse"]=19
 		or $IdStatoCeduto==$dati["IdStatoRecupero"] or $IdStatoWriteoff==$dati["IdStatoRecupero"]) 
 		{
@@ -1199,7 +1199,7 @@ function rendePositivo($contratto,$totale)
 		
 		//---------------------------------------------------------------------------------
 		// Se si tratta di un contratto in lavorazione interna, modifica la data di fine
-		// affido nella riga di assegnazione (è 9999-12-31) con la data di oggi
+		// affido nella riga di assegnazione (ï¿½ 9999-12-31) con la data di oggi
 		//---------------------------------------------------------------------------------
 		if (!execute("UPDATE assegnazione SET DataFin=CURDATE() WHERE IdContratto=$contratto AND DataFin='9999-12-31'"))
 			return FALSE;
@@ -1207,8 +1207,8 @@ function rendePositivo($contratto,$totale)
 			trace("Chiuso record assegnazione per lav.interna in data odierna",FALSE);
 		
 		//---------------------------------------------------------------------------------
-		// Se si tratta di positività totale storicizza tutto l'insoluto in StoriaInsoluto
-		// se totale=false, significa che è stata chiamata solo per cambiare lo stato del
+		// Se si tratta di positivitï¿½ totale storicizza tutto l'insoluto in StoriaInsoluto
+		// se totale=false, significa che ï¿½ stata chiamata solo per cambiare lo stato del
 		// contratto, non per storicizzare
 		//---------------------------------------------------------------------------------
 		if ($totale)
@@ -1230,7 +1230,7 @@ function rendePositivo($contratto,$totale)
 		
 		//------------------------------------------------------------------------------------------
 		// Aggiorna i dati di classificazione,stato e affido ecc. sul contratto
-		// NB: la positività non altera l'assegnazione all'oper. interno  né l'affido
+		// NB: la positivitï¿½ non altera l'assegnazione all'oper. interno  nï¿½ l'affido
 		//     (dalla versione 0.9.9)
 		// NB2: (24-6-2011) lo stato recupero di affido deve rimanere lo stesso, visto che l'affido
 		//      non viene tolto
@@ -1281,7 +1281,7 @@ function rendePositivo($contratto,$totale)
 
 //---------------------------------------------------------------------------------
 // metteInAttesa
-// Mette in stato di ATT un contratto se non è affidato ma si trova in una
+// Mette in stato di ATT un contratto se non ï¿½ affidato ma si trova in una
 // classe che prevede l'affido.
 //---------------------------------------------------------------------------------
 function metteInAttesa($contratto,$forceINT=false)
@@ -1291,8 +1291,8 @@ function metteInAttesa($contratto,$forceINT=false)
 		$userid = getUserName();
 		$stato = getScalar("SELECT IdStatoRecupero FROM statorecupero WHERE CodStatoRecupero='ATT'");
 		if ($forceINT) {
-// correzione del 2/12/2013: se chiamato con force, gli eventuali controlli di ammissibilità sono già inclusi nella
-// regola che ha scatenato la chiamata, quindi li semplifica, per non elencare i vari stati in cui l'op è possibile
+// correzione del 2/12/2013: se chiamato con force, gli eventuali controlli di ammissibilitï¿½ sono giï¿½ inclusi nella
+// regola che ha scatenato la chiamata, quindi li semplifica, per non elencare i vari stati in cui l'op ï¿½ possibile
 			$statoOld  = getScalar("Select c.IdStatoRecupero"
 		      ." FROM contratto c LEFT JOIN statorecupero sr ON c.IdStatoRecupero=sr.IdStatoRecupero"
 		      ." LEFT JOIN classificazione cl ON c.IdClasse=cl.IdClasse "
@@ -1316,7 +1316,7 @@ function metteInAttesa($contratto,$forceINT=false)
 				rollback();
 				return FALSE;
 			}
-			// toglie IdAffidamento dalle eventuali righe di insoluto (è IdAffidamento della lav.Interna)
+			// toglie IdAffidamento dalle eventuali righe di insoluto (ï¿½ IdAffidamento della lav.Interna)
 			$sql = "UPDATE insoluto SET IdAffidamento=NULL WHERE IdContratto=$contratto";
 			if (!execute($sql))
 			{
@@ -1324,7 +1324,7 @@ function metteInAttesa($contratto,$forceINT=false)
 				return FALSE;
 			}
 			
-			// Chiude eventuale affidamento aperto (è affidamento della lav.Interna)
+			// Chiude eventuale affidamento aperto (ï¿½ affidamento della lav.Interna)
 			if (!chiudeAffidamentoInterno($contratto))
 			{
 				rollback();
@@ -1339,7 +1339,7 @@ function metteInAttesa($contratto,$forceINT=false)
 		}
 		else 
 		{
-			return TRUE; // niente da fare, va bene così
+			return TRUE; // niente da fare, va bene cosï¿½
 		}
 	} 
 	catch (Exception $e)
@@ -1357,7 +1357,7 @@ function metteInAttesa($contratto,$forceINT=false)
 // da "Insoluto"
 // Argomenti: 1) Id contratto
 //            2) Numero rata
-//            3) codice azione convenzionale per indicare il motivo della storicizzazione (RIEntro, REVoca, POSitività)
+//            3) codice azione convenzionale per indicare il motivo della storicizzazione (RIEntro, REVoca, POSitivitï¿½)
 //            4) data inizio affido (opzionale)
 //            5) data fine affido (opzionale)
 //-----------------------------------------------------------------------------------------------------------------------
@@ -1365,30 +1365,30 @@ function storicizzaInsoluto($contratto,$NumRata,$tipoAzione,$dataApertura=0,$dat
 {
 	try
 	{
-		// Modifica 18/12/2011: non si limita ad inserire, ma aggiorna la riga se già esiste, con il principio che 
-		// in StoriaInsoluto ci deve essere al massimo una sola riga a parità di contratto/rata/lotto con l'unica
-		// eccezione che una rata positiva può rientrare negativa ed essere quindi registrata prima come POS e al
+		// Modifica 18/12/2011: non si limita ad inserire, ma aggiorna la riga se giï¿½ esiste, con il principio che 
+		// in StoriaInsoluto ci deve essere al massimo una sola riga a paritï¿½ di contratto/rata/lotto con l'unica
+		// eccezione che una rata positiva puï¿½ rientrare negativa ed essere quindi registrata prima come POS e al
 		// rientro come RIE
 		//----------------------------------------------------------------------------------------------------------
-		// Casi possibili: anzitutto la riga esistente può essere solo di tipo POS,
-		// quella che arriva può essere POS, REV o RIE e può trovarsi su insoluto perché è
-		// un addebito arrivato (o tornato) dopo la positività, oppure perché è una riga a saldo zero o
-		// a credito, anche questa arrivata (o tornata) dopo la positività. ["tornata"] nel senso che tutte
-		// le rate non a zero sono scritte su Insoluto durante la ProcessInsoluti se c'è motivo di scriverle
-		// Quindi, se è POS si aggiornano i dati; se è REV si aggiorna anche il tipo; se è RIE
+		// Casi possibili: anzitutto la riga esistente puï¿½ essere solo di tipo POS,
+		// quella che arriva puï¿½ essere POS, REV o RIE e puï¿½ trovarsi su insoluto perchï¿½ ï¿½
+		// un addebito arrivato (o tornato) dopo la positivitï¿½, oppure perchï¿½ ï¿½ una riga a saldo zero o
+		// a credito, anche questa arrivata (o tornata) dopo la positivitï¿½. ["tornata"] nel senso che tutte
+		// le rate non a zero sono scritte su Insoluto durante la ProcessInsoluti se c'ï¿½ motivo di scriverle
+		// Quindi, se ï¿½ POS si aggiornano i dati; se ï¿½ REV si aggiorna anche il tipo; se ï¿½ RIE
 		// (rientro automatico di fine affido) ha importanza solo se a debito (altrimenti la
-		// riga POS già è stata aggiornata con il credito corrispondente). Se è a debito, e
+		// riga POS giï¿½ ï¿½ stata aggiornata con il credito corrispondente). Se ï¿½ a debito, e
 		// impInsoluto, ImpCapitale e ImpPagato sono identici a quelli della riga POS, non registra nulla;
-		// se ImpPagato è aumentato, lo aggiorna nella riga POS, altrimenti inserisce la riga RIE 
+		// se ImpPagato ï¿½ aumentato, lo aggiorna nella riga POS, altrimenti inserisce la riga RIE 
 		// ma senza IdAffidamento (in modo che eventuali ulteriori importi a debito siano considerati "viaggianti")
 		//----------------------------------------------------------------------------------------------------------
 		
 		$userid = getUserName();
 		
 		// legge i dati necessari da insoluto e contratto
-		// Non usa v_pratiche, perché i campi di sintesi nel contratto possono non essere stati ancora aggiornati
+		// Non usa v_pratiche, perchï¿½ i campi di sintesi nel contratto possono non essere stati ancora aggiornati
 		// 29/4/13: aggiunta assegnazione.DataIni che ha la precedenza sulla data inizio affido contratto nel
-		// caso di positività STR (le chiusre mensili ridefiniscono il periodo di affido ogni mese)
+		// caso di positivitï¿½ STR (le chiusre mensili ridefiniscono il periodo di affido ogni mese)
 		$dati = getRow("SELECT c.IdOperatore,c.IdAgenzia,c.IdAgente,i.IdTipoInsoluto,i.DataInsoluto AS DataScadenza,i.ImpDebitoIniziale,i.ImpCapitale,i.ImpInteressi,"
 						 ."i.ImpAltriAddebiti,i.ImpSpeseRecupero,i.ImpCapitaleAffidato,i.ImpIncassoImproprio,"
 						 ."i.ImpPagato,i.ImpInsoluto,IFNULL(a.DataIni,c.DataInizioAffido) AS DataInizioAffido,c.DataFineAffido,i.DataArrivo,i.IdAffidamento,c.IdStatoRecupero"
@@ -1401,7 +1401,7 @@ function storicizzaInsoluto($contratto,$NumRata,$tipoAzione,$dataApertura=0,$dat
 		}
 					
 		// 22/12/2011: storicizza anche quelli non affidati ma in lavorazione interna)
-		if (!($dati["IdAgenzia"]>0 || $dati["IdStatoRecupero"]==13)) // Non storicizzare le positività di quelli non affidati né in lav. interna
+		if (!($dati["IdAgenzia"]>0 || $dati["IdStatoRecupero"]==13)) // Non storicizzare le positivitï¿½ di quelli non affidati nï¿½ in lav. interna
 			return TRUE;
 		
 		// Legge riga preesistente
@@ -1410,7 +1410,7 @@ function storicizzaInsoluto($contratto,$NumRata,$tipoAzione,$dataApertura=0,$dat
 			$data = ISODate($dati["DataFineAffido"]);
 			$storia = getRow("SELECT * FROM storiainsoluto WHERE IdContratto=$contratto AND NumRata=$NumRata AND DataFineAffido='$data' AND CodAzione='POS'");
 		}
-		else // si tratta di storicizzazione pratica in lav. interna, la data fine non c'è
+		else // si tratta di storicizzazione pratica in lav. interna, la data fine non c'ï¿½
 		{
 			$storia = getRow("SELECT * FROM storiainsoluto WHERE IdContratto=$contratto AND NumRata=$NumRata AND DataFineAffido='9999-12-31' AND CodAzione='POS'");
 		}
@@ -1423,12 +1423,12 @@ function storicizzaInsoluto($contratto,$NumRata,$tipoAzione,$dataApertura=0,$dat
 			else
 				$oper = "INS";
 		}
-		else if ($tipoAzione=="RIE" && $dati["ImpInsoluto"]>0) // esiste, ma questo è un rientro con debito
+		else if ($tipoAzione=="RIE" && $dati["ImpInsoluto"]>0) // esiste, ma questo ï¿½ un rientro con debito
 		{
 			if ($dati["ImpDebitoIniziale"]==$storia["ImpInsoluto"] && $dati["ImpCapitale"]==$storia["ImpCapitale"]
 			&& $impPagato==$storia["ImpPagato"]) // RIE identico a POS, non serve registrarlo
 				$oper = "";
-			else if (round($impPagato-$storia["ImpPagato"],2)>0) // importo pagato è aumentato
+			else if (round($impPagato-$storia["ImpPagato"],2)>0) // importo pagato ï¿½ aumentato
 				$oper = "UPD";
 			else // nuovo addebito, diverso da quanto scritto in POS: inserisce ma slegato dall'affido
 			{
@@ -1440,7 +1440,7 @@ function storicizzaInsoluto($contratto,$NumRata,$tipoAzione,$dataApertura=0,$dat
 				$oper = "INS";
 			}
 		}
-		else if ($tipoAzione=="RIE" && $dati["ImpInsoluto"]<=0) // esiste, ma questo è un rientro con credito
+		else if ($tipoAzione=="RIE" && $dati["ImpInsoluto"]<=0) // esiste, ma questo ï¿½ un rientro con credito
 			$oper =""; // nessuna operazione
 		else
 			$oper ="UPD";
@@ -1502,7 +1502,7 @@ function storicizzaInsoluto($contratto,$NumRata,$tipoAzione,$dataApertura=0,$dat
 			}
 		}
 		//----------------------------------------------------------------------------
-		// Riga già storicizzata, aggiorna
+		// Riga giï¿½ storicizzata, aggiorna
 		//----------------------------------------------------------------------------
 		else if ($oper=="UPD")
 		{
@@ -1512,14 +1512,14 @@ function storicizzaInsoluto($contratto,$NumRata,$tipoAzione,$dataApertura=0,$dat
 			addSetClause($setClause,"DataScadenza",$dati["DataScadenza"],"D");
 			//IdAffidamento non deve cambiare
 			//addSetClause($setClause,"IdAffidamento",$dati["IdAffidamento"],"N");
-			// ImpInsoluto non cambia perché contiene il debito all'inizio dell'affido			
-			// ImpCapitaleDaPagare non cambia perché contiene il capitale da pagare all'inizio dell'affido			
-			addSetClause($setClause,"ImpCapitale",$dati["ImpCapitale"],"N");	 // questo può cambiare per successivi addebiti	
+			// ImpInsoluto non cambia perchï¿½ contiene il debito all'inizio dell'affido			
+			// ImpCapitaleDaPagare non cambia perchï¿½ contiene il capitale da pagare all'inizio dell'affido			
+			addSetClause($setClause,"ImpCapitale",$dati["ImpCapitale"],"N");	 // questo puï¿½ cambiare per successivi addebiti	
 			addSetClause($setClause,"ImpInteressi",$dati["ImpInteressi"],"N");	 	
 			addSetClause($setClause,"ImpSpeseRecupero",$dati["ImpSpeseRecupero"],"N");	 	
-			// nella nuova gestione la riga di insoluto contiene sempre il debitoiniziale corretto anche quando è una
+			// nella nuova gestione la riga di insoluto contiene sempre il debitoiniziale corretto anche quando ï¿½ una
 			// nuova riga successiva a storicizzazione, ma comunque usando il debitoinsoluto di storiainsoluto (che si chiama ImpInsoluto)
-			// si è sicuri di avere il debito iniziale originario
+			// si ï¿½ sicuri di avere il debito iniziale originario
 			$impPagato = ($storia["ImpInsoluto"]>$dati["ImpInsoluto"])?$storia["ImpInsoluto"]-$dati["ImpInsoluto"]:0;
 			trace("Importo pagato=$impPagato calcolato come differenza tra debito all'affido (".$storia["ImpInsoluto"]
 					.") e insoluto attuale (".$dati["ImpInsoluto"].")",FALSE);
@@ -1538,14 +1538,14 @@ function storicizzaInsoluto($contratto,$NumRata,$tipoAzione,$dataApertura=0,$dat
 			}
 			trace("Aggiornamento riga di StoriaInsoluto per IdContratto=$contratto AND NumRata=$NumRata AND DataFineAffido='$data' - CodAzione=$tipoAzione",FALSE);
 		}
-		else // rientro con credito, nessuna operazione, perché aggiornamento deve già essere avvenuto per codazione=POS
+		else // rientro con credito, nessuna operazione, perchï¿½ aggiornamento deve giï¿½ essere avvenuto per codazione=POS
 			trace("Aggiornamento ignorato riga di StoriaInsoluto per IdContratto=$contratto AND NumRata=$NumRata AND DataFineAffido='$data' - CodAzione=$tipoAzione",FALSE);
 		
 		//----------------------------------------------------------------------------
-		// Se la storicizzazione è dovuta al passaggio in positività, 
-		// cancella la riga da Insoluto. Se la riga ha un credito, verrà poi ricreata
+		// Se la storicizzazione ï¿½ dovuta al passaggio in positivitï¿½, 
+		// cancella la riga da Insoluto. Se la riga ha un credito, verrï¿½ poi ricreata
 		// in Insoluto dalla processAndClassify, quando necessario, ma fino ad allora
-		// non serve mantenerla anche là
+		// non serve mantenerla anche lï¿½
 		//----------------------------------------------------------------------------
 		if ($tipoAzione=="POS")
 		{
@@ -1607,7 +1607,7 @@ function aggiornaCampiDerivati($IdContratto)
 			            else i.ImpInsoluto
 			       end
 			      )
-			    ) as Capitale, #questo è il capitale da pagare ancora
+			    ) as Capitale, #questo ï¿½ il capitale da pagare ancora
 			$exprIntMora as InteressiMora,
 			SUM(IF(i.ImpAltriAddebiti IS NOT NULL,i.ImpInteressi,0)) AS InteressiMoraAddebitati,
 			sum(IF(i.ImpAltriAddebiti IS NOT NULL,i.ImpAltriAddebiti,
@@ -1638,7 +1638,7 @@ function aggiornaCampiDerivati($IdContratto)
 			trace("Non riuscita lettura dati dalla view v_dettaglio_insoluto per aggiornamento campi derivati",FALSE);
 			return FALSE;   
 		}
-		// 7/1/13: cambiata query con una  più veloce
+		// 7/1/13: cambiata query con una  piï¿½ veloce
 		/*
 	    $sql2 = "select max(datacompetenza)"
  				." from"
@@ -1695,7 +1695,7 @@ function aggiornaCampiDerivati($IdContratto)
 //-----------------------------------------------------------------------------------------------------
 // aggiornaSpeseRecupero
 // Aggiorna il campo ImpSpeseRecupero nel contratto, tenendo conto anche degli insoluti eventualmente
-// già storicizzati perché diventati positivi nel periodo di affido
+// giï¿½ storicizzati perchï¿½ diventati positivi nel periodo di affido
 //-----------------------------------------------------------------------------------------------------
 function aggiornaSpeseRecupero($IdContratto,$esisteInsoluto,$FlagInteressiMora,$ImpSpeseIncasso,$PercSpeseIncasso)
 {
@@ -1747,10 +1747,10 @@ function aggiornaSpeseRecupero($IdContratto,$esisteInsoluto,$FlagInteressiMora,$
 
 //-----------------------------------------------------------------------
 // segnaRecidivo
-// Imposta  FlagRecupero=Y nel contratto se esiste più di un movimento
+// Imposta  FlagRecupero=Y nel contratto se esiste piï¿½ di un movimento
 // di tipo "Insoluto" (il flag viene anche impostato da updateClass,
 // la prima volta che entra in una classe di recupero, ma questa funzione
-// è necessaria per individuare i contratti con una storia di insoluti
+// ï¿½ necessaria per individuare i contratti con una storia di insoluti
 // alle spalle).
 //-----------------------------------------------------------------------
 function segnaRecidivo($IdContratto)
@@ -1766,9 +1766,9 @@ function segnaRecidivo($IdContratto)
 		// conta gli insoluti dalle tabelle insoluto e StoriaInsoluto, per tener conto dei BP, che non hanno movimenti "X" espliciti
 		$numInsoluti2 = getScalar("SELECT COUNT(*) FROM (SELECT DISTINCT NumRata FROM storiainsoluto WHERE IdContratto=$IdContratto AND ImpCapitaleDaPagare>0 AND NumRata!=0"
 								 ." UNION SELECT DISTINCT NumRata FROM insoluto WHERE IdContratto=$IdContratto and ImpCapitale>0 AND ImpInsoluto>5 AND numrata!=0) X");
-		if ($numInsoluti1>1 || $numInsoluti2>1) // più di un insoluto
+		if ($numInsoluti1>1 || $numInsoluti2>1) // piï¿½ di un insoluto
 		{
-		 	if ($flag!="Y") // non ha già il flag che indica recidivo
+		 	if ($flag!="Y") // non ha giï¿½ il flag che indica recidivo
 			{
 				trace("Contratto=$IdContratto - imposta FlagRecupero=Y (recidivo) [movimenti di insoluto=$numInsoluti1, rate insolute trattate in cnc=$numInsoluti2]",FALSE);
 				return execute("UPDATE contratto SET FlagRecupero='Y' WHERE IdContratto=$IdContratto");
@@ -2111,7 +2111,7 @@ function cambiaStato($idStatoAzione,$contratto)
 		$sql = "SELECT idClasseSuccessiva, sa.idStatoRecuperoSuccessivo, CodStatoRecupero FROM statoazione sa "
 		      ." LEFT JOIN statorecupero s ON sa.idStatoRecuperoSuccessivo=s.IdStatoRecupero"
 		      ." WHERE sa.idStatoAzione=$idStatoAzione";
-		$datiCnt = getRow($sql); // se lo statoRecuperoSuccessivo è nullo
+		$datiCnt = getRow($sql); // se lo statoRecuperoSuccessivo ï¿½ nullo
 		if ($datiCnt==null)
 			return TRUE;
 		if ($datiCnt['idClasseSuccessiva']!=null)
@@ -2129,7 +2129,7 @@ function cambiaStato($idStatoAzione,$contratto)
 			          ." and idstatorecupero in "
 			          ."(select idstatorecupero from statorecupero where codstatorecupero like 'WRK%')";
 			$inwork = getScalar($sqlCont);
-			if($inwork==0) // se non è un workflow lo stato attuale del contratto, salvalo nello stato precedente
+			if($inwork==0) // se non ï¿½ un workflow lo stato attuale del contratto, salvalo nello stato precedente
 			{	
 				$sqlrecP = "UPDATE contratto SET IdStatoRecuperoPrecedente=IdStatoRecupero WHERE IdContratto=$contratto";
 				if (!execute($sqlrecP))
@@ -2137,7 +2137,7 @@ function cambiaStato($idStatoAzione,$contratto)
 			}
 			if ($datiCnt['CodStatoRecupero'] == "ATT") // se chiesto passaggio in attesa di affido, esegue particolari operazioni
 			{
-				if (!metteInAttesa($contratto,true)) // forza anche se è in stato INT
+				if (!metteInAttesa($contratto,true)) // forza anche se ï¿½ in stato INT
 					return FALSE;
 			}
 			else
@@ -2148,7 +2148,7 @@ function cambiaStato($idStatoAzione,$contratto)
 				if (!execute($sql))
 					return FALSE;
 				
-				// Se è andato in lavorazione interna, provvede ai settaggi necessari
+				// Se ï¿½ andato in lavorazione interna, provvede ai settaggi necessari
 				if ($datiCnt['CodStatoRecupero'] == "INT")
 					inizioLavorazioneInterna($contratto);
 			}
@@ -2227,7 +2227,7 @@ function emailListaUtentiContratti($contratto,$CodiceAzione,&$arrayM)
 		
 		foreach($idAttuatoriPrecedenti as $attuatore)
 		{	
-			//se non esiste tale chiave di quell'utente od è la prima visita
+			//se non esiste tale chiave di quell'utente od ï¿½ la prima visita
 			if(!array_key_exists($attuatore['idutente'], $arrayM))
 			{
 				$arrayM[$attuatore['idutente']]=array();
@@ -2296,7 +2296,7 @@ function eseguiAutomatismi($idAzione,$IdContratto,$parameters)
 	try
 	{
 		$userid = getUserName();
-		// Legge solo gli automatismi con FlagCUmulativo='N', perché gli altri devono essere eseguiti una
+		// Legge solo gli automatismi con FlagCUmulativo='N', perchï¿½ gli altri devono essere eseguiti una
 		// sola volta sull'intero insieme di pratiche selezionate
 		$sql = "select a.*,m.FileName"
 			  ." from azioneautomatica az JOIN automatismo a ON az.idautomatismo=a.idautomatismo and curdate() between az.dataini and az.datafin AND IFNULL(FlagCumulativo,'N')='N'"
@@ -2327,11 +2327,11 @@ function eseguiAutomatismi($idAzione,$IdContratto,$parameters)
 	    					break;
 	    				case "LETTERA": // lettera rotomail
 	    					// Crea la riga su messaggidifferiti, solo se per lo stesso contratto
-	    					// e modello non c'è già una riga in stato "creata" o "sospesa" (il che significa che è
+	    					// e modello non c'ï¿½ giï¿½ una riga in stato "creata" o "sospesa" (il che significa che ï¿½
 	    					// ancora valida per l'invio)
 	    					
-	    					// Se viene passato un "riferimento", significa che il messaggio è legato ad un particolare oggetto
-	    					// (ad es. è l'avviso per una rata): se è stato già inviato un messaggio per lo stesso oggetto,
+	    					// Se viene passato un "riferimento", significa che il messaggio ï¿½ legato ad un particolare oggetto
+	    					// (ad es. ï¿½ l'avviso per una rata): se ï¿½ stato giï¿½ inviato un messaggio per lo stesso oggetto,
 	    					// non viene creata la riga.
 	    					$where = "IdContratto=$IdContratto AND Tipo='L' AND IdModello=".$value['IdModello'];
 	    					if ($parameters["Riferimento"]>"")
@@ -2380,11 +2380,11 @@ function eseguiAutomatismi($idAzione,$IdContratto,$parameters)
 	    					break;
 	    				case "SMSD":
 	    					// Crea la riga su messaggidifferiti, solo se per lo stesso contratto
-	    					// e modello non c'è già una riga in stato "creata" o "sospesa" (il che significa che è
+	    					// e modello non c'ï¿½ giï¿½ una riga in stato "creata" o "sospesa" (il che significa che ï¿½
 	    					// ancora valida per l'invio)
 	    					
-	    					// Se viene passato un "riferimento", significa che il messaggio è legato ad un particolare oggetto
-	    					// (ad es. è l'avviso per una rata): se è stato già inviato un messaggio per lo stesso oggetto,
+	    					// Se viene passato un "riferimento", significa che il messaggio ï¿½ legato ad un particolare oggetto
+	    					// (ad es. ï¿½ l'avviso per una rata): se ï¿½ stato giï¿½ inviato un messaggio per lo stesso oggetto,
 	    					// non viene creata la riga.
 	    					$where = "IdContratto=$IdContratto AND Tipo='S' AND IdModello=".$value['IdModello'];
 	    					if ($parameters["Riferimento"]>"")
@@ -2594,7 +2594,7 @@ function InvioMEmailComposte($comando,$parameters,&$txt="")
 			//trace("MAIL DESTINATARIO ".$strDest);
 			if($strDest!='')
 			{
-				//se è pieno continua e manda la mail altrimenti non mandarla e vai avanti
+				//se ï¿½ pieno continua e manda la mail altrimenti non mandarla e vai avanti
 				$arr=preparaEmail($comando,$parameters,'M',$destinatario);
 				$subject=$arr[0];
 				$body=$arr[1];
@@ -2753,7 +2753,7 @@ function replaceModel($body,$modelName,$query,$parametersDefault="")
 //-----------------------------------------------------------------------
 // replaceVariables
 // riceve una stringa la quale contiene del testo che deve essere sostituito
-// i testo da sostituire è racchiuso tra %
+// i testo da sostituire ï¿½ racchiuso tra %
 // restiruisce la stringa aggiornata con il testo sostituito
 //-----------------------------------------------------------------------
 function replaceVariables($strTxt,$parameters,$parametersDefault="")
@@ -2780,12 +2780,12 @@ function replaceVariables($strTxt,$parameters,$parametersDefault="")
     			$newVal = html_entity_decode($newVal,ENT_COMPAT,"ISO-8859-1");	
     			$newVal = str_replace("&","&amp;",$newVal);
 				// con il passaggio alla nuova versione di php sono diventate problematiche anche le lettere accentate
-				$newVal = str_replace("è","e'",$newVal); 
-				$newVal = str_replace("é","e'",$newVal); 
-				$newVal = str_replace("ì","i'",$newVal); 
-				$newVal = str_replace("à","a'",$newVal); 
-				$newVal = str_replace("ò","o'",$newVal); 
-				$newVal = str_replace("ù","u'",$newVal); 
+				$newVal = str_replace("ï¿½","e'",$newVal); 
+				$newVal = str_replace("ï¿½","e'",$newVal); 
+				$newVal = str_replace("ï¿½","i'",$newVal); 
+				$newVal = str_replace("ï¿½","a'",$newVal); 
+				$newVal = str_replace("ï¿½","o'",$newVal); 
+				$newVal = str_replace("ï¿½","u'",$newVal); 
 				
     			$strTxt = substr_replace($strTxt,$newVal,$pos,$pos1-$pos+1);
     			$pos = strpos($strTxt, '%',$pos+1); // prossima occorrenza
@@ -2824,7 +2824,7 @@ function replaceVariables($strTxt,$parameters,$parametersDefault="")
 // replaceModelVariable
 // riceve una stringa la quale contiene del testo, controlla che sia un 
 // modello se si, deve essere sostituito iterando per ogni contratto
-// i testo da sostituire è racchiuso tra %
+// i testo da sostituire ï¿½ racchiuso tra %
 // restiruisce la stringa aggiornata con il testo sostituito
 //-----------------------------------------------------------------------
 function replaceModelVariable($idContratti,$strTxt,$parameters,$parametersDefault="")
@@ -3120,7 +3120,7 @@ function ctrlNumeroCellulare($destinatario)
     		if (substr($destinatario,$i,1)>='0' && substr($destinatario,$i,1)<='9')
     	    			$retVal.=substr($destinatario,$i,1);
     	}
-		// verifico la lunghezza se diversa da 10 e 12 non è valido
+		// verifico la lunghezza se diversa da 10 e 12 non ï¿½ valido
 		// il primo carattere deve essere 3
 		if (strlen($retVal)<9 || strlen($retVal)>13 || substr($retVal,0,1)!='3')
 		{
@@ -3365,8 +3365,8 @@ function cambioStatoStragiud($contratto,$IdStatoStragiudiziale)
 }
 //--------------------------------------------------------------
 // fuoriRecupero
-// Determina se il contratto dato è stato forzato fuori recupero
-// o è in DBT. (viene chiamata per l'affido)
+// Determina se il contratto dato ï¿½ stato forzato fuori recupero
+// o ï¿½ in DBT. (viene chiamata per l'affido)
 //--------------------------------------------------------------
 function fuoriRecupero($IdContratto)
 {
@@ -3382,7 +3382,7 @@ function fuoriRecupero($IdContratto)
 
 //--------------------------------------------------------------
 // lavorazioneInterna
-// Determina se il contratto dato è in lav. interna oppure in
+// Determina se il contratto dato ï¿½ in lav. interna oppure in
 // workflow. In questo caso funziona la classificazione ma non
 // l'affido e l'assegnazione
 //--------------------------------------------------------------
@@ -3395,8 +3395,8 @@ function lavorazioneInterna($IdContratto)
 //----------------------------------------------------------------------------------------------
 // trovaProvvigioneApplicabile
 // Per un dato contratto, esamina le regole provvigionali disponibili e trova quella applicabile
-// Il parametro $dataRiferimento serve solo a selezionare le regole valide, cioè quelle in cui
-// l'intervallo DataIni-DataFin include la data di riferimento considerata (che è posta uguale 
+// Il parametro $dataRiferimento serve solo a selezionare le regole valide, cioï¿½ quelle in cui
+// l'intervallo DataIni-DataFin include la data di riferimento considerata (che ï¿½ posta uguale 
 // al fine lotto standard di 30 gg)
 //----------------------------------------------------------------------------------------------
 function trovaProvvigioneApplicabile($IdContratto,$IdAgenzia,&$CodProvv="",$dataRiferimento=NULL,&$durata=NULL)
@@ -3432,7 +3432,7 @@ function trovaProvvigioneApplicabile($IdContratto,$IdAgenzia,&$CodProvv="",$data
 		}
 
 		//--------------------------------------------------------------------------------------		
-		// Legge la classe originaria di assegnazione, se c'è
+		// Legge la classe originaria di assegnazione, se c'ï¿½
 		//--------------------------------------------------------------------------------------		
 		$IdClasse = getScalar("SELECT IdClasse FROM assegnazione WHERE IdContratto=$IdContratto AND IdAgenzia=$IdAgenzia AND DataFin='$dataRiferimento'");
 		if (!$IdClasse)
@@ -3458,12 +3458,12 @@ function trovaProvvigioneApplicabile($IdContratto,$IdAgenzia,&$CodProvv="",$data
 			
 			if ($regola["Condizione"]>"") // condizione SQL esplicita
 			{
-				//NB: se è arrivato fin qui, significa che la pratica non è ancora affidata: la condizione
-				//    deve perciò essere testata su Contratto
+				//NB: se ï¿½ arrivato fin qui, significa che la pratica non ï¿½ ancora affidata: la condizione
+				//    deve perciï¿½ essere testata su Contratto
 				if (!rowExistsInTable("v_cond_affidamento","IdContratto=$IdContratto AND (".$regola["Condizione"].")") )
 				{
 					//trace("Condizione '".$regola["Condizione"]."' NON soddisfatta",FALSE);
-					continue; // se la condizione non è soddisfatta, itera
+					continue; // se la condizione non ï¿½ soddisfatta, itera
 				}
 				trace("Condizione '".$regola["Condizione"]."' soddisfatta",FALSE);
 			}
@@ -3554,8 +3554,8 @@ function annullaForzaturaAffido($contratto)
 //        4) IdAzione (non "NULL" se si vuole che nella storia compaia il codice azione)
 //        5) inRevoca (true se chiamata dalla revoca (per ripristino forzatura prec.)
 //        6) soloQuandoDBT (true se la forzatura deve avvenire non prima che la pratica vada in DBT e quindi in ATS)
-// Restituisce: nome agenzia, oppure 0 se la forzatura è "non affidare"
-// oppure false, se la forzatura è "elimina forzatura precedente"
+// Restituisce: nome agenzia, oppure 0 se la forzatura ï¿½ "non affidare"
+// oppure false, se la forzatura ï¿½ "elimina forzatura precedente"
 //-----------------------------------------------------------------------
 function forzaAffidoAgenzia($contratto,$IdRegola,$nota="",$idAzione="NULL",$inRevoca=false,$soloQuandoDBT=false)
 {
@@ -3569,7 +3569,7 @@ function forzaAffidoAgenzia($contratto,$IdRegola,$nota="",$idAzione="NULL",$inRe
 				$IdRegola = "NULL";
 				break;
 			case 0:   // significa forza lav. interna al rientro (lo 0 viene registrato nel campo, che non
-				      // è foreign key per questo motivo
+				      // ï¿½ foreign key per questo motivo
 				break;
 			default: // altri valori
 				$dati = getRow("SELECT TitoloUfficio,CodRegolaProvvigione,
@@ -3580,9 +3580,9 @@ function forzaAffidoAgenzia($contratto,$IdRegola,$nota="",$idAzione="NULL",$inRe
 				break;
 		}
 
-		// Legge il contratto: se è in affido, viene segnato il prossimo affido sulla riga di assegnazione
+		// Legge il contratto: se ï¿½ in affido, viene segnato il prossimo affido sulla riga di assegnazione
 		// altrimenti viene segnato il codice provvigione (futuro) sul contratto, come si fa nel caso di affido con
-		// codice provvigione; se la richieste è no-affido, viene messo il contratto in lavorazione interna, in modo che
+		// codice provvigione; se la richieste ï¿½ no-affido, viene messo il contratto in lavorazione interna, in modo che
 		// non venga affidato.
 		$row = getRow("SELECT IdAgenzia,IdStatoRecupero FROM contratto WHERE IdContratto=$contratto");
 		$IdAgenzia = $row["IdAgenzia"];
@@ -3649,7 +3649,7 @@ function forzaAffidoAgenzia($contratto,$IdRegola,$nota="",$idAzione="NULL",$inRe
 		if ($IdRegola==NULL)
 			$esitoAzione = "Eliminata forzatura del prossimo affidamento automatico";
 		else if ($IdRegola==0)
-			$esitoAzione = "Al rientro dall' affidamento la pratica sarà messa in lavorazione interna ";
+			$esitoAzione = "Al rientro dall' affidamento la pratica sarï¿½ messa in lavorazione interna ";
 		else if ($inRevoca) // forzatura chiamata durante revoca per riprodurre la forzatura precedente
 			$esitoAzione = "Mantenuta forzatura del prossimo affidamento automatico all'agenzia ".$nome;
 		else
@@ -3676,7 +3676,7 @@ function forzaAffidoAgenzia($contratto,$IdRegola,$nota="",$idAzione="NULL",$inRe
 // Crea una riga di assegnazione per un contratto messo in lavorazione interna
 // e aggiorna corrispondentemente IdAffidamento in Insoluto. Quando viene 
 // chiamata, si presume che il contratto sia stato appena messo in lav.interna; 
-// se esiste già una vecchia assegnazione alla lav.interna aperta la riusa
+// se esiste giï¿½ una vecchia assegnazione alla lav.interna aperta la riusa
 //---------------------------------------------------------------------------------
 function inizioLavorazioneInterna($contratto)
 {
@@ -3915,7 +3915,7 @@ function udpdateCampiPropostaSS($idContratto,$dataSS,$impSS)
 			$sql = "UPDATE contratto SET DataSaldoStralcio=NULL,ImpSaldoStralcio=NULL WHERE IdContratto = $idContratto";
 		else if ($dataSS != NULL) // saldo e stralcio semplice 
 		  	$sql = "UPDATE contratto SET DataSaldoStralcio='".$dataSS."',ImpSaldoStralcio=".$impSS." WHERE IdContratto = $idContratto";
-		else  // saldo e stralcio dilazionato, la data è nel piano di rientro
+		else  // saldo e stralcio dilazionato, la data ï¿½ nel piano di rientro
 			$sql = "UPDATE contratto SET DataSaldoStralcio=NULL,ImpSaldoStralcio=".$impSS." WHERE IdContratto = $idContratto";
 			
 		return execute($sql);
@@ -4727,7 +4727,7 @@ function updatePercSvalutazione($percAbbuono,$idContratto){
 }
 //--------------------------------------------------------------------
 // applicaPercSvalutazione
-// Se è non nulla, applica al contratto la percentuale di svalutazione
+// Se ï¿½ non nulla, applica al contratto la percentuale di svalutazione
 // data
 //--------------------------------------------------------------------
 function applicaPercSvalutazione($IdAzione,$IdContratto,$perc,$nota="")
@@ -4800,7 +4800,7 @@ function creaFileCerved($IdProvvigione,&$errorMsg,&$fileURL)
 	if (count($rows)==0)
 		return "0";
 	// 16/1/2013: per evitare problemi di permission, genera il file in un subfolder che si chiama come lo userid
-	// del processo corrente (siccome la creazione può essere lanciata da web o da batch)
+	// del processo corrente (siccome la creazione puï¿½ essere lanciata da web o da batch)
 	$processUser = posix_getpwuid(posix_geteuid());
 	$localDir = TMP_PATH."/".$processUser['name'];
 	$fileURL = TMP_REL_PATH."/".$processUser['name']."/$fileName";
@@ -4915,7 +4915,7 @@ function creaFileCervedFisiche($IdProvvigione,&$errorMsg,&$fileURL)
 		return "0";
 		
 	// 16/1/2013: per evitare problemi di permission, genera il file in un subfolder che si chiama come lo userid
-	// del processo corrente (siccome la creazione può essere lanciata da web o da batch)
+	// del processo corrente (siccome la creazione puï¿½ essere lanciata da web o da batch)
 	$processUser = posix_getpwuid(posix_geteuid());
 	$localDir = TMP_PATH."/".$processUser['name'];
 	$fileURL = TMP_REL_PATH."/".$processUser['name']."/$fileName";
@@ -5117,7 +5117,7 @@ function insertRate($parameters)
 		{
 			if(!execute("delete from ratapiano where IdPianoRientro=".$parameters["IdPianoRientro"]))
 			{
-				trace("Errore durante l\'inserimento del piano di rateazione. Impossibile cancellare le rate già impostate.".mysqli_error($conn));
+				trace("Errore durante l\'inserimento del piano di rateazione. Impossibile cancellare le rate giï¿½ impostate.".mysqli_error($conn));
 				setLastError("Errore durante l\'inserimento del piano di rateazione. Impossibile cancellare le rate gi&agrave; impostate.");
 				return false;
 			}
@@ -5261,7 +5261,7 @@ function creaStampa($IdModello,$IdContratto,$IdMessaggioDifferito)
 		// leggo il contenuto del modello di stampa
 		$strTxt = file_get_contents($fileTemp);
 		
-		if($strTxt=="")       // se il contenuto è vuoto o ci sono errori
+		if($strTxt=="")       // se il contenuto ï¿½ vuoto o ci sono errori
 		{
 			$msg = "Errore nella lettura del file $fileTemp";
 			UpdateStatoMsgDiff($IdMessaggioDifferito,"N","Errore nell'elaborazione ".$tipoAll["TitoloModello"],$msg);
@@ -5303,7 +5303,7 @@ function creaStampa($IdModello,$IdContratto,$IdMessaggioDifferito)
 		}
 
 		// scrivo il nuovo contenuto della lettera nel nuovo allegato
-		// Se il file da produrre è PDF, chiama l'apposita funzione, altrimenti scrive semplicemente il testo fin qui composto
+		// Se il file da produrre ï¿½ PDF, chiama l'apposita funzione, altrimenti scrive semplicemente il testo fin qui composto
 		if ($ext=='.pdf') {
 			$result = creaPdfDaHtml($strTxt,$newFile);
 		} else {		
@@ -5321,9 +5321,9 @@ function creaStampa($IdModello,$IdContratto,$IdMessaggioDifferito)
 		$IdUtente = $context["IdUtente"];
 		$idtipo = $idTipoAllegato;
 		
-		// Controllo se l'allegato è stato già inserito nella tabella allegato
+		// Controllo se l'allegato ï¿½ stato giï¿½ inserito nella tabella allegato
 		$IdAllegato = getScalar("SELECT IdAllegato FROM allegato WHERE UrlAllegato='$url' AND IdContratto=$IdContratto");
-		if ($IdAllegato>0) // già presente: modifica solo la data
+		if ($IdAllegato>0) // giï¿½ presente: modifica solo la data
 		{
 			if (!execute("UPDATE allegato SET LastUpd=NOW() WHERE IdAllegato=$IdAllegato"))
 			{
@@ -5509,7 +5509,7 @@ function deleteAllegato($IdAllegato)
 	$idContratto = $row["IdContratto"];
 	try
 	{
-		if (execute("delete from allegatoazionespeciale where idallegato=$IdAllegato")) // se per caso è collegato ad az. speciale
+		if (execute("delete from allegatoazionespeciale where idallegato=$IdAllegato")) // se per caso ï¿½ collegato ad az. speciale
 		{
 			if(execute("update incasso set idallegato = null where idallegato=$IdAllegato"))
 			{
@@ -5569,8 +5569,8 @@ function creaPdfDaHtml($html,$filePath) {
 		$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
 		$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 		
-		// dalla cartella tcpdf punta indietro alla cartella images
-		$pdf->setHeaderData("../../images/headerLettera.jpg","170" /* larghezza in mm */
+		// headerLettera.jpg deve essere messa nella cartella tcpdf/examples/images  
+		$pdf->setHeaderData("headerLettera.jpg","170" /* larghezza in mm */
 				,'','',array(0,0,0),array(255,255,255));
 		$pdf->setPrintFooter(false); // evita riga di footer
 		
@@ -5588,8 +5588,8 @@ function creaPdfDaHtml($html,$filePath) {
 		// ---------------------------------------------------------
 		
 		// set font		
-		$pdf->AddFont('ToyotaText', 'I',__DIR__."/tcpdf/fonts/toyotatext_it_4.php" );
-		$pdf->SetFont("ToyotaText", 'I', 10);
+		$pdf->AddFont('PdfaHelveticai', 'I',__DIR__."/tcpdf/fonts/pdfahelveticai.php" );
+		$pdf->SetFont("PdfaHelveticai", 'I', 10);
 		
 		//add a page
 		$pdf->AddPage();
