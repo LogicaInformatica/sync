@@ -3,7 +3,7 @@
 #
 CREATE OR REPLACE VIEW v_pratiche_dbt
 AS
-select c.IdContratto,CodContratto AS numPratica,c.IdCliente,
+select c.IdContratto,CodContratto AS numPratica,c.IdCliente,cl.CodCliente,
 ImpCapitale+ImpDebitoResiduo AS ImpInsoluto,IFNULL(Nominativo,RagioneSociale) AS Cliente,TitoloCompagnia AS Dealer,c.IdStatoRecupero,
 concat(p.CodProdotto,' ',TitoloProdotto) AS Prodotto,TitoloRegione AS Regione,AbbrStatoRecupero as Stato,
 ap.TitoloAgenzia AS AgenziaProx,DataVendita,DataCambioStato AS DataStato,sto.NotaEvento AS Nota,Garanzie

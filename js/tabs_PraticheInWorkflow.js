@@ -214,7 +214,8 @@ DCS.GridPraticheWrkf = Ext.extend(DCS.GridPratiche, {
 		if (viewname=='v_pratiche_dbt') {
 			var columns =  [
     	    	{dataIndex:'numPratica',	width:35, 	header:'N.Pratica', xtype: 'string'},
-    	    	{dataIndex:'Cliente',		width:90,	header:'Cliente'},  
+    	    	{dataIndex:'Cliente',		width:90,	header:'Cliente'},
+    	    	{dataIndex:'CodCliente', 	width:70,	header:'Cod.Cliente'},
     	    	{dataIndex:'Prodotto',		width:90,	header:'Prodotto'},
     	    	{dataIndex:'Dealer',		width:90,	header:'Dealer'},
     	    	{dataIndex:'Regione',		width:90,	header:'Regione'},
