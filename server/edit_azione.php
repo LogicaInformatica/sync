@@ -841,7 +841,18 @@ try
 					$statolegale = "Assegnato stato legale $statolegale";
 				writeHistory($idAzione,$statolegale,$idContratto,$nota);
 				break;
-					
+			case 'CambioStatoStragiud':
+				$idStatoStragiudiziale = $_REQUEST["IdStatoStragiudiziale"]; // id dello stato stragiudiziale
+				$statostragiudiziale  = cambioStatoStragiud($idContratto,$idStatoStragiudiziale);// vedi funzione cambioStatoLegale
+				if ($statostragiudiziale===FALSE)
+					Throw new Exception(getLastError());
+					$esitoAzione = "Effettuato cambio di stato stragiudiziale";
+					if($statostragiudiziale =="")
+						$statostragiudiziale = "Rimosso lo stato stragiudiziale";
+					else
+						$statostragiudiziale = "Assegnato stato stragiudiziale $statostragiudiziale";
+				writeHistory($idAzione,$statostragiudiziale,$idContratto,$nota);
+				break;	
 			case "CambiaClasse":	// Cambio classificazione
 				$sql = "UPDATE contratto SET IdClasse={$_REQUEST["IdClasse"]},"
 				. "LastUser='$userid',DataCambioClasse=CURDATE() WHERE IdContratto=$idContratto";
