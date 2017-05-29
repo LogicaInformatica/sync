@@ -75,7 +75,8 @@ DCS.GridPraticheStrLeg = Ext.extend(DCS.GridPratiche, {
 					{name: 'MesiDilazione', type: 'int'},
 					{name: 'ProssimaAgenzia'},		
 					{name: 'FormDettaglio'}, // serve per avere il nome del dettaglio (xtype)
-					{name: 'StatoLegale'},  
+					{name: 'StatoLegale'},
+					{name: 'StatoStragiudiziale'},
 					{name: 'StatoInDBT'}];
 
 		var columns;
@@ -136,6 +137,8 @@ DCS.GridPraticheStrLeg = Ext.extend(DCS.GridPratiche, {
 	        	{dataIndex:'StatoInDBT', width:100, header:'Stato in DBT',hidden:true, hideable:true,exportable:true,stateful:false}
 	        	,{dataIndex:'StatoLegale', width:100, header:'Stato Legale',hideable:true,exportable:true,stateful:false
 	        		,hidden: (this.task!='LEGLEA' && this.task!='LEGLOA')}
+	        	,{dataIndex:'StatoStragiudiziale', width:100, header:'Stato<br>Stragiudiziale',hideable:true,sortable:true,exportable:true,stateful:false
+	        		,hidden: (this.task=='LEGLEA' || this.task=='LEGLOA')}
 	        	,{dataIndex:'ListaGaranti', width:100, header:'Garanti',hidden:true,hideable:true,exportable:true,stateful:false}
 	        	,{dataIndex:'UltimaAzione', width:100, header:'Ultima azione',hidden:true,hideable:true,exportable:true,stateful:false}
 	        	,{dataIndex:'DataUltimaAzione', width:100, header:'Data ult. azione',hidden:true,hideable:true,exportable:true,stateful:false}

@@ -66,7 +66,7 @@ DCS.GridPraticheStatiStragiudiziali = Ext.extend(DCS.GridPratiche, {
 							{name: 'NumeroRate', type: 'int'},
 							{name: 'InteressiDilazione', type: 'float'},
 							{name: 'FormDettaglio'}, // serve per avere il nome del dettaglio (xtype)
-							{name: 'StatoLegale'},  
+							{name: 'StatoStragiudiziale'},  
 							{name: 'MesiDilazione', type: 'int'}							
 							];
 	
@@ -128,7 +128,7 @@ DCS.GridPraticheStatiStragiudiziali = Ext.extend(DCS.GridPratiche, {
 			        	{dataIndex:'NumeroRate', width:50, header:'N. rate',hidden:true,hideable:true,exportable:true},
 			        	{dataIndex:'InteressiDilazione', width:90, header:'Interessi dilazione',hidden:true,hideable:true,exportable:true},
 			        	{dataIndex:'MesiDilazione', width:90, header:'N. mesi dilazione',hidden:true,hideable:true,exportable:true}
-			        	,{dataIndex:'StatoLegale', width:100, header:'Stato Legale',hideable:true,exportable:true,stateful:false,hidden:true}
+			        	,{dataIndex:'StatoStragiudiziale', width:100, header:'Stato<br>Stragiudiziale',hideable:true,sortable:true,exportable:true,stateful:false,hidden:true}
 			        	,{dataIndex:'ListaGaranti', width:100, header:'Garanti',hidden:true,hideable:true,exportable:true,stateful:false}
 			        	,{dataIndex:'UltimaAzione', width:100, header:'Ultima azione',hidden:true,hideable:true,exportable:true,stateful:false}
 			        	,{dataIndex:'DataUltimaAzione', width:100, header:'Data ult. azione',hidden:true,hideable:true,exportable:true,stateful:false}

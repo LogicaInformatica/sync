@@ -19,7 +19,8 @@ DCS.GridPraticheAffidate = Ext.extend(DCS.GridPratiche, {
 					{name: 'ImpInteressiMora', type: 'float'},
 					{name: 'ImpSpeseRecupero', type: 'float'},
 					{name: 'AbbrStatoRecupero'},
-					{name: 'StatoLegale'},  
+					{name: 'StatoLegale'},
+					{name: 'StatoStragiudiziale'}, 
 					{name: 'AbbrClasse'},
 					{name: 'tipoPag'},
 					{name: 'agenzia'},
@@ -75,6 +76,7 @@ DCS.GridPraticheAffidate = Ext.extend(DCS.GridPratiche, {
 	        	{dataIndex:'AbbrClasse', width:40,	header:'Class.',filterable:true,sortable:true, hidden:false},
 	        	{dataIndex:'agenzia',	width:50,	hidden: true,header:'Agenzia',filterable:true,sortable:true,groupable:true}
 	        	,{dataIndex:'StatoLegale', width:100, header:'Stato Legale',hideable:true,exportable:true,stateful:false,hidden:true}
+	        	,{dataIndex:'StatoStragiudiziale', width:100, header:'Stato<br>Stragiudiziale',hideable:true,sortable:true,exportable:true,stateful:false,hidden:true}
 	        	,{dataIndex:'ListaGaranti', width:100, header:'Garanti',hidden:true,hideable:true,exportable:true,stateful:false}
 	        	,{dataIndex:'UltimaAzione', width:100, header:'Ultima azione',hidden:true,hideable:true,exportable:true,stateful:false}
 	        	,{dataIndex:'DataUltimaAzione', width:100, header:'Data ult. azione',hidden:true,hideable:true,exportable:true,stateful:false}

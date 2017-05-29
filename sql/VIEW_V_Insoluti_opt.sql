@@ -23,7 +23,7 @@ IF (DataUltimaScadenza<=CURDATE(),0,
 Numrate - (period_diff(EXTRACT(YEAR_MONTH FROM curdate()),EXTRACT(YEAR_MONTH FROM dataprimascadenza))
 + if (day(curdate())>=day(dataultimascadenza),1,0))) AS RateFuture,
 co.IdStatoRinegoziazione AS FlagRinegoziazione,v.StatoRinegoziazione,
-DescrBene,CodBene,FormDettaglio,IdCOntrattoDerivato,DataChiusura,StatoLegale,co.IdStatoLegale,co.IdStatoStragiudiziale,Garanzie,
+DescrBene,CodBene,FormDettaglio,IdCOntrattoDerivato,DataChiusura,StatoLegale,co.IdStatoLegale,StatoStragiudiziale,co.IdStatoStragiudiziale,Garanzie,
 IFNULL(co.ImpInsoluto,IF(IdAgenzia>0,ImpSpeseRecupero,0)+IF(rp.FlagInteressiMora='Y',ImpInteressiMora,0))
 +ImpPagato AS ImpDebitoIniziale, v.CodCliente
 from contratto co
