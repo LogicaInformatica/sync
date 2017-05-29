@@ -9,7 +9,7 @@ v.classif,v.AbbrClasse,v.agenzia,co.IdCliente,v.tipoPag,v.IdFamiglia,v.OrdineSta
 v.FlagNoAffido,co.DataCambioStato,co.DataCambioClasse,DataInizioAffido,DataFineAffido,v.IdReparto, v.Telefono,
 v.Categoria,co.IdClasse,co.IdStatoRecupero,DataUltimoPagamento,DataPrimaScadenza,v.CodiceFiscale,
 ImpInteressiMora,ImpSpeseRecupero,co.CodRegolaProvvigione,co.ImpCapitale,co.PercSvalutazione,((co.PercSvalutazione/100)*co.ImpInsoluto) as Svalutazione,
-v.InRecupero,NumInsoluti,NumRate,FasciaRecupero,v.FormDettaglio,StatoLegale,co.IdStatoLegale, co.IdStatoStragiudiziale, Garanzie
+v.InRecupero,NumInsoluti,NumRate,FasciaRecupero,v.FormDettaglio,StatoLegale,co.IdStatoLegale,StatoStragiudiziale, co.IdStatoStragiudiziale, Garanzie
 from contratto co
 JOIN _opt_insoluti v ON v.IdContratto=co.IdContratto
 left join regolaprovvigione rp on  rp.IdRegolaProvvigione = co.IdRegolaProvvigione
