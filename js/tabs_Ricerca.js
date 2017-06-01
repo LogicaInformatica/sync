@@ -198,7 +198,8 @@ DCS.pnlSearch = Ext.extend(DCS.GridPratiche, {
 				{name: 'ImpSpeseRecupero', type: 'float'},
 				{name: 'ImpPagato', type: 'float'},
 				{name: 'AbbrStatoRecupero'},
-				{name: 'StatoLegale'},  
+				{name: 'StatoLegale'},
+				{name: 'StatoStragiudiziale'},
 				{name: 'AbbrClasse'},
 				{name: 'tipoPag'},
 				{name: 'DataUltimoPagamento', type:'date'},
@@ -261,6 +262,7 @@ DCS.pnlSearch = Ext.extend(DCS.GridPratiche, {
 	        	{dataIndex:'AbbrClasse',	width:45,	header:'Class.',filterable:true,sortable:true,groupable:true},
 	        	{dataIndex:'CodAgente',	width:45,	header:'Operatore',filterable:true,sortable:true,groupable:true}
 	        	,{dataIndex:'StatoLegale', width:100, header:'Stato Legale',hideable:true,exportable:true,stateful:false,hidden:true}
+	        	,{dataIndex:'StatoStragiudiziale', width:100, header:'Stato<br>Stragiudiziale',hideable:true,sortable:true,exportable:true,stateful:false,hidden:true}
 	        	,{dataIndex:'UltimaAzione', width:100, header:'Ultima azione',hidden:true,hideable:true,exportable:true,stateful:false}
 	        	,{dataIndex:'DataUltimaAzione', width:100, header:'Data ult. azione',hidden:true,hideable:true,exportable:true,stateful:false}
 	        	,{dataIndex:'UtenteUltimaAzione', width:100, header:'Utente Ult.Azione',hidden:true,hideable:true,exportable:true,stateful:false}
@@ -381,7 +383,8 @@ DCS.pnlSearch = Ext.extend(DCS.GridPratiche, {
 				 {name: 'ImpCapitaleAffidato',type: 'float'},
 				{name: 'DataUltimoPagamento', type:'date'},
 				{name: 'AbbrStatoRecupero'},
-				{name: 'StatoLegale'},  
+				{name: 'StatoLegale'},
+				{name: 'StatoStragiudiziale'},
 				{name: 'AbbrClasse'},
 				{name: 'tipoPag'},
 				{name: 'ruolo'}, // usato solo nella lista di tipo PraticheSoggetto
@@ -407,6 +410,7 @@ DCS.pnlSearch = Ext.extend(DCS.GridPratiche, {
 	        	{dataIndex:'DataUltimoPagamento',   width:60,	header:'Ultimo pag.', xtype:'datecolumn', format:'d/m/y'},
 				{dataIndex:'AbbrStatoRecupero',width:45,header:'Stato',hidden:this.hideStato,filterable:true,sortable:true,groupable:true},
 	        	{dataIndex:'StatoLegale', width:100, header:'Stato Legale',hideable:true,exportable:true,stateful:false,hidden:true},
+	        	{dataIndex:'StatoStragiudiziale', width:100, header:'Stato<br>Stragiudiziale',hideable:true,sortable:true,exportable:true,stateful:false,hidden:true},
 				{dataIndex:'AbbrClasse',width:45,	header:'Class.',filterable:true,sortable:true,groupable:true},
 	        	{dataIndex:'CodiceFiscale', width:70, header:'Codice Fiscale',hidden:true,hideable:true,exportable:true},
 	        	{dataIndex:'Indirizzo', width:70, header:'Indirizzo',hidden:true,hideable:true,exportable:true},

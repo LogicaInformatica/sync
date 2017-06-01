@@ -383,7 +383,7 @@ DCS.dStatoStragiudPanel = Ext.extend(Ext.Panel, {
 			items: [formAggregato]
 		});
 		
-		DCS.dStatoLegalePanel.superclass.initComponent.call(this);
+		DCS.dStatoStragiudPanel.superclass.initComponent.call(this);
 		//editing
 		if(this.recordMod!=null){
 			Ext.getCmp(idDin+'id').setValue(this.recordMod.get('IdStatoStragiudiziale'));
@@ -406,7 +406,6 @@ DCS.showDetailSSTG= function(titolo,rec,store)
 			    height: h,
 				modal: true,
 				title: titolo,
-				tools: [helpTool("StatoLegale")],
 				resizable:false,
 				items: [{
 					xtype: 'DCS_DettaglioStatoStragiudPanel',

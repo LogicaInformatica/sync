@@ -6,7 +6,7 @@ v.cliente,i.NumRate AS insoluti,
 i.ImpDebitoTotale AS importo,i.ImpCapitaleAffidato,i.ImpPagatoTotale AS ImpPagato,v.stato,
 v.AbbrStatoRecupero,co.CodRegolaProvvigione,
 ImpInsoluto+ImpDebitoResiduo AS ImpDebitoResiduo,
-v.classif,v.AbbrClasse,v.agenzia,
+v.classif,v.AbbrClasse,v.agenzia,v.StatoLegale,v.StatoStragiudiziale,
 co.IdCliente,v.tipoPag,v.IdFamiglia,v.OrdineStato,v.stato AS CodStatoRecupero,co.IdAgenzia,
 v.FlagNoAffido,co.DataCambioStato,co.DataCambioClasse,NULL AS DataScadenzaAzione,co.DataInizioAffido,co.DataFineAffido,
 v.IdReparto, v.Telefono,  'N' as CiSonoAzioniOggi,DataUltimoPagamento,co.IdStatoRecupero,co.idClasse,v.CodiceFiscale
