@@ -313,7 +313,7 @@ DCS.GridExperian = Ext.extend(Ext.grid.GridPanel, {
 					}
 					var pnl = new DCS.pnlSearch(parametri);
 					var win = new Ext.Window({
-						width: 1100, height:700, minWidth: 900, minHeight: 700,
+						width: 1100, height:700,  
 						autoHeight:true,modal: true,
 					    layout: 'fit', plain:true, bodyStyle:'padding:5px;',
 					    title: titolo,
@@ -362,8 +362,8 @@ DCS.GridExperian = Ext.extend(Ext.grid.GridPanel, {
 				   text: 'Rimuovi selezionate',
 				   tooltip: 'Rimuove dalla lista le pratiche selezionate',
 				   handler: rimuovePratiche,
-				   sm: selectionCheckbox, // aggiunge proprietà custom per passare la colonna di selezione 
-				   gstore: this.store // aggiunge proprietà custom per passare lo store
+				   sm: selectionCheckbox, // aggiunge proprietï¿½ custom per passare la colonna di selezione 
+				   gstore: this.store // aggiunge proprietï¿½ custom per passare lo store
 				});
 		}
 

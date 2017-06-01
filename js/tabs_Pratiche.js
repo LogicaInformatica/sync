@@ -124,7 +124,7 @@ DCS.GridPratiche = Ext.extend(Ext.grid.GridPanel, {
 						actionColumn.items[8].tooltip = 'Nessuna nota';
 		            	return 'senza_note';
 		        	}
-		        	else if (nn<0) // solo note già lette
+		        	else if (nn<0) // solo note giï¿½ lette
 		        	{
 		        		actionColumn.items[8].tooltip = (nn==-1)?'1 nota gi&agrave; letta':((-nn)+' note gi&agrave; lette');
 		            	return '';
@@ -158,7 +158,7 @@ DCS.GridPratiche = Ext.extend(Ext.grid.GridPanel, {
 										actionColumn.items[9].tooltip = 'Candidata a rinegoziazione'; 
 									return 'rineg_blu';
 								}
-								else if (CONTEXT.InternoEsterno=='I') // non è il momento: lo vede solo l'interno, ma in giallo
+								else if (CONTEXT.InternoEsterno=='I') // non ï¿½ il momento: lo vede solo l'interno, ma in giallo
 								{
 									actionColumn.items[9].tooltip = 'Candidata a rinegoziazione o accodamento, non ancora visibile all\'agenzie';
 									return 'rineg_giallo';
@@ -351,7 +351,7 @@ DCS.GridPratiche = Ext.extend(Ext.grid.GridPanel, {
 									 titolo: 'Lista pratiche di '+rec.get('Nominativo') };
 						var pnl = new DCS.pnlSearch(parametri);
 						var win = new Ext.Window({
-							width: 1100, height:700, minWidth: 900, minHeight: 700,
+							width: 1100, height:700, 
 							autoHeight:true,modal: true,
 						    layout: 'fit', plain:true, bodyStyle:'padding:5px;',
 						    title: titolo,
@@ -364,10 +364,10 @@ DCS.GridPratiche = Ext.extend(Ext.grid.GridPanel, {
 						showGrigliaRate(rec.get('IdContratto'),rec.get('Nominativo'),this.isStorico);
 					}else{
 						// 7/4/2014: controlla che l'apertura non sia fatta da un utente (di agenzia) non autorizzato a vedere questa pratica
-						// (può avvenire a partire dalle liste delle provvigioni, in cui i supervisori di agenzia vedono le pratiche anche dopo
+						// (puï¿½ avvenire a partire dalle liste delle provvigioni, in cui i supervisori di agenzia vedono le pratiche anche dopo
 						// l'affido)
 						if (CONTEXT.InternoEsterno=='E' && rec.get('IdAgenzia')>0 && rec.get('IdAgenziaCorrente')!=rec.get('IdAgenzia'))
-							Ext.Msg.alert('','Il dettaglio della pratica non è più visibile');
+							Ext.Msg.alert('','Il dettaglio della pratica non ï¿½ piï¿½ visibile');
 						else
 							showPraticaDetail(rec.get('IdContratto'),
 								rec.get('numPratica')?rec.get('numPratica'):rec.get('CodContratto'),
@@ -476,7 +476,7 @@ DCS.GridPratiche = Ext.extend(Ext.grid.GridPanel, {
 	},    
 	
 	// 7/4/2014: Rende invisibili i pulsanti di azione se l' utente (di agenzia) non autorizzato a vedere questa pratica
-	// (può avvenire a partire dalle liste delle provvigioni, in cui i supervisori di agenzia vedono le pratiche anche dopo
+	// (puï¿½ avvenire a partire dalle liste delle provvigioni, in cui i supervisori di agenzia vedono le pratiche anche dopo
 	// l'affido)
 	condMakeInvisible: function(v, meta, rec) {
 		if (CONTEXT.InternoEsterno=='E' && rec.get('IdAgenzia')>0 && rec.get('IdAgenziaCorrente')!=rec.get('IdAgenzia')) {

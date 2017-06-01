@@ -212,7 +212,7 @@ DCS.GridSintesiPraticheAgenzia = Ext.extend(Ext.grid.GridPanel, {
 	showListaPraticheAgente: function(Agente,IdAgente,IdAgenzia,DataFineAffido,Lotto)
     {
 		var oggi = new Date();
-		if (DataFineAffido<oggi.dateFormat('Y-m-d')) {	// Lotto non più affidato
+		if (DataFineAffido<oggi.dateFormat('Y-m-d')) {	// Lotto non piï¿½ affidato
 			Ext.Msg.alert('Informazione', "Non &egrave; possibile visualizzare la lista perch&eacute; il periodo di affido del lotto &egrave; terminato.");
 		} else if (DataFineAffido==null) {
 			Ext.Msg.alert('Informazione', "Non &egrave; possibile visualizzare la lista di dettaglio sulla sintesi storica.");
@@ -220,7 +220,7 @@ DCS.GridSintesiPraticheAgenzia = Ext.extend(Ext.grid.GridPanel, {
 			var pnl = new DCS.pnlSearch({agente: IdAgente, agenzia:IdAgenzia, lotto: DataFineAffido, 
 				titolo:'Lista pratiche assegnate all\'operatore '+ Agente + ' '+Lotto.toLowerCase(), IdC: 'PSintesiAgenzia'});
 			var win = new Ext.Window({
-	    		width: 1100, height:600, minWidth: 700, minHeight: 500,
+	    		width: 1100, height:700, 
 	    		autoHeight:true,modal: true,
 	    	    layout: 'fit', plain:true, bodyStyle:'padding:5px;',
 	    	    title: 'Lista di dettaglio',
@@ -238,7 +238,7 @@ DCS.GridSintesiPraticheAgenzia = Ext.extend(Ext.grid.GridPanel, {
 	showListaPraticheStatoLav: function(IdAgenzia,CodStato,TitoloStato,DataFineAffido,Lotto)
     {
 		var oggi = new Date();
-		if (DataFineAffido < oggi.dateFormat('Y-m-d')) { // Lotto non più affidato
+		if (DataFineAffido < oggi.dateFormat('Y-m-d')) { // Lotto non piï¿½ affidato
 			Ext.Msg.alert('Informazione', "Non &egrave; possibile visualizzare la lista perch&eacute; il periodo di affido del lotto &egrave; terminato.");
 		}
 		else {
@@ -251,9 +251,7 @@ DCS.GridSintesiPraticheAgenzia = Ext.extend(Ext.grid.GridPanel, {
 			});
 			var win = new Ext.Window({
 				width: 1100,
-				height: 600,
-				minWidth: 700,
-				minHeight: 500,
+				height: 700,
 				autoHeight: true,
 				modal: true,
 				layout: 'fit',
@@ -274,7 +272,7 @@ DCS.PraticheAgenziaSintesi = function(){
 
 	return {
 		create: function(){
-			if (CONTEXT.READ_REPARTO) // può vedere il lavoro di tutti gli agenti
+			if (CONTEXT.READ_REPARTO) // puï¿½ vedere il lavoro di tutti gli agenti
 			{
 				var grid1 = new DCS.GridSintesiPraticheAgenzia({
 					stateId: 'PraticheSintesiAgAge',

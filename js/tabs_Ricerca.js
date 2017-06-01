@@ -32,7 +32,7 @@ DCS.tabs_Ricerca = Ext.extend(Ext.form.TriggerField, {
 		if( v.length > 0 && v!=this.emptyText) {
 			var pnl = new DCS.pnlSearch({IdC: v});
 			var win = new Ext.Window({
-	    		width: 1100, height:600, minWidth: 700, minHeight: 500,
+	    		width: 1100, height:700, 
 	    		autoHeight:true, modal:true,
 	    	    layout: 'fit', plain:true, bodyStyle:'padding:5px;',
 				title: 'Ricerca',
@@ -81,6 +81,7 @@ DCS.pnlSearch = Ext.extend(DCS.GridPratiche, {
 						 {name: 'ImpPagatoTotale',type: 'float'},
 						 {name: 'ImpInteressi',type: 'float'},
 						 {name: 'ImpSpese',type: 'float'},
+                                                 {name: 'ImpProvvigione',type: 'float'},
 						 {name: 'PercCapitale', type: 'float'},
 						 {name: 'PercCapitaleReale', type: 'float'},
     					 {name: 'DataUltimoPagamento', type:'date'},
@@ -119,7 +120,10 @@ DCS.pnlSearch = Ext.extend(DCS.GridPratiche, {
 		        			xtype:'numbercolumn',format:'0.000,00/i',tooltip:'Interessi di mora incassati'},
 			        	{dataIndex:'ImpSpese', width:58,	header:'Spese rec.',align:'right',filterable:false,sortable:true,groupable:false,summaryType:'sum',
 		        			xtype:'numbercolumn',format:'0.000,00/i',tooltip:'Spese di recupero incassate'},
-				        {dataIndex:'PercCapitale', width:55,	align:'right',header:'% capitale',filterable:false,sortable:true,groupable:false,
+					{dataIndex:'ImpProvvigione', width:40,	header:'Provvigione',align:'right',filterable:false,sortable:true,groupable:false,summaryType:'sum',
+		        			xtype:'numbercolumn',format:'0.000,00/i'},	
+				        {dataIndex:'Provenienza',	width:120,	header:'Provenienza',filterable:true,sortable:true, hidden:(CONTEXT.InternoEsterno == 'E'), hideable:(CONTEXT.InternoEsterno != 'E'), groupable: true},
+				       {dataIndex:'PercCapitale', width:55,	align:'right',header:'% capitale',filterable:false,sortable:true,groupable:false,
 			    	       	xtype:'numbercolumn',format:'000 %/i',summaryType:'percentIPM'},
 				        {dataIndex:'PercCapitaleReale', width:60,	align:'right',header:'% cap. reale',filterable:false,sortable:true,groupable:false,
 			    	       	xtype:'numbercolumn',format:'000 %/i',summaryType:'percentIPM'},
