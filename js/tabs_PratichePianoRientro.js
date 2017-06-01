@@ -20,7 +20,8 @@ DCS.GridPratichePianoRientro = Ext.extend(DCS.GridPratiche, {
 					{name: 'ImpPagato', type: 'float'},
 					{name: 'ImpCapitale', type: 'float'},
 					{name: 'AbbrStatoRecupero'},
-					{name: 'StatoLegale'},  
+					{name: 'StatoLegale'},
+					{name: 'StatoStragiudiziale'},
 					{name: 'AbbrClasse'},
 					{name: 'tipoPag'},
 					{name: 'agenzia'},
@@ -89,7 +90,8 @@ DCS.GridPratichePianoRientro = Ext.extend(DCS.GridPratiche, {
 	        	{dataIndex:'agenzia',	width:50,	header:'Agenzia',filterable:true,sortable:true,groupable:true,
 	        		hidden:(this.task=='svaluta' || this.task=='inAttesa' || this.task=='interne'  || this.task=='workflow')},
 	        	{dataIndex:'CodUtente',	width:30,	header:'Oper.',filterable:true,sortable:true,groupable:true}
-		        	,{dataIndex:'StatoLegale', width:100, header:'Stato Legale',hideable:true,exportable:true,stateful:false,hidden:true}
+		        ,{dataIndex:'StatoLegale', width:100, header:'Stato Legale',hideable:true,exportable:true,stateful:false,hidden:true}
+		        ,{dataIndex:'StatoStragiudiziale', width:100, header:'Stato<br>Stragiudiziale',hideable:true,sortable:true,exportable:true,stateful:false,hidden:true}
 		        ,{dataIndex:'ListaGaranti', width:100, header:'Garanti',hidden:true,hideable:true,exportable:true,stateful:false}
 	        	,{dataIndex:'UltimaAzione', width:100, header:'Ultima azione',hidden:true,hideable:true,exportable:true,stateful:false}
 	        	,{dataIndex:'DataUltimaAzione', width:100, header:'Data ult. azione',hidden:true,hideable:true,exportable:true,stateful:false}

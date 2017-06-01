@@ -171,7 +171,7 @@ DCS.GridPraticheAffidateSintesi = Ext.extend(Ext.grid.GridPanel, {
     {
    	var pnl = new DCS.pnlSearch({stato: stato, agenzia: agenzia, prodotto: prodotto, IdC: 'PSintesi'});
 		var win = new Ext.Window({
-    		width: 1100, height:600, minWidth: 700, minHeight: 500,
+    		width: 1100, height:700, 
     		autoHeight:true,modal: true,
     	    layout: 'fit', plain:true, bodyStyle:'padding:5px;',
     	    title: 'Pratiche di dettaglio',

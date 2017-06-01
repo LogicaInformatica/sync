@@ -17,7 +17,8 @@ DCS.GridPraticheRinegoziate = Ext.extend(DCS.GridPratiche, {
 					{name: 'ImpPagato', type: 'float'},
 					{name: 'ImpCapitale', type: 'float'},
 					{name: 'AbbrStatoRecupero'},
-					{name: 'StatoLegale'},  
+					{name: 'StatoLegale'},
+					{name: 'StatoStragiudiziale'},
 					{name: 'AbbrClasse'},
 					{name: 'tipoPag'},
 					{name: 'agenzia'},
@@ -77,6 +78,7 @@ DCS.GridPraticheRinegoziate = Ext.extend(DCS.GridPratiche, {
 	        	{dataIndex:'CodUtente',	width:30,	header:'Oper.',filterable:true,sortable:true,groupable:true},
 	        	{dataIndex:'ListaGaranti', width:100, header:'Garanti',hidden:true,hideable:true,exportable:true,stateful:false}
 	        	,{dataIndex:'StatoLegale', width:100, header:'Stato Legale',hideable:true,exportable:true,stateful:false,hidden:true}
+	        	,{dataIndex:'StatoStragiudiziale', width:100, header:'Stato<br>Stragiudiziale',hideable:true,sortable:true,exportable:true,stateful:false,hidden:true}
 	        	,{dataIndex:'UltimaAzione', width:100, header:'Ultima azione',hidden:true,hideable:true,exportable:true,stateful:false}
 	        	,{dataIndex:'DataUltimaAzione', width:100, header:'Data ult. azione',hidden:true,hideable:true,exportable:true,stateful:false}
 	        	,{dataIndex:'UtenteUltimaAzione', width:100, header:'Utente Ult.Azione',hidden:true,hideable:true,exportable:true,stateful:false}

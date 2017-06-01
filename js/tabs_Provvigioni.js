@@ -418,7 +418,7 @@ DCS.GridProvvigioni = Ext.extend(Ext.grid.GridPanel, {
    	   					if(stato!=0){
    	   						showAnswFormProvvigione(task,"cambio di stato", idProvvigione, this.gstore);
    	   					} else{
-   	   						Ext.MessageBox.alert('Non consentito', "Il cambio stato non può essere effettuato su un periodo in corso");
+   	   						Ext.MessageBox.alert('Non consentito', "Il cambio stato non puï¿½ essere effettuato su un periodo in corso");
    	   					}
    	   				},
    	   				failure: function ( result, request) { 
@@ -441,7 +441,7 @@ DCS.GridProvvigioni = Ext.extend(Ext.grid.GridPanel, {
 		var pnl = new DCS.pnlSearch({stato: idprovvigione, titolo:titolo, IdC: tipoProvv==4?'ProvvigioniSingole':'Provvigioni'});
 		pnl.lotto = lotto;
 		var win = new Ext.Window({
-    		width: 1100, height:600, minWidth: 1100, minHeight: 600,
+    		width: 1100, height:700, 
     		autoHeight:true,modal: true,
     	    layout: 'fit', plain:true, bodyStyle:'padding:5px;',
     	    title: 'Lista di dettaglio',

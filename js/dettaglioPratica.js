@@ -470,7 +470,7 @@ DCS.GridRecapiti = Ext.extend(Ext.grid.GridPanel, {
 				                         titolo:"Lista pratiche collegate a "+Nome, 
 				                         searchFields:{IdCliente:IdCliente}});
 			var win = new Ext.Window({
-	    		width: 1100, height:600, minWidth: 1100, minHeight: 600,
+	    		width: 1100, height:700, 
 	    		autoHeight:true,modal: true,
 	    	    layout: 'fit', plain:true, bodyStyle:'padding:5px;',
 	    	    title: 'Ricerca pratiche',

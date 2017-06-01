@@ -52,8 +52,8 @@ function assign($IdContratto)
 		}
 		// Seleziona tutte le regole di assegnazione che riguardano gli operatori interni
 		$arrayIds = Array();
-		$forceAgenzia = FALSE; // TRUE quando l'agenzia deve corrispondere (cioè non considera buona l'entry 
-		                       // con idReparto=NULL se ce n'è una con IdReparto non NULL)
+		$forceAgenzia = FALSE; // TRUE quando l'agenzia deve corrispondere (cioï¿½ non considera buona l'entry 
+		                       // con idReparto=NULL se ce n'ï¿½ una con IdReparto non NULL)
 		$regole = getFetchArray("SELECT * FROM regolaassegnazione WHERE TipoAssegnazione='1'"
 			." AND CURDATE() BETWEEN DataIni AND DataFin ORDER BY Ordine");
 		foreach ($regole as $regola)
@@ -82,12 +82,12 @@ function assign($IdContratto)
 			if ($regola["ImportoA"]>0) // condizione sull'importo massimo
 				if ($regola["ImportoA"]<$pratica["Importo"])
 					continue;
-			if ($regola["IdReparto"]!==NULL && $pratica["IdAgenzia"]!=NULL) // condizione sull'agenzia a cui è affidata la pratica
+			if ($regola["IdReparto"]!==NULL && $pratica["IdAgenzia"]!=NULL) // condizione sull'agenzia a cui ï¿½ affidata la pratica
 			{
 				if ($regola["IdReparto"]!=$pratica["IdAgenzia"])
 					continue;
 				else
-					$forceAgenzia = TRUE; // non accetta più le entry con IdReparto NULL
+					$forceAgenzia = TRUE; // non accetta piï¿½ le entry con IdReparto NULL
 			}	
 			else // IdReparto NULL oppure idAgenzia NULL: non dipende dall'agenzia affidataria
 				if ($pratica["IdAgenzia"]>0 && $forceAgenzia) // serve match con agenzia
@@ -101,7 +101,7 @@ function assign($IdContratto)
 				$arrayIds[$IdUtente] = $regola["TipoDistribuzione"];
 		}
 		//----------------------------------------------------------------------------------
-		// Se arrayIds non è vuoto, assegna la pratica all'operatore che ne ha di meno
+		// Se arrayIds non ï¿½ vuoto, assegna la pratica all'operatore che ne ha di meno
 		// (in totale, se TipoDistribuzione='C', oppure nel giorno se TipoDistribuzione='I')
 		//----------------------------------------------------------------------------------
 		if (count($arrayIds)>0)
@@ -146,7 +146,7 @@ function assign($IdContratto)
 //          0 se tutto va bene ma non ha assegnato ad alcuno
 //          IdUtente   se assegnato
 // NOTA BENE: per ora la funzione implementa l'algoritmo semplice
-//          richiesto, ma per uniformità con il resto dovrebbe
+//          richiesto, ma per uniformitï¿½ con il resto dovrebbe
 //          usare la tabella delle regole di assegnazione e la
 //          procedura custom_AgentAssignment       
 //----------------------------------------------------------------
@@ -177,7 +177,7 @@ function assignAgent($IdContratto)
 		}
 		$IdAgenzia = $pratica["IdAgenzia"];
 		//----------------------------------------------------------
-		// Se non affidata oppure già assegnata, non assegna
+		// Se non affidata oppure giï¿½ assegnata, non assegna
 		//----------------------------------------------------------
 		if (!($IdAgenzia>0) || $pratica["IdAgente"]>0)
 			return 0;
@@ -194,7 +194,7 @@ function assignAgent($IdContratto)
 		}
 
 		//----------------------------------------------------------
-		// Se un'altra pratica dello stesso cliente è in affido
+		// Se un'altra pratica dello stesso cliente ï¿½ in affido
 		// presso questa agenzia, assegna lo stesso operatore
 		//----------------------------------------------------------
 		$IdCliente = $pratica["IdCliente"];
@@ -251,7 +251,7 @@ function assignAgent($IdContratto)
 				$arrayIds[$IdUtente] = $regola["TipoDistribuzione"];
 		}
 		//----------------------------------------------------------------------------------
-		// Se arrayIds è vuoto, presume una distribuzione equa tra tutti gli utenti del
+		// Se arrayIds ï¿½ vuoto, presume una distribuzione equa tra tutti gli utenti del
 		// reparto aventi profilo 5 
 		//
 		// SOPPRESSO IL 27/12/2011 PER EVITARE ASSEGNAZIONI NON VOLUTE
@@ -266,7 +266,7 @@ function assignAgent($IdContratto)
 		}
 		
 		//----------------------------------------------------------------------------------
-		// Se arrayIds non è vuoto, assegna la pratica all'operatore che ne ha di meno
+		// Se arrayIds non ï¿½ vuoto, assegna la pratica all'operatore che ne ha di meno
 		// (in totale, se TipoDistribuzione='C', oppure nel giorno se TipoDistribuzione='I')
 		//----------------------------------------------------------------------------------
 		if (count($arrayIds)>0)
@@ -327,7 +327,7 @@ function delegate($IdContratto)
 		if (lavorazioneInterna($IdContratto))
 			return 0;
 
-		// 2014-07-10: se il contratto ha il flag di blocco affido, anziché affidarlo lo mette in lav interna
+		// 2014-07-10: se il contratto ha il flag di blocco affido, anzichï¿½ affidarlo lo mette in lav interna
 		// con l'apposita categoria ("Blocco affido per anomalia", id=10)
 		if (rowExistsInTable("contratto","IdContratto=$IdContratto AND IF(FlagBloccoAffido>'',FlagBloccoAffido,'N') NOT IN ('N','U')")) {
 			impostaStato("INT",$IdContratto,10,   // mette in stato di lavorazione interna con categoria 10 (blocco)
@@ -365,7 +365,7 @@ function delegate($IdContratto)
 				trace("Affido non effettuato perche' rilevata una richiesta di forzatura con indicazione generica di affido ad un legale",FALSE);
 				return 0;
 			}
-    		// se FlagForzaSeDBT=Y e lo stato recupero non è ATS (in attesa di affido STR/LEG) non applica la forzatura
+    		// se FlagForzaSeDBT=Y e lo stato recupero non ï¿½ ATS (in attesa di affido STR/LEG) non applica la forzatura
     		if ($IdAffidoForzato>0 && $dati["FlagForzaSeDBT"]=='Y' && $dati["IdStatoRecupero"]!=25)
     		{
 				trace("Forzatura affido (id=$IdAffidoForzato) non effettuata perche' la pratica non e' ancora in attesa di affido STR/LEG",FALSE);					
@@ -388,7 +388,7 @@ function delegate($IdContratto)
 		}
 		else // no forzature durante affido precedente: verifica se esiste forzatura a livello di contratto
 		     // (solo se contratto non affidato attualmente, altrimenti il campo CodRegolaProvvigione si riferisce
-		     //  all'affido attuale, non è la forzatura)
+		     //  all'affido attuale, non ï¿½ la forzatura)
 		{
 			$dati = getRow("SELECT r.IdRegolaProvvigione,r.IdReparto AS IdNuovaAgenzia,r.durata,c.CodRegolaProvvigione,FlagForzaSeDBT,IdStatoRecupero"
 			              ." FROM contratto c LEFT JOIN regolaprovvigione r ON r.CodRegolaProvvigione=c.CodRegolaProvvigione"
@@ -402,7 +402,7 @@ function delegate($IdContratto)
 				}
 				else
 				{
-					// se FlagForzaSeDBT=Y e lo stato recupero non è ATS (in attesa di affido STR/LEG) non applica la forzatura
+					// se FlagForzaSeDBT=Y e lo stato recupero non ï¿½ ATS (in attesa di affido STR/LEG) non applica la forzatura
 		    		if ($dati["FlagForzaSeDBT"]=='Y' && $dati["IdStatoRecupero"]!=25)
 						trace("Forzatura affido (id=".$dati["IdRegolaProvvigione"].") non effettuata perche' la pratica non e' ancora in attesa di affido STR/LEG",FALSE);					
 		    		else
@@ -419,7 +419,7 @@ function delegate($IdContratto)
 		}
 
 		//--------------------------------------------------------------------------------------
-		// Dapprima verifica se c'è una forzatura data con l'azione "Forza prossimo affido"
+		// Dapprima verifica se c'ï¿½ una forzatura data con l'azione "Forza prossimo affido"
 		// Poi chiama le logiche custom
 		//--------------------------------------------------------------------------------------
 		if ($IdRepartoScelto>0)
@@ -463,23 +463,23 @@ function delegate($IdContratto)
 			trace("Cliente ".$pratica["IdCliente"]." privo di IdArea",FALSE);
 		}
 		
-		// Se già affidata, non affida (la pratica resta per il momento all'agenzia che ce l'ha)
+		// Se gia' affidata, non affida (la pratica resta per il momento all'agenzia che ce l'ha)
 		if ($pratica["IdAgenzia"]>0)
 		{
-			trace("Contratto già affidato, l'affido non viene modificato",FALSE);
+			trace("Contratto gia' affidato, l'affido non viene modificato",FALSE);
 			return 0;
 		}
 
 		// Usa MySQL per sapere che giorno di inizio considerare, tra OGGI e DOMANI
-		// dipende dal fatto se è superata o meno l'ORA_FINE_GIORNO
+		// dipende dal fatto se ï¿½ superata o meno l'ORA_FINE_GIORNO
 		$oraFineGiorno = getSysParm("ORA_FINE_GIORNO","20");
 		$dataInizioAffido = getScalar("SELECT DATE(NOW()+INTERVAL ".(24-$oraFineGiorno)." HOUR)");
 		$dataInizioAffido = dateFromString($dataInizioAffido);
 		
 		// Seleziona tutte le regole di assegnazione che riguardano le agenzie
 		$arrayIds = Array();
-		$forceCond = FALSE; // TRUE quando c'è una condizione (cioè non considera buona l'entry 
-		                    // con Condizione=NULL se ce n'è una con Condizione non NULL)
+		$forceCond = FALSE; // TRUE quando c'ï¿½ una condizione (cioï¿½ non considera buona l'entry 
+		                    // con Condizione=NULL se ce n'ï¿½ una con Condizione non NULL)
 		$preferred = FALSE; // TRUE quando una regola ha tipoDistribuzione=P (prioritaria)
 		
 		if ($IdRepartoScelto>0) // forzatura: determina direttamente la riga applicabile (att.ne a quelle legate ad uno specifico IdRegolaProvvigione)
@@ -553,7 +553,7 @@ function delegate($IdContratto)
 			}
 			
 			// Eventuale variazione durata provvigione 
-			if ($IdRepartoScelto>0)// regola provvigione già determinata dalle forzature
+			if ($IdRepartoScelto>0)// regola provvigione gia' determinata dalle forzature
 			{
 				$durataNew = Custom_Duration($IdContratto,$IdRegolaProvvigione,$dataInizioAffido);
 				if ($durataNew>0)
@@ -564,13 +564,13 @@ function delegate($IdContratto)
 			if ($regola["IdArea"]>0 && !($IdRepartoScelto>0)) // soddisfatta condizione sull'area di recupero
 				trace("Area id=".$regola["IdArea"]." assegnata ad agenzia $IdReparto",FALSE);
 			$dataInizioReale = $dataInizioAffido;						
-			if ($regola["GiorniFissiInizio"]>"") // affido possibile solo in giorni prefissati (cioè "per lotti")
+			if ($regola["GiorniFissiInizio"]>"") // affido possibile solo in giorni prefissati (cioe' "per lotti")
 			{
 				// Se sono stabiliti dei giorni fissi, puo' affidare la pratica se oggi e' il giorno fisso,
 				// ma anche se la pratica e' in attesa da prima del precedente giorni fisso
 				// (perche' significa che quel giorno il motore non ha girato o non l'ha individuata)
 				$bool = getScalar("SELECT DAY(NOW()+INTERVAL ".(24-$oraFineGiorno)." HOUR) IN (".$regola["GiorniFissiInizio"].")");
-				if ($bool!="1") // oggi non è uno dei giorni stabiliti
+				if ($bool!="1") // oggi non e' uno dei giorni stabiliti
 				{
 					//if (!inAttesaDaPrima($IdContratto,$regola["GiorniFissiInizio"],$dataInizioAffido))
 					if (!giornoFissoRinviato($regola["GiorniFissiInizio"],$dataInizioAffido,$dataInizioReale))
@@ -608,7 +608,7 @@ function delegate($IdContratto)
 		{
 			if (count($arrayIds)>1) // c'e' piu' di una scelta
 			{
-				if (array_key_exists($IdAgenziaPrec,$arrayIds)) // l'agenzia precedente è una di quelle selezionabili
+				if (array_key_exists($IdAgenziaPrec,$arrayIds)) // l'agenzia precedente ï¿½ una di quelle selezionabili
 				{
 					unset($arrayIds[$IdAgenziaPrec]); // toglie elemento dall'array
 					trace("Non affidata ad agenzia n.$IdAgenziaPrec perche' e' obbligatorio il cambio di agenzia",FALSE);
@@ -671,9 +671,9 @@ function delegate($IdContratto)
 					// se multiplo di 30, si intende un numero intero di mesi
 					if ($durataTemp%30==0)
 						$data = mktime(0,0,0,date("n",$dataInizioAffido)+$durataTemp/30,
-								date("j",$dataInizioAffido)-1,date("Y",$dataInizioAffido)); // data fine affido (cioè ultimo giorno di affido, incluso)
+								date("j",$dataInizioAffido)-1,date("Y",$dataInizioAffido)); // data fine affido (cioï¿½ ultimo giorno di affido, incluso)
 					else
-						$data = mktime(0,0,0,date("n",$dataInizioAffido),date("j",$dataInizioAffido)+$durataTemp-1,date("Y",$dataInizioAffido)); // data fine affido (cioè ultimo giorno di affido, incluso)
+						$data = mktime(0,0,0,date("n",$dataInizioAffido),date("j",$dataInizioAffido)+$durataTemp-1,date("Y",$dataInizioAffido)); // data fine affido (cioï¿½ ultimo giorno di affido, incluso)
 					if ($giorniFissiTemp>"") // se deve terminare solo in giorni prefissati (causa inizio fase successiva "per lotti")
 					{
 						$fine   = date("j",$data); // giorno calcolato di fine affido
@@ -737,8 +737,8 @@ function delegate($IdContratto)
 }
 //----------------------------------------------------------------------------------------------------------
 // giornoFissoRinviato
-// Determina se il giorno fisso precedente è passato senza affido (di solito perché festivo) e se oggi
-// è un giorno vaildo per effettuare l'affido non fatto in quel giorno.
+// Determina se il giorno fisso precedente ï¿½ passato senza affido (di solito perchï¿½ festivo) e se oggi
+// ï¿½ un giorno vaildo per effettuare l'affido non fatto in quel giorno.
 //----------------------------------------------------------------------------------------------------------
 function giornoFissoRinviato($giorniFissi,&$dataFissa,&$dataInizioReale)
 {
@@ -756,25 +756,25 @@ function giornoFissoRinviato($giorniFissi,&$dataFissa,&$dataInizioReale)
 			break;            // trovato
 		}
 	}
-	if ($i<0) // non trovato (oggi è un giorno che precede il primo della lista), quindi va all'ultimo del mese precedente
+	if ($i<0) // non trovato (oggi ï¿½ un giorno che precede il primo della lista), quindi va all'ultimo del mese precedente
 		$data  = mktime(0,0,0,date("n")-1,$giorni[count($giorni)-1],date("Y")); // sposta all'ultimo giorno fisso del mese precedente
 
 	//---------------------------------------------------------------------------------------------
 	// Controlla se a partire da quel giorno fino ad oggi sono avvenuti affidi automatici
-	// Se sì, significa che non c'è motivo di affidare fuori dal giorno fisso, altrimenti
-	// (affido non avvenuto) si può affidare sul lotto a patto che non siano passati troppi giorni
+	// Se sï¿½, significa che non c'ï¿½ motivo di affidare fuori dal giorno fisso, altrimenti
+	// (affido non avvenuto) si puï¿½ affidare sul lotto a patto che non siano passati troppi giorni
 	//---------------------------------------------------------------------------------------------
 	$affidiFatti = getScalar("SELECT MAX(LastUpd) FROM log WHERE TipoLog='AFFIDO' AND LastUpd>='".ISODate($data,true)
 	                   ."' AND DATE(LastUpd)<'".ISODate(time(),true)."'");	
 	
 	if ($affidiFatti>0)
-		return FALSE; // non c'è motivo di affidare in ritardo
+		return FALSE; // non c'ï¿½ motivo di affidare in ritardo
 		
 	// Determina quanti giorni sono tollerabili come ritardo, considerando i giorni festivi intercorsi
 	$giornoSettimana = getdate($data); // giorno in cui sarebbe dovuto avvenire l'affido
 	$giornoSettimana = $giornoSettimana["wday"];
 	
-	// correzione del 18/8/2014: sopporta 3 giorni altrimenti le feste di venerdì creano problemi
+	// correzione del 18/8/2014: sopporta 3 giorni altrimenti le feste di venerdï¿½ creano problemi
 	//if ($giornoSettimana==0) // era domenica
 	//	$diff = 1; // un giorno di ritardo
 	//else if ($giornoSettimana==6) // era sabato
@@ -799,14 +799,14 @@ function giornoFissoRinviato($giorniFissi,&$dataFissa,&$dataInizioReale)
 //------------------------------------------------------------------------
 // inAttesaDaPrima
 // Determina se il contratto era in attesa da un giorno precedente il
-// più recente giorno fisso (il che indica che la pratica 
-// avrebbe dovuto essere affidata in quel giorno fisso, ma non lo è stato
-// probabilmente perché giorno festivo)
+// piï¿½ recente giorno fisso (il che indica che la pratica 
+// avrebbe dovuto essere affidata in quel giorno fisso, ma non lo ï¿½ stato
+// probabilmente perchï¿½ giorno festivo)
 //------------------------------------------------------------------------
 function inAttesaDaPrima($IdContratto,$giorniFissi,&$dataFissa)
 {
-	// cerca l'ultimo evento che non sia una revoca automatica (altrimenti può trovare la data del rientro effettuato subito prima,
-	// che ha lo stesso problema riguardante gli eventuali giorni fissi non elaborati per festività)
+	// cerca l'ultimo evento che non sia una revoca automatica (altrimenti puï¿½ trovare la data del rientro effettuato subito prima,
+	// che ha lo stesso problema riguardante gli eventuali giorni fissi non elaborati per festivitï¿½)
 	$dataCambioStato = getScalar("SELECT DATE(MAX(DataEvento)) FROM storiarecupero WHERE IdContratto=$IdContratto AND DescrEvento NOT LIKE '%revoca auto%'");
 	// Legge la massima data di registrazione degli insoluti su questo contratto
 	$dataArrivoInsoluti = getScalar("SELECT MAX(DataArrivo) FROM insoluto WHERE IdContratto=$IdContratto");
@@ -824,7 +824,7 @@ trace("dataCambioStato: ".ISODate($dataCambioStato)." dataArrivoInsoluti: ".ISOD
 	
 	if ($giornoSettimana==0) // domenica
 		$diff = 2; // due giorni
-	else if ($giornoSettimana==1) // lunedì
+	else if ($giornoSettimana==1) // lunedï¿½
 		$diff = 3;
 	else if ($giornoSettimana==6) // sabato
 		$diff = 1;
@@ -847,17 +847,17 @@ trace("dataCambioStato: ".ISODate($dataCambioStato)." dataArrivoInsoluti: ".ISOD
 			break;            // trovato
 		}
 	}
-	if ($i<0) // non trovato (oggi è un giorno che precede il primo della lista)
+	if ($i<0) // non trovato (oggi ï¿½ un giorno che precede il primo della lista)
 		$data  = mktime(0,0,0,date("n")-1,$giorni[count($giorni)-1],date("Y")); // sposta all'ultimo giorno fisso del mese precedente
 
 	$oggi = mktime(0,0,0,date("n"),date("j"),date("Y"));
 
-	if ($oggi-$data>($diff+3)*24*60*60) // più di 3 giorni dopo la data di affido
+	if ($oggi-$data>($diff+3)*24*60*60) // piï¿½ di 3 giorni dopo la data di affido
 	{	
 		//trace("Passato troppo tempo ".ISODate(time()). " ".ISODate($data),FALSE);
 		return FALSE; // troppo tardi, meglio non affidare
 	}
-	if (ISODate($dataCambioStato)<=ISODate($data))  // TRUE se il cambio stato è precedente al più recente giorno fisso
+	if (ISODate($dataCambioStato)<=ISODate($data))  // TRUE se il cambio stato ï¿½ precedente al piï¿½ recente giorno fisso
 	{	
 		$dataFissa = $data;
 		trace("dataInizioAffido calcolata: ".ISODate($dataFissa),FALSE);
@@ -897,8 +897,8 @@ function classify($IdContratto,&$changed=FALSE,$escludeFuoriRecupero=TRUE)
 		}	
 		//----------------------------------------------------------------------------
 		// Non classifica se la data di aggiornamento dei movimenti
-		// è inferiore alla data di cambio classe e si tratta di pratica positiva
-		// (perché sulle positive permanenti non arrivano più movimenti)
+		// ï¿½ inferiore alla data di cambio classe e si tratta di pratica positiva
+		// (perchï¿½ sulle positive permanenti non arrivano piï¿½ movimenti)
 		//----------------------------------------------------------------------------
 		//$dataCambioClasse = ISODate($pratica["DataCambioClasse"]);
 		//$dataUltimoMov    = ISODate(getScalar("SELECT MAX(LastUpd) FROM movimento WHERE IdContratto=$IdContratto"));
@@ -918,7 +918,7 @@ function classify($IdContratto,&$changed=FALSE,$escludeFuoriRecupero=TRUE)
 			if (!updateClass($IdContratto,$IdClasse,$changed))
 				return FALSE;
 			$classe = getRow("SELECT * FROM classificazione WHERE IdClasse=$IdClasse");
-			if ($classe["FlagNoAffido"]=="Y" && $classe["FlagRecupero"]=="Y") // || $IdClasse==NULL) // questa classificazione non va in affido ma è in recupero: mette stato "INT" e revoca
+			if ($classe["FlagNoAffido"]=="Y" && $classe["FlagRecupero"]=="Y") // || $IdClasse==NULL) // questa classificazione non va in affido ma ï¿½ in recupero: mette stato "INT" e revoca
 			{
 				if ($pratica["IdAgenzia"]==NULL
 			 	&& ($pratica["CodStatoRecupero"]=="NOR" || $pratica["CodStatoRecupero"]=="ATT" || $pratica["CodStatoRecupero"]=="OPE" || $pratica["CodStatoRecupero"]==null))
@@ -987,7 +987,7 @@ function classify($IdContratto,&$changed=FALSE,$escludeFuoriRecupero=TRUE)
 					continue;
 				}
 // dal 13/1/2012 si confronta l'importo capitale, non il totale insoluto
-// dal 8/11/2012 se è richiesta solo rata 0, si applica l'importo insoluto (caso AAD)
+// dal 8/11/2012 se ï¿½ richiesta solo rata 0, si applica l'importo insoluto (caso AAD)
 			if ($classe["ImpInsolutoDa"]!=NULL) // condizione sull'importo insoluto minimo
 			{
 				$impConfronto = ($classe["NumRataA"]==="0" ? $pratica["ImpInsoluto"]:$pratica["ImpCapitale"]);
@@ -1018,8 +1018,8 @@ function classify($IdContratto,&$changed=FALSE,$escludeFuoriRecupero=TRUE)
 					if ($subtrace) trace("Scartata per check su NumGiorniA",FALSE);
 					continue;
 				}
-			// la condizione sulla recidività funziona solo supponendo che si sta trattando il primo insoluto
-			if ($classe["FlagRecidivo"]=="Y") // condizione sulla recidività 
+			// la condizione sulla recidivitï¿½ funziona solo supponendo che si sta trattando il primo insoluto
+			if ($classe["FlagRecidivo"]=="Y") // condizione sulla recidivitï¿½ 
 			{
 				if ($pratica["FlagRecupero"]!="Y")  // il contratto deve essere stato in recupero
 				{
@@ -1041,7 +1041,7 @@ function classify($IdContratto,&$changed=FALSE,$escludeFuoriRecupero=TRUE)
 				if (!rowExistsInTable("v_pratica_noopt c","IdContratto=$IdContratto AND (".$classe["Condizione"].")") )
 				{
 					trace("Classificazione ".$classe["CodClasse"]." non applicabile causa condizione ".$classe["Condizione"],FALSE);
-					continue; // se la condizione non è soddisfatta, itera
+					continue; // se la condizione non ï¿½ soddisfatta, itera
 				}
 				else
 					if ($subtrace) trace("Condizione ".$classe["Condizione"]." soddisfatta",FALSE);
@@ -1053,7 +1053,7 @@ function classify($IdContratto,&$changed=FALSE,$escludeFuoriRecupero=TRUE)
 		}
 		if (!updateClass($IdContratto,$IdClasse,$changed))
 			return FALSE;
-		if ($classe["FlagNoAffido"]=="Y" && $classe["FlagRecupero"]=="Y") // || $IdClasse==NULL) // questa classificazione non va in affido ma è in recupero: mette stato "INT" e revoca
+		if ($classe["FlagNoAffido"]=="Y" && $classe["FlagRecupero"]=="Y") // || $IdClasse==NULL) // questa classificazione non va in affido ma ï¿½ in recupero: mette stato "INT" e revoca
 	//	if ($classe["FlagNoAffido"]=="Y" || $IdClasse==NULL) // questa classificazione non va in affido: mette stato "INT" e revoca
 		{
 			if ($pratica["IdAgenzia"]==NULL
@@ -1116,7 +1116,7 @@ function updateClass($IdContratto,$IdClasse,&$changed)
 			}
 		}
 		
-		// Scrive sullo storico recupero l'evento (se si è trattato effettivamente di un cambio)
+		// Scrive sullo storico recupero l'evento (se si ï¿½ trattato effettivamente di un cambio)
 		if (getAffectedRows()>0)
 		{
 			writeHistory("NULL","Pratica riclassificata come '$classe'",$IdContratto,"");
@@ -1176,10 +1176,10 @@ function chiusureMensili()
 			}
 			$IdAssegnazione = getInsertId(); // ID generato dall'INSERT
 			//-----------------------------------------------------------------------------
-			// Storicizza le rate di insoluto in StoriaInsoluto, senza però toglierle
+			// Storicizza le rate di insoluto in StoriaInsoluto, senza perï¿½ toglierle
 			// da Insoluto, visto che non sono chiuse. La data di fine viene messa
-			// uguale a quella della chiusura mensile (cioè fine mese passato); la data di
-			// inizio è quella dell'assegnazione
+			// uguale a quella della chiusura mensile (cioï¿½ fine mese passato); la data di
+			// inizio ï¿½ quella dell'assegnazione
 			//-----------------------------------------------------------------------------
 			$rate = fetchValuesArray("SELECT NumRata FROM insoluto WHERE IdContratto=$contratto");
 			foreach ($rate AS $NumRata)
@@ -1248,7 +1248,7 @@ function chiusureMensili()
 //---------------------------------------------------------------------------------------------
 // revocheAutomatiche
 // Effettua la revoca automatica per tutte le pratiche con data fine
-// affido scaduta. NB le agenzie legali non rientrano in automatico, è la funzione
+// affido scaduta. NB le agenzie legali non rientrano in automatico, ï¿½ la funzione
 // revocaAgenzia che effettua questo controllo.
 //---------------------------------------------------------------------------------------------
 function revocheAutomatiche(&$listaClienti)
@@ -1290,7 +1290,7 @@ function revocheAutomatiche(&$listaClienti)
 			Custom_Return($IdContratto,$IdAgenziaPrec,$CodRegolaProvvigione,$dataInizioAffido,$dataFineAffido);
 
 			//--------------------------------------------------------------------------
-			// Ricalcola campi derivati, perché possono essere diversi dopo il rientro
+			// Ricalcola campi derivati, perchï¿½ possono essere diversi dopo il rientro
 			// (interesse e spese)
 			//--------------------------------------------------------------------------
 			if (!aggiornaCampiDerivati($IdContratto))
@@ -1300,10 +1300,10 @@ function revocheAutomatiche(&$listaClienti)
 			}
 		}
 		//--------------------------------------------------------------------------
-		// Cambia il flag delle provvigioni già chiuse ma la cui dataFineAffido
-		// è uguale a quella delle pratiche rientrate, perché i giorni festivi
-		// può essere passata aggiornaProvvigioni, congelandole anche se il lotto
-		// non è stato chiuso dal rientro (correzione 27/2/2012)
+		// Cambia il flag delle provvigioni giï¿½ chiuse ma la cui dataFineAffido
+		// ï¿½ uguale a quella delle pratiche rientrate, perchï¿½ i giorni festivi
+		// puï¿½ essere passata aggiornaProvvigioni, congelandole anche se il lotto
+		// non ï¿½ stato chiuso dal rientro (correzione 27/2/2012)
 		//--------------------------------------------------------------------------
 		if ($dataFineAffido>0)
 		{
@@ -1313,7 +1313,7 @@ function revocheAutomatiche(&$listaClienti)
 		// Per tutti i lotti con regolaProvvigione avente FlagCerved=Y, produce l'estratto per Cerved
 		// e lo invia agli indirizzi e-mail configurati
 		//---------------------------------------------------------------------------------------------
-		if ($qualcheRientroPerCerved) // c'è stata qualche revoca effettivamente
+		if ($qualcheRientroPerCerved) // c'ï¿½ stata qualche revoca effettivamente
 			produceFileCerved($dataFineAffido);
 	}
 	catch (Exception $e)
@@ -1355,7 +1355,7 @@ function produceFileCerved($dataFineAffido)
 				trace("Fallita creazione file cerved per idProvvigione=$IdPprovvigione: $errmsg");
 				return FALSE;		
 			}
-			if ($filePath[0]>"" && $filePath[0]!="0") // né errore né file vuoto
+			if ($filePath[0]>"" && $filePath[0]!="0") // nï¿½ errore nï¿½ file vuoto
 			{
 				$parti 				= split("/",$filePath[0]);
 				$attachment["type"] = "text/plain";
@@ -1367,7 +1367,7 @@ function produceFileCerved($dataFineAffido)
 				sendMail("",$destinatario,$subject,$message,$attachment);
 			}
 			if (count($filePath)==2){
-				if ($filePath[1]>"" && $filePath[1]!="0") // né errore né file vuoto
+				if ($filePath[1]>"" && $filePath[1]!="0") // nï¿½ errore nï¿½ file vuoto
 				{
 					$parti 				= split("/",$filePath[1]);
 					$attachment["type"] = "text/plain";
@@ -1405,7 +1405,7 @@ function affidaInAttesa()
 		$ids = fetchValuesArray($sql);
 		foreach ($ids as $IdContratto) 	
 		{
-			// Non serve classificarlo, è già stato fatto se necessario nel processo a monte
+			// Non serve classificarlo, ï¿½ giï¿½ stato fatto se necessario nel processo a monte
 			$ret = delegate($IdContratto); // tenta affido
 			if ($ret===FALSE) // errore grave
 			{
@@ -1524,7 +1524,7 @@ function aggiornaProvvigioni($changeStatus=TRUE,$condizione="TRUE")
 				if (!execute($sql))
 					return FALSE;	
 				trace("Aggiornato il campo ImpIncassoImproprio su ".getAffectedRows()." righe di StoriaInsoluto",FALSE);	
-				// A questo punto è necessario ricalcolare i campi derivati sui contratti toccati dalle query precedenti
+				// A questo punto ï¿½ necessario ricalcolare i campi derivati sui contratti toccati dalle query precedenti
 				trace("Ricalcolo campi derivati per le pratiche toccate dalle operazioni precedenti",FALSE);	
 				foreach ($ids as $IdContratto) {
 					aggiornaCampiDerivati($IdContratto);
@@ -1617,7 +1617,7 @@ function aggiornaProvvigioni($changeStatus=TRUE,$condizione="TRUE")
 					$IdsProvvigioni = fetchValuesArray("SELECT IdProvvigione FROM provvigione WHERE IdRegolaProvvigione=$IdRegolaProvv"
 			    	  ." AND IdReparto=$IdAgenzia AND DataFin='$DataLotto' AND TipoCalcolo='$tipoCalcolo'");
 			        break;
-			    case 'X': // provvigioni STR/LEG con chiusura periodica mensile (visibilità limitata alle agenzie)
+			    case 'X': // provvigioni STR/LEG con chiusura periodica mensile (visibilitï¿½ limitata alle agenzie)
 			    case 'C': // provvigioni STR/LEG con chiusura periodica mensile
 					$IdsProvvigioni = fetchValuesArray("SELECT IdProvvigione FROM provvigione WHERE IdRegolaProvvigione=$IdRegolaProvv"
 			      	." AND IdReparto=$IdAgenzia AND (DataFin='$DataLotto' OR DataFin>=CURDATE() AND CURDATE()<='$DataLotto')"
@@ -1654,7 +1654,7 @@ function aggiornaProvvigioni($changeStatus=TRUE,$condizione="TRUE")
 					$condVeloce  = "(DataFin='$DataLotto' OR DataFin>=CURDATE() AND CURDATE()<='$DataLotto') AND IdRegolaProvvigione=$IdRegolaProvv";
 					$view = "v_importi_per_provvigioni_full";
 					break;
-				case 'X': // provvigioni STR/LEG con chiusura mensile e visibilità limitata per le agenzie
+				case 'X': // provvigioni STR/LEG con chiusura mensile e visibilitï¿½ limitata per le agenzie
 					$dataMassima = $context["sysparms"]["DATA_ULT_VIS_STR"]; 
 					if ($dataMassima=="") $dataMassima = '9999-12-31';
 					$condImporti = "DataInizioAffidoContratto<='$dataMassima' AND (DataFineAffido='$DataLotto' OR DataFineAffido>=CURDATE() AND CURDATE()<='$DataLotto') AND IdRegolaProvvigione=$IdRegolaProvv";
@@ -1668,7 +1668,7 @@ function aggiornaProvvigioni($changeStatus=TRUE,$condizione="TRUE")
 					$view = "v_importi_per_provvigioni_full";
 					break;
 			}
-			// per velocizzare (dato che la query principale è lenta), determina prima se esistono assegnazioni 
+			// per velocizzare (dato che la query principale ï¿½ lenta), determina prima se esistono assegnazioni 
 			if (!rowExistsInTable("assegnazione",$condVeloce)) {
 				commit();
 				trace("Nessuna assegnazione per questa regola, tipo e periodo (where: $condVeloce)",false);
@@ -1712,8 +1712,8 @@ function aggiornaProvvigioni($changeStatus=TRUE,$condizione="TRUE")
 			
 			//-------------------------------------------------------------------------------------
 			// Loop su tutte le pratiche interessate; ogni pratica di una coppia agenzia-lotto
-			// viene esaminata tante volte quante regole distinte esistono, perché l'applicabilità
-			// della regola non si può testare direttamente con la query 
+			// viene esaminata tante volte quante regole distinte esistono, perche' l'applicabilita'
+			// della regola non si puo' testare direttamente con la query 
 			//-------------------------------------------------------------------------------------
 			$dati = getFetchArray($query="SELECT * FROM $view WHERE $condImporti ORDER BY IdContratto");
 			if (!is_array($dati))
@@ -1727,18 +1727,18 @@ function aggiornaProvvigioni($changeStatus=TRUE,$condizione="TRUE")
 			foreach ($dati as $riga)
 			{
 				//-------------------------------------------------------------------------------------
-				// Determina quale regola di calcolo provvigione è applicabile a questo contratto
+				// Determina quale regola di calcolo provvigione e' applicabile a questo contratto
 				//-------------------------------------------------------------------------------------				
 				$IdContratto = $riga["IdContratto"];
 	//7/10/13			$IdRegola = trovaProvvigioneApplicabile($IdContratto,$IdAgenzia,$CodProvv,$riga["DataFineAffido"]);
 				$IdRegola=$IdRegolaProvv; //$IdRegola==$IdRegolaProvv
 	//			trace("IdContratto=$IdContratto, IdRegola=$IdRegola, IdRegolaProvv=$IdRegolaProvv",FALSE);
-				if ($IdRegola==$IdRegolaProvv) // è proprio quella corrente 
+				if ($IdRegola==$IdRegolaProvv) // e' proprio quella corrente 
 				{
 					if ($regola["FlagPerPratica"]=='Y') // calcolo provvigioni per pratica singola (Nicol Rinegoziazione)
 					{
 						// capita (in particolare su Nicol / RINE) che una pratica sia affidata due volte nello stesso mese
-						// se quindi il codice contratto risulta uguale al precedente elaborato, lo ignora. Questo è necessario
+						// se quindi il codice contratto risulta uguale al precedente elaborato, lo ignora. Questo ï¿½ necessario
 						// solo in questo tipo di regole, in cui la provvigione dipende dal numero di pratiche e dallo
 						// stato in cui si trovano
 						if ($IdContratto==$lastId) {
@@ -1756,7 +1756,7 @@ function aggiornaProvvigioni($changeStatus=TRUE,$condizione="TRUE")
 						// dal 1/2/2012 invertiti i due termini capitale reale e capitale
 						// il capitale reale incassato tiene conto al massimo dell'importo rata
 						$impCapitaleRealeIncassato += $riga["ImpPagato"]>$riga["ImpCapitaleAffidato"]?$riga["ImpCapitaleAffidato"]:$riga["ImpPagato"];
-						// il capitale  incassato tiene conto di tutto quello che è stato incassato, tranne spese e interessi
+						// il capitale  incassato tiene conto di tutto quello che e' stato incassato, tranne spese e interessi
 						$impCapitaleIncassato += $riga["ImpPagato"];
 					}
 						
@@ -1770,7 +1770,7 @@ function aggiornaProvvigioni($changeStatus=TRUE,$condizione="TRUE")
 						$numViagg++; // indica il numero di pratiche con rate viaggianti, non il num. totale di rate viaggianti
 						
 					//-------------------------------------------------------------------------------------
-					// Indica quale riga di Provvigione è applicata, nella riga di Assegnazione
+					// Indica quale riga di Provvigione ï¿½ applicata, nella riga di Assegnazione
 					// interessata
 					//-------------------------------------------------------------------------------------				
 					switch ($tipoCalcolo)
@@ -1915,7 +1915,7 @@ function aggiornaProvvigioni($changeStatus=TRUE,$condizione="TRUE")
 				
 				
 				//-------------------------------------------------------------------------------------
-				// Caso 0 (nuovo): provvigioni calcolate per pratica; il risultato è dato dalla
+				// Caso 0 (nuovo): provvigioni calcolate per pratica; il risultato e' dato dalla
 				// somma dei campi ImpProvvigione del dettaglioProvvigione 
 				//-------------------------------------------------------------------------------------
 				if ($regola["FlagPerPratica"]=='Y') // calcolo provvigioni per pratica singola
@@ -1924,17 +1924,18 @@ function aggiornaProvvigioni($changeStatus=TRUE,$condizione="TRUE")
 					trace("Calcolata somma provvigioni per pratica = $provv",FALSE);
 					$soglia = NULL;
 					$bonus = NULL;
+                    // in questo caso, il campo ImpProvvigione (di dettaglioprovvigione) Ã¨ stato giÃ  impostato su ciascuna pratica 
 				}
 								
 				//-------------------------------------------------------------------------------------
-				// Primo caso: è indicata una formula diretta 
+				// Primo caso: e' indicata una formula diretta 
 				//-------------------------------------------------------------------------------------
 				// Legge provvigione + campi calcolati
-				else if (!($regola["FormulaFascia"]>"")) // non c'è calcolo per fasce
+				else if (!($regola["FormulaFascia"]>"")) // non c'e' calcolo per fasce
 				{
 					if (!($regola["Formula"]>""))
 					{
-						trace("La regola provvigione con id=$IdProvvigione non ha né formula né fascia",FALSE,TRUE);
+						trace("La regola provvigione con id=$IdProvvigione non ha ne' formula ne' fascia",FALSE,TRUE);
 						$provv = 0;
 					}
 					else
@@ -1944,9 +1945,19 @@ function aggiornaProvvigioni($changeStatus=TRUE,$condizione="TRUE")
 					}
 					$soglia = NULL;
 					$bonus = NULL;
+                    // in questo caso, il campo ImpProvvigione (di dettaglioprovvigione) Ã¨ per ora nullo , ma puÃ² essere calcolato applicando
+                    // la stessa formula alla speciale vista v_dettaglioprovvigione_transform (che mappa i campi del dettaglio su quelli
+                    // usati nelle "Formule")
+                    if (!execute("UPDATE dettaglioprovvigione dp"
+                        . " JOIN v_dettaglioprovvigione_transform t ON t.IdProvvigione=dp.IdProvvigione AND t.IdContratto=dp.IdContratto"
+                        . " SET dp.ImpProvvigione={$regola["Formula"]} WHERE dp.IdProvvigione=$IdProvvigione"))		
+                    {
+                        rollback();
+                        return FALSE;
+                    }
 				}
 				//-------------------------------------------------------------------------------------
-				// Secondo caso: niente formula, si applicano fasce di risultato 
+				// Secondo caso: si applicano fasce di risultato (perchÃ© FormulaFascia Ã¨ valorizzato)
 				//-------------------------------------------------------------------------------------
 				else
 				{
@@ -1972,7 +1983,7 @@ function aggiornaProvvigioni($changeStatus=TRUE,$condizione="TRUE")
 					$provv  = getScalar("SELECT ".$fascia["Formula"]." FROM v_provvigione WHERE IdProvvigione=$IdProvvigione");
 					$soglia = $fascia["ValoreSoglia"];
 					
-					// Eventuale Bonus: se c'è una formula anche nella riga principale
+					// Eventuale Bonus: se c'e' una formula anche nella riga principale
 					if ($regola["Formula"]>"")
 					{
 						$bonus = getScalar("SELECT ".$regola["Formula"]." FROM v_provvigione WHERE IdProvvigione=$IdProvvigione");
@@ -1981,6 +1992,23 @@ function aggiornaProvvigioni($changeStatus=TRUE,$condizione="TRUE")
 						$bonus = NULL;
 					
 					trace("Applica formula fascia ".$fascia["Formula"]." = $provv, bonus=$bonus",FALSE);
+                    
+                    // in questo caso, il campo ImpProvvigione (di dettaglioprovvigione) Ã¨ per ora nullo , ma puÃ² essere calcolato applicando
+                    // la stessa formula selezionata (per fascia) alla speciale vista v_dettaglioprovvigione_transform (che mappa i campi del dettaglio su quelli
+                    // usati nelle "Formule"). Inoltre puÃ² essere aggiunto anche il bonus, a meno che non sia una semplice costante
+                    if ($regola["Formula"]>'' && !preg_match('/^[0-9\.]+$/',$regola["Formula"])) {
+                        $addition = "+".$regola["Formula"];
+                    } else {
+                        $addition = "";
+                    }
+                    if (!execute("UPDATE dettaglioprovvigione dp"
+                        . " JOIN v_dettaglioprovvigione_transform t ON t.IdProvvigione=dp.IdProvvigione AND t.IdContratto=dp.IdContratto"
+                        . " SET dp.ImpProvvigione={$fascia["Formula"]}$addition WHERE dp.IdProvvigione=$IdProvvigione"))		
+                    {
+                        rollback();
+                        return FALSE;
+                    }
+
 				}
 
 				//-------------------------------------------------------------------------------------
@@ -2072,14 +2100,14 @@ function cancellaProvvigioni($IdsProvvigioni)
 function calcolaProvvigionePerPratica($regola,$IdContratto,$DataLotto)
 {
 	//-------------------------------------------------------------------------------------
-	// Primo caso: è indicata una formula diretta 
+	// Primo caso: ï¿½ indicata una formula diretta 
 	//-------------------------------------------------------------------------------------
 	// Legge provvigione + campi calcolati
-	if (!($regola["FormulaFascia"]>"")) // non c'è calcolo per fasce
+	if (!($regola["FormulaFascia"]>"")) // non c'ï¿½ calcolo per fasce
 	{
 		if (!($regola["Formula"]>""))
 		{
-			trace("La regola provvigione con id=$IdProvvigione non ha né formula né fascia",FALSE,TRUE);
+			trace("La regola provvigione con id=$IdProvvigione non ha nï¿½ formula nï¿½ fascia",FALSE,TRUE);
 			$provv = 0;
 		}
 		else
@@ -2098,7 +2126,7 @@ function calcolaProvvigionePerPratica($regola,$IdContratto,$DataLotto)
 		if ($valore===FALSE)
 			return FALSE;
 			
-		if ($valore==NULL) // non c'è (ad es. nuovoTasso non determinabile, perché la rinegoziazione non è chiusa)
+		if ($valore==NULL) // non c'ï¿½ (ad es. nuovoTasso non determinabile, perchï¿½ la rinegoziazione non ï¿½ chiusa)
 		{
 			$provv = 0;		
 		}
@@ -2121,13 +2149,13 @@ function calcolaProvvigionePerPratica($regola,$IdContratto,$DataLotto)
 
 //----------------------------------------------------------------------------------------------------
 // affidaTutti
-// Esegue l'affidamento dei contratti di cui è stata appena modificata la classe. 
+// Esegue l'affidamento dei contratti di cui ï¿½ stata appena modificata la classe. 
 // Viene fatto in massa dopo aver classificato tutti i contratti, per gestire
 // correttamente le flotte e l'affido congiunto di pratiche in base alla classe peggiore
 //----------------------------------------------------------------------------------------------------
 function affidaTutti($arrayIdClienti)
 {
-	// se non c'è lista clienti (postprocessing non preceduto da altre fasi) la crea con i contratti in attesa di affido
+	// se non c'ï¿½ lista clienti (postprocessing non preceduto da altre fasi) la crea con i contratti in attesa di affido
 	if (count($arrayIdClienti)==0)
 	{
 //		$sql = "select DISTINCT IdCliente from contratto where idstatorecupero=2 and idclasse in "
@@ -2136,7 +2164,7 @@ function affidaTutti($arrayIdClienti)
 		$sql = "select DISTINCT IdCliente from contratto where idstatorecupero=25 or (idstatorecupero=2 and idclasse in "
 		      ."(select idclasse from classificazione where curdate() between dataini and datafin and IFNULL(flagnoaffido,'N')='N'))";
 	}
-	else // altrimenti aggiunge quelli in attesa all'array già fornito (in cui peraltro dovrebbero essere tutti in attesa)
+	else // altrimenti aggiunge quelli in attesa all'array giï¿½ fornito (in cui peraltro dovrebbero essere tutti in attesa)
 	{
 		$ids = join(",",$arrayIdClienti);
 		$sql = "select DISTINCT IdCliente from contratto where (idstatorecupero=2 and idclasse in "
@@ -2147,7 +2175,7 @@ function affidaTutti($arrayIdClienti)
 	$ids = join(",",$arrayIdClienti);
 	writeProcessLog(PROCESS_NAME,"L'elaborazione riguarda i contratti di ".count($arrayIdClienti)." clienti");
    	
-	// Seleziona i contratti da affidare, in ordine di cliente e gravità discendente
+	// Seleziona i contratti da affidare, in ordine di cliente e gravitï¿½ discendente
     // 25-11-2011: esclude le pratiche con una sola rata insoluta che deve ancora scadere
     // 1/8/2012: corregge criterio per le pratiche str/leg
    	$sql = "SELECT IdContratto FROM contratto c JOIN classificazione cl ON cl.IdClasse=c.IdClasse
@@ -2196,7 +2224,7 @@ function affidaTutti($arrayIdClienti)
 		if (!metteInAttesa($IdContratto))
 			return FALSE;
 		
-		// Ri-aggiorna campi calcolati nel contratto, se non affidata (altrimenti li ha già ricalcolati l'affido)
+		// Ri-aggiorna campi calcolati nel contratto, se non affidata (altrimenti li ha giï¿½ ricalcolati l'affido)
 		if (!($IdAgenzia>0)) {
 			if (!aggiornaCampiDerivati($IdContratto,0))
 			{
@@ -2215,7 +2243,7 @@ function affidaTutti($arrayIdClienti)
 //* Aggiorna il flag di bloccoAffido nel contratto
 //************************************************************************
 function aggiornaFlagBloccoAffido($IdContratto,$flagBloccoAffido) {
-	if (!($IdContratto>0)) return; // può essere un contratto non registrato a causa dell'errore
+	if (!($IdContratto>0)) return; // puï¿½ essere un contratto non registrato a causa dell'errore
 	$row = getRow("SELECT CodContratto,IF(FlagBloccoAffido>'',FlagBloccoAffido,'N') AS FlagBloccoAffido FROM contratto WHERE IdContratto=$IdContratto");
 	$currFlag 		= $row["FlagBloccoAffido"];
 	$CodContratto   = $row["CodContratto"];
@@ -2257,15 +2285,15 @@ function aggiornaFlagBloccoAffido($IdContratto,$flagBloccoAffido) {
 	if ($newFlag=='') return; // niente da cambiare
 	
 	if (!execute("UPDATE contratto SET FlagBloccoAffido='$newFlag' WHERE IdContratto=$IdContratto")) 
-		return; //	qualcosa non va, rinuncia (la traccia conterrà il messaggio SQL)
+		return; //	qualcosa non va, rinuncia (la traccia conterrï¿½ il messaggio SQL)
 		
 	if (getAffectedRows()==0) return; // nessun cambiamento: nessuna azione
 
-	// se il valore è effettivamente cambiato da non-bloccato a bloccato, emette opportuna segnalazione	
+	// se il valore ï¿½ effettivamente cambiato da non-bloccato a bloccato, emette opportuna segnalazione	
 	if 	($newFlag!='N' && $currFlag=='N') {
 		writeProcessLog(PROCESS_NAME,"Pratica {$row["CodContratto"]} marcata con 'Blocco Affido' a causa di anomalie nell'acquisizione dei dati",2);
 		writeHistory("NULL","Pratica marcata con 'Blocco Affido' a causa di anomalie nell'acquisizione dei dati",$IdContratto,"");		
-	} // non emette messaggi al reset, perché potrebbe essere smentito subito dopo (flag ok su contartti, KO su movimenti) 
+	} // non emette messaggi al reset, perchï¿½ potrebbe essere smentito subito dopo (flag ok su contartti, KO su movimenti) 
 }
 
 //************************************************************************
@@ -2282,7 +2310,7 @@ function resetBloccoAffido($IdContratto,$flagBloccoAffido) {
 
 
 /**
- * Controlla se è stato messo flagSospeso='X' per provocare lo stop immediato del batch
+ * Controlla se ï¿½ stato messo flagSospeso='X' per provocare lo stop immediato del batch
  */
 function controllaStopForzato() {
 	global $idImportLog;
@@ -2290,7 +2318,7 @@ function controllaStopForzato() {
 	$stop = getScalar("SELECT FlagSospeso FROM eventosistema WHERE IdEvento=1");
 	if ($stop=="X")
 	{
-		writeResult($idImportLog,"K","Elaborazione interrotta perché FlagSospeso=X");
+		writeResult($idImportLog,"K","Elaborazione interrotta perchï¿½ FlagSospeso=X");
 		sendDeferMail(); // invia messaggi accumulati
 		die();
 	}

@@ -60,7 +60,7 @@ function importFile(){
 		if(!get_magic_quotes_gpc())
 			$fileName = addslashes($fileName);
 		
-		$localDir = TMP_PATH."/import";
+		$localDir = TMP_PATH."/wizard";
 		if (!file_exists($localDir)) {
 			if (!mkdir($localDir,0777,true)) { // true --> crea le directory ricorsivamente
 				fail("Impossibile creare la cartella $localDir");

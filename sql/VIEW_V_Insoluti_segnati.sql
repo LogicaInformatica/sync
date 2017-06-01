@@ -8,4 +8,4 @@ select v.*,CONCAT(TitoloUfficio,' (',rp.CodRegolaProvvigione,')') AS ProssimaAge
 FROM v_insoluti_opt v
 LEFT JOIN regolaprovvigione rp ON rp.CodRegolaProvvigione=v.CodRegolaProvvigione
 	AND CURDATE()+INTERVAL 1 MONTH BETWEEN DataIni AND DataFin
-LEFT JOIN reparto r ON r.IdReparto=rp.IdReparto;  
+LEFT JOIN reparto r ON r.IdReparto=rp.IdReparto; 

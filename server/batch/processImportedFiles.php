@@ -85,11 +85,12 @@ function processImportedFiles($postprocessing=TRUE)
 			else // elaborazione KO: sposta nel folder dei file errati
 			{
 				rename($filepath,TMP_PATH."/errFiles/$item");
-				if ($idImportLog>0)
+				if ($idImportLog>0) { // e' uno dei file attesi?
 					changeImportStatus($idImportLog,'P'); // indica come processato
-				writeProcessLog(PROCESS_NAME,"Fine elaborazione forzata per errore su file $filepath",3);
-				sendDeferMail(); // invia messaggi accumulati
-				return;
+    				writeProcessLog(PROCESS_NAME,"Fine elaborazione forzata per errore su file $filepath",3);
+            		sendDeferMail(); // invia messaggi accumulati
+        			return;
+                } // altrimenti prosegue col prossimo file
 			}
 			writeProcessLog(PROCESS_NAME,"Fine elaborazione file $filepath");
 		}
@@ -98,7 +99,7 @@ function processImportedFiles($postprocessing=TRUE)
 
 	//----------------------------------------------------------------------
 	// Sistema i link tra recapiti e clienti per i casi in cui il contratto
-	// è stato spostato su altro codice cliente
+	// ï¿½ stato spostato su altro codice cliente
 	//----------------------------------------------------------------------
 	execute("update recapito r join contratto c on c.idcontratto=r.idcontratto and c.idcliente != r.idcliente"
 			." set r.idcliente=c.idcliente");
@@ -131,7 +132,7 @@ function processImportedFiles($postprocessing=TRUE)
 		rielaboraNegativi(); // aggiorna anche $listaClienti
 		writeProcessLog(PROCESS_NAME,"Fine elaborazione pratiche non ricevute ora ma che erano in negativo");
 		
-		// i Rientri devono essere fatti prima dell'affido corrente, per far sì che vengano correttamente giudicati
+		// i Rientri devono essere fatti prima dell'affido corrente, per far sï¿½ che vengano correttamente giudicati
 		// i clienti per la gestione flotte
 		writeProcessLog(PROCESS_NAME,"Elaborazione revoche automatiche di fine periodo affidamento");
 		revocheAutomatiche($listaClienti);  // revoca senza riaffido
@@ -164,7 +165,7 @@ function processImportedFiles($postprocessing=TRUE)
 			writeProcessLog(PROCESS_NAME,"Elaborazione regole di assegnazione operatori mancanti su $cnt contratti a recupero");
 			foreach ($contratti as $IdContratto)
 			{
-				if (assign($IdContratto)===FALSE) // l'errore non è detto sia così grave
+				if (assign($IdContratto)===FALSE) // l'errore non ï¿½ detto sia cosï¿½ grave
 				{
 					//writeResult($idImportLog,"K",getLastError());
 					trace("assign fallita idContratto=$IdContratto");
@@ -174,13 +175,13 @@ function processImportedFiles($postprocessing=TRUE)
 		}
 		
 		// Query corretta il 20/3/2014 per ridurre l'impegno. Adesso individua tutti i contratti in cui impInsoluto
-		// non è (come dovrebbe) uguale alla somma di capitale, spese, interessi e altri addebiti
+		// non ï¿½ (come dovrebbe) uguale alla somma di capitale, spese, interessi e altri addebiti
 		$contratti = fetchValuesArray("SELECT IdContratto FROM contratto c"
 		                             ." LEFT JOIN regolaripartizione rr ON c.IdRegolaProvvigione=rr.IdRegolaProvvigione"
 									 ." WHERE impinsoluto!=impcapitale+impaltriaddebiti+impspeserecupero"
 									 ."+IF(flagInteressimora='Y',impinteressimora+impinteressimoraaddebitati,0)");
 //		$contratti = fetchValuesArray("SELECT IdContratto FROM contratto c WHERE impinsoluto!=impcapitale+impinteressimora+impaltriaddebiti+impspeserecupero+impinteressimoraaddebitati");
-		writeProcessLog(PROCESS_NAME,"Elaborazione campi derivati in ".count($contratti)." contratti in cui non è stato ancora fatto");
+		writeProcessLog(PROCESS_NAME,"Elaborazione campi derivati in ".count($contratti)." contratti in cui non ï¿½ stato ancora fatto");
 		// NOTA BENE: il criterio di cui sopra non tiene conto del fatto che gli interessi di mora e le spese sono
 		// addebitati (quindi contribuiscono a impinsoluto) solo se lo stato di affido lo prevede, quindi la query
 		// produce molti falsi positivi, perdendo un po' di tempo inutile, ma non fa danni
@@ -195,14 +196,14 @@ function processImportedFiles($postprocessing=TRUE)
 				trace("aggiornaCampiDerivati fallita idContratto=$IdContratto");
 			}
 		}
-		writeProcessLog(PROCESS_NAME,"Fine elaborazione campi derivati in ".count($contratti)." contratti in cui non è stato ancora fatto");
+		writeProcessLog(PROCESS_NAME,"Fine elaborazione campi derivati in ".count($contratti)." contratti in cui non ï¿½ stato ancora fatto");
 
 		// Effettua spostamenti di regolaprovvigione per le regole scadute (cosa che serve nei
 		// periodi in cui si introducono nuove regole con codici identici alle vecchie)
 		// (Aggiorna l'IdRegolaProvvigione sia in contratto che in assegnazione)
 		// 8/1/15: rilevato che in questo modo si passano le assegnazioni alla nuova regola, anche per quelle con
 		// chiusura mensile, mentre il mese ancora da chiudere dovrebbe restare con la vecchia regola
-		// Non ho trovato però una soluzione diretta. Quindi nel caso
+		// Non ho trovato perï¿½ una soluzione diretta. Quindi nel caso
 		writeProcessLog(PROCESS_NAME,"Elaborazione spostamenti di regola-provvigione per le regole scadute");
 		$sql = "update contratto c
 join assegnazione a on c.idcontratto=a.idcontratto and a.datafin=c.datafineaffido
@@ -270,8 +271,12 @@ function processFile($dir,$filename)
 	{
 		$precrimine = FALSE;
 
-		// Separa tipo e id del file da processare (il nome file è Company_idfile_tipofile)
+		// Separa tipo e id del file da processare (il nome file e' Company_idfile_tipofile)
 		$parti = explode("_",$filename);
+        if (count($parts)<3) {
+  			writeProcessLog(PROCESS_NAME,"File $filename non identificato",0);
+			return FALSE;
+        }
 		$type  = $parti[2];
 		$from  = $parti[0];
 		$id    = $parti[1];
@@ -280,7 +285,7 @@ function processFile($dir,$filename)
 		trace("Inizio elaborazione file di import $type con id=$id",FALSE); // traccia per debug
 
 		// Ottiene la chiave della riga corrispondente nell'importLog
-		if ($dataFile>0)   // se già impostato (nuova gestione, da importlog con id=1
+		if ($dataFile>0)   // se giï¿½ impostato (nuova gestione, da importlog con id=1
 			$idImportLog = getImportLogId($from,$type,$id);
 		else {
 			$idImportLog = getImportLogId($from,$type,$id,$dataFile); // legge data di import
@@ -345,7 +350,7 @@ function processFile($dir,$filename)
 			}
 		}
 			
-		// All'inizio del file dipendenti, marca la dataPagamento a tutte le righe in cui è null
+		// All'inizio del file dipendenti, marca la dataPagamento a tutte le righe in cui ï¿½ null
 		// per poi riconoscerle
 		if ($type=="dipendenti")
 		{
@@ -386,7 +391,7 @@ function processFile($dir,$filename)
 				writeResult($idImportLog,"K","La riga n. " . ($nrows+1) . " del file ha un formato invalido");
 				return FALSE;
 			}
-			else if (property_exists($json,"rows")) // si tratta dell'ultima riga di controllo (già controllata nella import.php)
+			else if (property_exists($json,"rows")) // si tratta dell'ultima riga di controllo (giï¿½ controllata nella import.php)
 				break;
 			// Smista per il trattamento specifico
 			switch ($type)
@@ -444,7 +449,7 @@ function processFile($dir,$filename)
 								continue;
 						}
 					}
-					if	(!$precrimine) $movimentiOK = TRUE; // indica che è arrivato un file movimenti non vuoto
+					if	(!$precrimine) $movimentiOK = TRUE; // indica che ï¿½ arrivato un file movimenti non vuoto
 					
 					$ret = processMovimento($json,$IdContratto,$lastContratto); // carica singolo record e gestisce il break
 					break;
@@ -600,7 +605,7 @@ function processCliente($json,$idCompany)
 		if ($json->ragsoc>'')
 			$json->tipo = 1; // persona giuridica
 		
-		if ($idCliente!=NULL) // è necessario un UPDATE (la tab. ClienteCompagnia non si deve aggiornare)
+		if ($idCliente!=NULL) // ï¿½ necessario un UPDATE (la tab. ClienteCompagnia non si deve aggiornare)
 		{
 
 			$setClause = "";
@@ -651,7 +656,7 @@ function processCliente($json,$idCompany)
 
 			//trace("Update cliente $codcli OK");
 		}
-		else // è necessario un INSERT
+		else // ï¿½ necessario un INSERT
 		{
 			$colList = ""; // inizializza lista colonne
 			$valList = ""; // inizializza lista valori
@@ -755,7 +760,7 @@ function processBanche($json)
 	{
 		if(rowExistsInTable('banca',"banca.ABI=$json->abi and banca.CAB=$json->cab") != false) // la banca esiste?
 		{
-			// è necessario un UPDATE
+			// ï¿½ necessario un UPDATE
 			$setClause = "";
 			addSetClause($setClause,"ABI",$json->abi,"N");
 			addSetClause($setClause,"CAB",$json->cab,"N");
@@ -784,7 +789,7 @@ function processBanche($json)
 		}
 		else
 		{
-			// è necessario un INSERT
+			// ï¿½ necessario un INSERT
 			$colList = ""; // inizializza lista colonne
 			$valList = ""; // inizializza lista valori
 			addInsClause($colList,$valList,"ABI",$json->abi,"N");
@@ -860,20 +865,20 @@ function processContratto($json,$idCompany)
 	// INIZIO CONTROLLO DATI RICEVUTI DA STRUTTURA JSON
 
 	//Controllo codice contratto ricevuto da struttura Json e lttura IdContratto da DB
-	if ($CodContratto!="")       // se è stato specificato  il codice contratto
+	if ($CodContratto!="")       // se ï¿½ stato specificato  il codice contratto
 	{
 		// ricavo idCodContratto dalla tab Contratti
 		$row = getRow("SELECT IdContratto,IdStatoRecupero FROM contratto WHERE CodContratto ='".$json->CodContratto."' AND IdCompagnia =".$idCompany);
 		if ($row==NULL)
-			$todo="Insert";  	    // 	dovrò fare l'insert del contratto
+			$todo="Insert";  	    // 	dovrï¿½ fare l'insert del contratto
 		else
 		{
 			$IdContratto = $row["IdContratto"];
 			$oldStatoRecupero = $row["IdStatoRecupero"];
-			$todo="Update";  	    // 	dovrò fare l'update del contratto
+			$todo="Update";  	    // 	dovrï¿½ fare l'update del contratto
 		}
 	}
-	else  						    //  non è stato specificato il codice contratto
+	else  						    //  non ï¿½ stato specificato il codice contratto
 	{
 		//  invio errore per mancanza codice contratto
 		writeRecordError($idImportLog,"E","Codice contratto non presente in un record del file contratti ",null);
@@ -884,7 +889,7 @@ function processContratto($json,$idCompany)
 	//echo("todo=$todo");
 
 	//Controllo Codice cliente ricevuto dalla struttura Json  e lettura IdCliente da DB
-	if($json->CodCliente!="") 	    // se è stato specificato  il codice cliente
+	if($json->CodCliente!="") 	    // se ï¿½ stato specificato  il codice cliente
 	{
 		// ricavo IdCliente dalla tab Cliente in Join Con la tab ClienteCompagnia (con cod compagnia specificato)
 		$QueryStr = " SELECT C.IdCliente"
@@ -906,7 +911,7 @@ function processContratto($json,$idCompany)
 			return 1;
 		}
 	}
-	else  						    //  non è stato specificato il codice cliente
+	else  						    //  non ï¿½ stato specificato il codice cliente
 	{
 		//  invio errore per mancanza codice cliente
 		writeRecordError($idImportLog,"E","Codice Cliente assente in un record del file contratti",$CodContratto);
@@ -915,7 +920,7 @@ function processContratto($json,$idCompany)
 	}
 
 	//Controllo CodProdotto ricevuto dalla struttura Json e lettura IdProdotto da db
-	if($json->CodProdotto!="") 	    // se è stato specificato  il codice prodotto
+	if($json->CodProdotto!="") 	    // se ï¿½ stato specificato  il codice prodotto
 	{
 		// ricavo IdProdotto dalla tab Prodotto in Join Con la tab famigliaProdotto (con cod compagnia specificato)
 		$QueryStr = " SELECT P.IdProdotto"
@@ -944,7 +949,7 @@ function processContratto($json,$idCompany)
 	}
 
 	//Controllo CodStatoContratto ricevuto dalla struttura Json  e lettura IdStatoContratto da db
-	if ($json->CodStatoContratto!="") 	// se è stato specificato  il codice statoContratto
+	if ($json->CodStatoContratto!="") 	// se ï¿½ stato specificato  il codice statoContratto
 	{
 		// ricavo IdStatoContratto dalla tab statoContratto
 		$QueryStr = " SELECT S.IdStatoContratto"
@@ -968,7 +973,7 @@ function processContratto($json,$idCompany)
 	$IdStatoContratto = 999; // impostato a N/A
 
 	//Controllo CodTipoPagamento ricevuto dalla struttura Json e lettura IdTipoPagamento
-	if ($json->CodTipoPagamento!="") 	// se è stato specificato  il codice TipoPagamento
+	if ($json->CodTipoPagamento!="") 	// se ï¿½ stato specificato  il codice TipoPagamento
 	{
 		// ricavo IdTipoPagamento dalla tab tipopagamento
 		$QueryStr = " SELECT T.IdTipoPagamento"
@@ -1000,7 +1005,7 @@ function processContratto($json,$idCompany)
 			writeRecordError($idImportLog,"E","Banca con codice ABI: $json->CodABI e codice CAB: $json->CodCAB trovata nel contratto $CodContratto ma non presente sul DB",$CodContratto);
 		}
 
-		if($json->CodCC!="")   // se è stato specificato il codice di conto corrente
+		if($json->CodCC!="")   // se ï¿½ stato specificato il codice di conto corrente
 		{
 			$Iban = createIban($json->CodABI, $json->CodCAB, $json->CodCC);
 			//echo("IBAN:".$Iban);
@@ -1011,19 +1016,19 @@ function processContratto($json,$idCompany)
 				$Iban = "***CC="+$json->CodCC;
 			}
 		}
-		else					// non è stato specificato il CC non posso calcolare Cod IBAN
+		else					// non ï¿½ stato specificato il CC non posso calcolare Cod IBAN
 		{
 			writeRecordError($idImportLog,"E","Codice di conto corrente non presente, impossibile calcolare il codice IBAN",$CodContratto);
 			$Iban = "***CC="+$json->CodCC;
 		}
 	}
-	else 				 				// non è stata trovata una banca con abi e cab indicati e non è stato possibile calcolare l'iban
+	else 				 				// non ï¿½ stata trovata una banca con abi e cab indicati e non ï¿½ stato possibile calcolare l'iban
 	{
 		$Iban = "";
 	}
 
 	// Controllo CodFiliale e lettura IdFiliale da DB
-	if($json->CodFiliale!="" && $json->CodFiliale!=0) 		// se è stato specificato  il codice filiale
+	if($json->CodFiliale!="" && $json->CodFiliale!=0) 		// se ï¿½ stato specificato  il codice filiale
 	{
 		// ricavo IdFiliale dalla tab filiale
 		$QueryStr = " SELECT F.IdFiliale"
@@ -1044,7 +1049,7 @@ function processContratto($json,$idCompany)
 	}
 
 	// Controllo CodVenditore
-	if($json->CodVenditore!="" && $json->CodVenditore!=0) 		// se è stato specificato  il codice venditore
+	if($json->CodVenditore!="" && $json->CodVenditore!=0) 		// se ï¿½ stato specificato  il codice venditore
 	{
 		// ricavo IdVenditore dall'anagrafe clienti
 		$IdVenditore = getScalar("SELECT IdCliente FROM cliente WHERE CodCliente='".$json->CodVenditore."'");
@@ -1056,7 +1061,7 @@ function processContratto($json,$idCompany)
 		}
 	}
 	// Controllo CodPuntoVendita (per ora solo in anagrafe clienti)
-	if($json->CodPuntoVendita!="" && $json->CodPuntoVendita!=0) 		// se è stato specificato  il codice punto vendita
+	if($json->CodPuntoVendita!="" && $json->CodPuntoVendita!=0) 		// se ï¿½ stato specificato  il codice punto vendita
 	{
 		// ricavo IdPuntoVendita dall'anagrafe clienti
 		$IdPuntoVendita = getScalar("SELECT IdCliente FROM cliente WHERE CodCliente='".$json->CodPuntoVendita."'");
@@ -1068,11 +1073,11 @@ function processContratto($json,$idCompany)
 		}
 	}
 	// Controllo Attributo
-	if($json->Attributo!="") 		// se è stato specificato l'attributo
+	if($json->Attributo!="") 		// se ï¿½ stato specificato l'attributo
 	{
 		// ricavo IdPuntoVendita dall'anagrafe cl
 
-		// il cod. attributo sul DB CNC ha la forma "LE CH" (ad es.) cioè famiglia+blank+attributo
+		// il cod. attributo sul DB CNC ha la forma "LE CH" (ad es.) cioï¿½ famiglia+blank+attributo
 		$attr = substr($json->CodProdotto,0,2)." ".$json->Attributo;
 		$IdAttributo = getScalar("SELECT IdAttributo FROM attributo WHERE CodAttributoLegacy='$attr'");
 		if(!($IdAttributo>0))
@@ -1089,7 +1094,7 @@ function processContratto($json,$idCompany)
 		$attr = "";
 	}
 	// Controllo IdCompagniaIdDealer e lettura id compagnia dealer dal db
-	if($json->IdCompagniaIdDealer!="")// se è stato specificato  il codice compagnia dealer
+	if($json->IdCompagniaIdDealer!="")// se ï¿½ stato specificato  il codice compagnia dealer
 	{
 		// controllo se il codice compagnia dealer esiste e che la compagnia sia dealer (IdTipoCompagnia=3)
 		$QueryStr = " SELECT C.IdCompagnia"
@@ -1102,7 +1107,7 @@ function processContratto($json,$idCompany)
 			
 		if($IdDealer=="")
 		{
-			// Controlla se esiste il cliente con tale codice: se sì lo copia in Compagnia
+			// Controlla se esiste il cliente con tale codice: se sï¿½ lo copia in Compagnia
 			$cliente = getRow("SELECT * FROM cliente WHERE CodCliente='".$json->IdCompagniaIdDealer."'");
 			if ($cliente>0)
 			{
@@ -1124,7 +1129,7 @@ function processContratto($json,$idCompany)
 	}
 
 	// Controllo CodTipoSpeciale e lettura IdTipoSpeciale dal db
-	if($json->CodTipoSpeciale!="") 	// se è stato specificato  il codice tipo speciale
+	if($json->CodTipoSpeciale!="") 	// se ï¿½ stato specificato  il codice tipo speciale
 	{
 		// controllo se il codice compagnia dealer esiste e che la compagnia sia dealer (IdTipoCompagnia=3)
 		$QueryStr = " SELECT C.IdTipoSpeciale"
@@ -1145,7 +1150,7 @@ function processContratto($json,$idCompany)
 	}
 
 	// Controllo Responsabile e lettura IdFiliale (responsebile contratto) da DB
-	if($json->Responsabile!="" && $json->Responsabile!="XXX" ) 		// se è stato specificato  il codice responsabile (filiale)
+	if($json->Responsabile!="" && $json->Responsabile!="XXX" ) 		// se ï¿½ stato specificato  il codice responsabile (filiale)
 	{
 		// ricavo IdFiliale (responsabile) dalla tab filiale
 		$QueryStr = " SELECT F.IdFiliale"
@@ -1163,12 +1168,12 @@ function processContratto($json,$idCompany)
 			$Responsabile = "";
 		}
 	}
-	else  							//  non è stato specificato il codice responsabile (filiale)
+	else  							//  non ï¿½ stato specificato il codice responsabile (filiale)
 	{
 		$Responsabile = "";
 	}
 	// Determina lo stato recupero, nei casi in cui questo dipende dallo stato contratto
-	// o da altre considerazioni (torna FALSE se non deve essere toccato). Può anche aggiustare il debitoResituo
+	// o da altre considerazioni (torna FALSE se non deve essere toccato). Puï¿½ anche aggiustare il debitoResituo
 	$IdStatoRecupero = calcolaStatoRecupero($IdContratto,$json->CodStatoContratto,$attr,$json->CapitRes,$flagRineg);
 	if ($IdStatoRecupero==79 || $IdStatoRecupero==84) // se in write off o cessione
 		$IdClasse = 19; // mette classe "fuori recupero"
@@ -1387,16 +1392,16 @@ function processContratto($json,$idCompany)
 		if ($json->CodContrEstinto>'')
 			collegaContrattoEstinto($IdContratto,$json->CodContrEstinto);
 		
-		// Se il contratto è già in DBT il campo ImpDebitoResiduo deve essere messo a zero, perché il capitale
-		// residuo su rate future è già addebitato su rata 0
-		// Idem se il contratto è estinto (anche in questo caso il debito è dato dal saldo del partitario)
+		// Se il contratto ï¿½ giï¿½ in DBT il campo ImpDebitoResiduo deve essere messo a zero, perchï¿½ il capitale
+		// residuo su rate future ï¿½ giï¿½ addebitato su rata 0
+		// Idem se il contratto ï¿½ estinto (anche in questo caso il debito ï¿½ dato dal saldo del partitario)
 		$sql = "UPDATE contratto set impdebitoresiduo=0 where (idstatocontratto in (10,12,2,3,14)
 		        OR idstatocontratto=23 and idattributo in (59,71,82,83,84)) AND IdContratto=$IdContratto";
 		if (!execute($sql)) {
 			$flagBloccoAffido = 'C';
 			return 2;
 		}
-		// Se il contratto è in affido (o attesa di affido) STR/LEG, mette il coeff. di svalutazione a 0.85
+		// Se il contratto ï¿½ in affido (o attesa di affido) STR/LEG, mette il coeff. di svalutazione a 0.85
 		$sql = "UPDATE contratto SET PercSvalutazione=0.85 WHERE idstatorecupero in (5,6,25,26)
 		        AND PercSvalutazione IS NULL AND IdContratto=$IdContratto";
 		if (!execute($sql)) {
@@ -1416,14 +1421,14 @@ function processContratto($json,$idCompany)
 
 //==============================================================================================
 // calcolaStatoRecupero
-// Calcola lo stato recupero, nei casi in cui è determinato dallo stato contratto
-// Per i contratti DBT azzera l'importo debito residuo, perché già nel partitario.
-// Annulla anche il flag rinegoziazione, se il contratto è chiuso.
+// Calcola lo stato recupero, nei casi in cui ï¿½ determinato dallo stato contratto
+// Per i contratti DBT azzera l'importo debito residuo, perchï¿½ giï¿½ nel partitario.
+// Annulla anche il flag rinegoziazione, se il contratto ï¿½ chiuso.
 //==============================================================================================
 function calcolaStatoRecupero($IdContratto,$CodStatoContratto,$CodAttributo,&$capitaleResiduo,&$flagRinegoziazione)
 {
 	//-----------------------------------------------------------------------------------------------
-	// Controlla se la rinegoziazione è avvenuta e corregge il flag di rinegoziazione
+	// Controlla se la rinegoziazione ï¿½ avvenuta e corregge il flag di rinegoziazione
 	//-----------------------------------------------------------------------------------------------
 	if ($IdContratto>0) // contratto esistente
 	{
@@ -1431,7 +1436,7 @@ function calcolaStatoRecupero($IdContratto,$CodStatoContratto,$CodAttributo,&$ca
 		||  $CodStatoContratto=="EST" || $CodStatoContratto=="ANN" || $CodStatoContratto=='EA'
 		||  $CodStatoContratto=="ESO" || $CodStatoContratto=="SOI" || $CodStatoContratto=='STO')
 		{
-			// Contratto chiuso: controlla se ne è stato aperto uno successivo di tipo
+			// Contratto chiuso: controlla se ne ï¿½ stato aperto uno successivo di tipo
 			// piano di rientro o rifinanziamento 
 			$row = getRow("SELECT IdCliente,DataChiusura FROM contratto WHERE IdContratto=$IdContratto");
 			$IdCliente = $row["IdCliente"];
@@ -1476,7 +1481,7 @@ function calcolaStatoRecupero($IdContratto,$CodStatoContratto,$CodAttributo,&$ca
 		//non ho idcontratto	writeHistory("NULL","Pratica messa in stato 'in attesa di affidamento STR/LEG'",$IdContratto,"");		
 			return $IdStato;
 		}
-		else // controlla che sia in uno stato che può essere spostato su ATS
+		else // controlla che sia in uno stato che puï¿½ essere spostato su ATS
 		     // se in affido, vedi funzione revocaAgenzia in workflowFunc.php
 		{
 			// dal 9/8/2012, quelle in stato INT non vengono cambiate di stato
@@ -1494,9 +1499,9 @@ function calcolaStatoRecupero($IdContratto,$CodStatoContratto,$CodAttributo,&$ca
 	}
 	//-----------------------------------------------------------------------------------------------
 	// Gestione delle pratiche passate a perdita su OCS o cedute
-	// Per il loan, se lo stato è PAP (95) con attributo LO CE o nullo --> è una cessione
-	//              se lo stato è PAP (95) con altro attributo         --> è un write off
-	// Per il leasing, se lo stato è CHI (90) e attributo = PP può essere entrambe le cose,
+	// Per il loan, se lo stato ï¿½ PAP (95) con attributo LO CE o nullo --> ï¿½ una cessione
+	//              se lo stato ï¿½ PAP (95) con altro attributo         --> ï¿½ un write off
+	// Per il leasing, se lo stato ï¿½ CHI (90) e attributo = PP puï¿½ essere entrambe le cose,
 	// lo mette in stato CES se era in corso una proposta di cessione del credito.
 	//-----------------------------------------------------------------------------------------------
 	$IdStatoCeduto = getScalar("SELECT IdStatoRecupero FROM statorecupero WHERE CodStatoRecupero='CES'"); 
@@ -1516,7 +1521,7 @@ function calcolaStatoRecupero($IdContratto,$CodStatoContratto,$CodAttributo,&$ca
 			// Cerca l'ultima azione del workflow cessione per questo contratto
 			$codAzione = getScalar("SELECT CodAzione FROM storiarecupero sr JOIN azione a ON a.idazione=sr.idazione 
 				AND CodAzione LIKE 'WF%CES%' WHERE IdContratto=0$IdContratto ORDER BY 1 DESC LIMIT 1");
-			if ($codAzione>"") // c'è
+			if ($codAzione>"") // c'ï¿½
 				if ($codAzione != "WF_ANNULLA_CES" && $codAzione != "WF_RIF_CGM_CES")	// richiesta non annullata	
 					$idNuovoStato = $IdStatoCeduto;
 				else
@@ -1542,7 +1547,7 @@ function calcolaStatoRecupero($IdContratto,$CodStatoContratto,$CodAttributo,&$ca
 			{
 				writeHistory("NULL","Pratica messa 'fuori recupero' causa passaggio a perdita o cessione",$IdContratto,"");		
 
-				// azzera anche l'eventuale data di Saldo e Stralcio, in modo che non si veda più nello scadenzario specifico
+				// azzera anche l'eventuale data di Saldo e Stralcio, in modo che non si veda piï¿½ nello scadenzario specifico
 				execute("UPDATE contratto SET DataSaldoStralcio=NULL WHERE IdContratto=$IdContratto");
 
 				// chiusura forzata richieste in attesa di convalids
@@ -1554,7 +1559,7 @@ function calcolaStatoRecupero($IdContratto,$CodStatoContratto,$CodAttributo,&$ca
 	
 	if (!$IdContratto) // contratto non ancora presente sul DB
 		return 1; // stato 1 = non a recupero
-	else // contratto già esistente, lascia nello stato in cui è
+	else // contratto giï¿½ esistente, lascia nello stato in cui ï¿½
 	{
 		return $IdStatoCorrente;
 	} 
@@ -1587,7 +1592,7 @@ function collegaContrattoEstinto($IdContratto,$CodEstinto)
 //==============================================================================================
 // controllaPianoRientro
 // Se il contratto ha un piano di rientro, aggiorna gli importi pagati, attribuendo a scalare
-// la diminuzione di debito rispetto al dovuto iniziale (che è dato dal totale rate da pagare)
+// la diminuzione di debito rispetto al dovuto iniziale (che ï¿½ dato dal totale rate da pagare)
 //==============================================================================================
 function controllaPianoRientro($IdContratto)
 {
@@ -1598,7 +1603,7 @@ function controllaPianoRientro($IdContratto)
 	$totalePiano 	= $dati["Totale"];		// totale da pagare nel piano di rientro
 	$idPiano        = $dati["IdPianoRientro"];  
 	$debitoCapitale = $dati["ImpCapitale"]; // debito odierno su capitale (dovrebbe essere minore o uguale al totale, 
-	// perché il passaggio in DBT dovrebbe aver portato a capitale tutto il dovuto, su rata 0)
+	// perchï¿½ il passaggio in DBT dovrebbe aver portato a capitale tutto il dovuto, su rata 0)
 	if ($totalePiano) return TRUE;
 	trace("Elabora piano di rientro contratto $IdContratto",FALSE);
 	
@@ -1733,7 +1738,7 @@ function processControparte($json,$idCompany)
 //   1) $json			struttura dati in input
 //   2) IdCompagnia
 // Restituisce:
-//      IdContratto oppure FALSE se c'è un errore
+//      IdContratto oppure FALSE se c'ï¿½ un errore
 //==============================================================================================
 function getIdContratto($json,$idCompany)
 {
@@ -1816,7 +1821,7 @@ function processMovimento($json,$IdContratto,&$lastContratto)
 		//-----------------------------------------------------------------------------------------------
 
 		// Controllo codTipoMovimento e lettura da DB IdTipoMovimento
-		if ($json->codTipoMovimento!="" ) 	// se è stato specificato  il codTipoMovimento
+		if ($json->codTipoMovimento!="" ) 	// se ï¿½ stato specificato  il codTipoMovimento
 		{
 			// ricavo IdTipoMovimento  dalla tab tipoMovimento
 			$QueryStr = " SELECT M.IdTipoMovimento"
@@ -1836,7 +1841,7 @@ function processMovimento($json,$IdContratto,&$lastContratto)
 		}
 
 		// Controllo codTipoPartita e lettura da DB IdTipoMovimento
-		if ($json->codTP!="" ) 	// se è stato specificato  il tipo partita
+		if ($json->codTP!="" ) 	// se ï¿½ stato specificato  il tipo partita
 		{
 			$QueryStr = " SELECT IdTipoPartita FROM tipopartita"
 				." WHERE CodTipoPartitaLegacy='".$json->codTP."'";
@@ -1849,7 +1854,7 @@ function processMovimento($json,$IdContratto,&$lastContratto)
 		}
 		
 		// Controllo codInsoluto e lettura da DB IdTipoInsoluto
-		if($json->codInsoluto!="" ) 	// se è stato specificato  il codInsoluto
+		if($json->codInsoluto!="" ) 	// se ï¿½ stato specificato  il codInsoluto
 		{
 			// ricavo IdTipoMovimento  dalla tab tipoMovimento
 			$QueryStr = " SELECT IdTipoInsoluto"
@@ -1893,7 +1898,7 @@ function processMovimento($json,$IdContratto,&$lastContratto)
 		//---------------------------------------------
 		// Aggiunta campi DBT per leasing 25/10/2012
 		//---------------------------------------------
-		if ($idTipoMovimento==339) // è "Apertura sofferenza leasing" che stabilisce l'importo del DBT
+		if ($idTipoMovimento==339) // ï¿½ "Apertura sofferenza leasing" che stabilisce l'importo del DBT
 		                           // per i contratti leasing
 		{
 			$setClause = "";
@@ -1910,7 +1915,7 @@ function processMovimento($json,$IdContratto,&$lastContratto)
 		}
 		else if ($idTipoMovimento==121) // decadenza beneficio del termine per i Loan DBT
 		{
-			// se la data DBT è nulla (su alcuni contratti DBT accade per errori su OCS)
+			// se la data DBT ï¿½ nulla (su alcuni contratti DBT accade per errori su OCS)
 			// usa quella del movimento (non l'importo, che non contiene gli insoluti su rate passate)
 			if (rowExistsInTable("contratto","DataDBT IS NULL AND IdContratto=$IdContratto"))
 			{
@@ -1974,7 +1979,7 @@ function processAndClassify($IdContratto)
 	trace("processInsoluti ha ritornato $ret",FALSE);
 	if ($ret == 0) // ci sono insoluti
 	{
-		if (!segnaRecidivo($IdContratto)) // segna FlagRecupero=Y se più di 1 insoluto
+		if (!segnaRecidivo($IdContratto)) // segna FlagRecupero=Y se piï¿½ di 1 insoluto
 		{
 			if ($idImportLog>0) writeResult($idImportLog,"K",getLastError());
 			return 2;
@@ -2066,7 +2071,7 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 		." OR idtipomovimento in (select idtipomovimento from tipomovimento where categoriamovimento='X')"
 		.") ORDER BY 1";
 		$rate = fetchValuesArray($sql);
-		if (count($rate)==0) // non può verificarsi a meno di errore su DB, visto quando viene chiamata questa funzione
+		if (count($rate)==0) // non puï¿½ verificarsi a meno di errore su DB, visto quando viene chiamata questa funzione
 		{
 			trace("Nessuna rata elaborabile individuata con la query precedente",FALSE);
 			//if ($idImportLog>0) writeResult($idImportLog,"K","Nessuna rata elaborabile individuata per il contratto $IdContratto: ".getLastError());
@@ -2092,8 +2097,8 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 		$ImpRataFinale  = $dati["ImpRataFinale"]+$dati["ImpSpeseIncasso"];
 		$dataScadenzaRataPrecedente = 0;
 		//------------------------------------------------------------------------------------------
-		// Loop su ciascun numero di rata, cioè su ciascuna partita elementare
-		// (la rata zero però comprende movimenti di tipo vario)
+		// Loop su ciascun numero di rata, cioï¿½ su ciascuna partita elementare
+		// (la rata zero perï¿½ comprende movimenti di tipo vario)
 		//------------------------------------------------------------------------------------------
 		$saldo = 0; // saldo totale di tutte le rate
 		$dataScadenzaRataPrecedente = "";
@@ -2101,7 +2106,7 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 		{
 			//--------------------------------------------------------------------------------------
 			// Legge in ordine le righe della partita, per determinare la data di scadenza
-			// (ultima data in cui si è passati da credito a debito)
+			// (ultima data in cui si ï¿½ passati da credito a debito)
 			//--------------------------------------------------------------------------------------
 			$sql = "SELECT m.*,CategoriaMovimento,m.IdTipoInsoluto,CategoriaPartita"
 			." FROM movimento m LEFT JOIN tipomovimento tm ON m.IdTipoMovimento=tm.IdTipoMovimento"
@@ -2111,7 +2116,7 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 			." ORDER BY IdMovimento";
 			//." ORDER BY DataScadenza,DataRegistrazione,NumRiga";
 			$movimenti = getFetchArray($sql);
-			if (count($movimenti)==0) // non può verificarsi a meno di errore su DB, visto quando viene chiamata questa funzione
+			if (count($movimenti)==0) // non puï¿½ verificarsi a meno di errore su DB, visto quando viene chiamata questa funzione
 			{
 				if ($idImportLog>0) writeResult($idImportLog,"K",getLastError());
 				return 2;
@@ -2128,7 +2133,7 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 			$eraDataInsoluto = "";
 			$rataCerta = FALSE;
 			$ultimoIncasso = 0;
-			$primoMovInsoluto = true; // true finché non si incontra un movimento di categoria X (insoluto RID)
+			$primoMovInsoluto = true; // true finchï¿½ non si incontra un movimento di categoria X (insoluto RID)
 			$veroDebito = false;
 			$veroPagamento = false;
 			//$eraCapitale = 0;
@@ -2141,7 +2146,7 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 				//--------------------------------------------------------------------------------------------
 				// Nuova gestione dal 26/1/2011: usa il tipo partita
 				//--------------------------------------------------------------------------------------------
-				if ($catP>"") // è presente il tipo partita
+				if ($catP>"") // ï¿½ presente il tipo partita
 				{
 					$nuovaGestione = true;
 					switch ($catP)
@@ -2161,7 +2166,7 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 									$impCapitale += $importo;
 									$dataInsoluto = $mov["DataScadenza"]?$mov["DataScadenza"]:$mov["DataCompetenza"];
 									// dal 20/12/2012 prende per buona l'ultima data di scadenza capitale incontrata
-									//                se il saldo fin lì è zero (quindi tutto il pregresso è stornato/annullato
+									//                se il saldo fin lï¿½ ï¿½ zero (quindi tutto il pregresso ï¿½ stornato/annullato
 									if ($dataInsolutoVero<$dataInsoluto || $curr == 0) // data spostata in avanti (oppure primo nuovo addebito) 
 										$dataInsolutoVero = $dataInsoluto;
 										
@@ -2183,16 +2188,16 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 									trace("Movimento di categoria X (insoluto) con importo<0: trattato come uno storno di addebito (contratto $IdContratto, numRata=$NumRata)",FALSE);
 									$impCapitale += $importo;
 								}	
-								else // accredito su quota capitale vero e proprio, cioè incasso o scarico RID
+								else // accredito su quota capitale vero e proprio, cioï¿½ incasso o scarico RID
 								{
 									$incasso -= $importo; // incasso tiene conto dei soli incassi su capitale
 									$ultimoIncasso = -$importo;
-									if ($catMov=='P') // è un "pagamento" su capitale vero e proprio, non uno scarico RID,
-									                  // né un annullamento per DBT, cessione ecc.
+									if ($catMov=='P') // ï¿½ un "pagamento" su capitale vero e proprio, non uno scarico RID,
+									                  // nï¿½ un annullamento per DBT, cessione ecc.
 									{
 										$veroPagamento = true;
 									}
-									else // è uno scarico RID o qualcosa di simile (anche una nota di credito)
+									else // ï¿½ uno scarico RID o qualcosa di simile (anche una nota di credito)
 									{
 										if ($incasso>=$impCapitale) // azzera il capitale dovuto
 											$veroDebito = false; // presume che sia una rata normalmente positiva, fino a qui
@@ -2228,7 +2233,7 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 							$impCapitale += $importo;
 							//			trace("Aggiunto a capitale $importo",FALSE);
 							if ($impCapitale == $ImpRataFinale || $impCapitale == $ImpRataNormale )
-								$rataCerta = TRUE; // non serve più cercare quant'è la rata
+								$rataCerta = TRUE; // non serve piï¿½ cercare quant'ï¿½ la rata
 						}
 					}
 					if ($curr<=0.001 && $curr + $importo>0.001) // questo movimento fa diventare debito
@@ -2236,7 +2241,7 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 						$dataInsoluto = $mov["DataScadenza"]?$mov["DataScadenza"]:$mov["DataCompetenza"];
 						// dal 20/1/2012 $dataInsolutVero contiene la max data insoluto determinata dall'analisi delle righe
 						// che producono un debito; in questo modo si considera sempre la data di emissione rata massima, anche
-						// se l'ordine di registrazione è ingannevole come nella pratica con id=42857 rata n.3
+						// se l'ordine di registrazione ï¿½ ingannevole come nella pratica con id=42857 rata n.3
 						if ($dataInsolutoVero<$dataInsoluto)
 							$dataInsolutoVero = $dataInsoluto;
 					}
@@ -2252,15 +2257,15 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 						$impCapitale = 0;
 					}
 	
-					// Se è uno storno che accredita, può servire a spostare il debito nel futuro,
-					// allora non considera più la data insoluto impostata prima, in modo che si prenda la data
+					// Se ï¿½ uno storno che accredita, puï¿½ servire a spostare il debito nel futuro,
+					// allora non considera piï¿½ la data insoluto impostata prima, in modo che si prenda la data
 					// dell'eventuale mov. di spostamento in avanti
 					// La terza condizione considera pure lo scarico RID vero e proprio
 					// 29/9/2011: ricorretto per considerare come storno incasso anche i movimenti di categoria X,
-					//            distinguendo però l'insoluto RID puro e semplice
+					//            distinguendo perï¿½ l'insoluto RID puro e semplice
 					// 1/12/2011: modificato ulteriormente per considerare i movimenti tipo X (insoluti)
 					//            solo come eventuale storno dell'ultimo incasso
-					if ($incasso>0 && round($importo,2)<=round($incasso,2) && $catMov=='S'   // è uno storno esplicito, anche parziale
+					if ($incasso>0 && round($importo,2)<=round($incasso,2) && $catMov=='S'   // ï¿½ uno storno esplicito, anche parziale
 					||  $incasso>0 && round($importo,2)<=round($ultimoIncasso,2) && $catMov=='X' && !$primoMovInsoluto) // oppure un mov. di tipo "insoluto", ma successivo al primo
 					{                             // (evita di cancellare incasso registrato prima di insoluto rid originario)
 						trace("rata $NumRata: storno incasso da $incasso a ".round($incasso-$importo,2),FALSE);
@@ -2278,7 +2283,7 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 				//echo "numRata=$NumRata catMov=$catMov capitale=$impCapitale incasso=$incasso curr=$curr\n";
 			} // fine loop sui movimenti della rata corrente
 			
-			// Se il capitale è zero a causa di storni
+			// Se il capitale ï¿½ zero a causa di storni
 			
 			// Arrotonda per evitare importi quasi 0 (nnnn E-14)
 			$curr  = round($curr,2);
@@ -2291,24 +2296,24 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 
 			//--------------------------------------------------------------------------------------------
 			// A causa della determinazione approssimativa di quali causali indicano una rata
-			// e quali un pagamento, avviene abbastanza spesso che la rata venga contata più volte
-			// e il pagamento meno volte del necessario. Nel caso (errato) più frequente,
+			// e quali un pagamento, avviene abbastanza spesso che la rata venga contata piï¿½ volte
+			// e il pagamento meno volte del necessario. Nel caso (errato) piï¿½ frequente,
 			// 	capitale = multiplo di insoluto, e pagato=0. In questo caso, aggiusta l'importo capitale.
 			//--------------------------------------------------------------------------------------------
 //			if (!$nuovaGestione)
 //			{
-				if ($curr>0) // c'è un debito
+				if ($curr>0) // c'ï¿½ un debito
 				{
 					if ($impCapitale>$curr*1.9 && $incasso==0) // capitale molto maggiore di ins. con pagam=0
 					{
 						if (round($impCapitale/$curr,2)==0 ) // capitale multiplo esatto dell'insoluto
 							$impCapitale = $curr;  // imposta il capitale 'reale'
-						// meno frequentemente, il capitale è moltiplicato ma c'è anche un residuo di spese
-						// che fa sì che l'insoluto non sia un sottomultiplo esatto del capitale
+						// meno frequentemente, il capitale ï¿½ moltiplicato ma c'ï¿½ anche un residuo di spese
+						// che fa sï¿½ che l'insoluto non sia un sottomultiplo esatto del capitale
 						else
 						{
 							$newCap = $impCapitale/round($impCapitale/$curr,0); // sottomultiplo esatto
-							if ($curr-$newCap>=0 && $curr-$newCap<10) // insoluto residuo è piccolo
+							if ($curr-$newCap>=0 && $curr-$newCap<10) // insoluto residuo ï¿½ piccolo
 								$impCapitale = $newCap; // imposta il capitale 'reale'
 						}
 					}
@@ -2328,9 +2333,9 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 //			}
 
 			//-------------------------------------------------------------------------------------
-			// Se la partita è a debito, inserisce o aggiorna la riga in "Insoluto"
-			// Se è a saldo 0 e la riga non è in Insoluto, la ignora; altrimenti la aggiorna.
-			// Se è a saldo positivo la inserisce o aggiorna (serve a calcolare il bilancio totale)
+			// Se la partita ï¿½ a debito, inserisce o aggiorna la riga in "Insoluto"
+			// Se ï¿½ a saldo 0 e la riga non ï¿½ in Insoluto, la ignora; altrimenti la aggiorna.
+			// Se ï¿½ a saldo positivo la inserisce o aggiorna (serve a calcolare il bilancio totale)
 			//-------------------------------------------------------------------------------------
 			$dataInsoluto = ($dataInsolutoVero=="")?$dataInsoluto:$dataInsolutoVero;
 			// Ottimizzazione 11/7/2012: legge tutte le righe di insoluto prima
@@ -2338,26 +2343,26 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 			$ins = $insArray[$NumRata];
 			if ($curr > 0 && ISODate($dataInsoluto)<=$dataLimite) // Insoluto in una data non futura
 				$oper = ($ins==NULL)?"INS":"UPD";
-			else if ($curr < 0) // residuo a credito: scrive perché serve al totale
+			else if ($curr < 0) // residuo a credito: scrive perchï¿½ serve al totale
 				$oper = ($ins==NULL)?"INS":"UPD";
 			else if ($curr == 0) // saldo zero
 				$oper = ($ins==NULL)?"":"UPD";
 			else
 				$oper = "";
 
-			// Se è una rata positiva, ma contiene un vero pagamento, deve essere contata  come rata
-			// viaggiante, nel caso in cui la pratica sia in affido, anche se è arrivata già positiva.
+			// Se ï¿½ una rata positiva, ma contiene un vero pagamento, deve essere contata  come rata
+			// viaggiante, nel caso in cui la pratica sia in affido, anche se ï¿½ arrivata giï¿½ positiva.
 			// In questo caso, quindi deve essere scritta in modo opportuno su Insoluto (come se fosse
 			// stata impagata e poi pagata)
 			$special = false;
 			if ($oper!="UPD" && $NumRata!=0 && $veroDebito && $veroPagamento && $curr<=0 && $dati["IdAgenzia"]>0
 			&& ISODate($dataInsoluto)>=ISODate($dati["DataInizioAffido"]) )
 			{
-				// 17 mag 2012: controlla che la stessa rata non sia già stata archiviata come positiva in un lotto
+				// 17 mag 2012: controlla che la stessa rata non sia giï¿½ stata archiviata come positiva in un lotto
 				//              precedente (altrimenti ogni volta che esamina la stessa rata in un nuovo lotto
-				//              la storicizza di nuovo). Questa soppressione può causare il mancato conteggio in casi
-				//              particolari (incasso precedente stornato e riavvenuto più tardi, con rata positiva a inizio affido) 
-				//              ma i pro sono più dei contro
+				//              la storicizza di nuovo). Questa soppressione puï¿½ causare il mancato conteggio in casi
+				//              particolari (incasso precedente stornato e riavvenuto piï¿½ tardi, con rata positiva a inizio affido) 
+				//              ma i pro sono piï¿½ dei contro
 				
 				if (!rowExistsInTable("storiainsoluto",
 					"IdContratto=$IdContratto AND NumRata=$NumRata AND CodAzione='POS' AND ImpPagato=".str_replace(',','.',$incasso). 
@@ -2380,28 +2385,28 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 				addInsClause($colList,$valList,"IdContratto",$IdContratto,"N");
 				addInsClause($colList,$valList,"NumRata",$NumRata,"N");
 				addInsClause($colList,$valList,"DataInsoluto",$dataInsoluto,"D");
-				// La data di arrivo è uguale alla data di oggi nelle elaborazione ordinarie, mentre è uguale alla dataRif passata se si tratta di
+				// La data di arrivo ï¿½ uguale alla data di oggi nelle elaborazione ordinarie, mentre ï¿½ uguale alla dataRif passata se si tratta di
 				// elaborazioni straordinarie eventualmente basate su dati pregressi
-				// 26/10/2011: DataArrivo viene mantenuto solo per verifica, ma non deve più essere usato
+				// 26/10/2011: DataArrivo viene mantenuto solo per verifica, ma non deve piï¿½ essere usato
 				//             (viene usato IdAffidamento per gli stessi scopi)
 				if ($dataRif>=ISODate(mktime(0,0,0,date("m"),date("d")-3,date("Y")))) // normale elaborazione giornaliera (considerando anche il gap del week end)
 					addInsClause($colList,$valList,"DataArrivo","CURDATE()","G");
 				else
-					addInsClause($colList,$valList,"DataArrivo",$dataRif,"D"); //NB: è proprio dataRif (la data di arrivo del partitario vedi ProcessAndClassify)
+					addInsClause($colList,$valList,"DataArrivo",$dataRif,"D"); //NB: ï¿½ proprio dataRif (la data di arrivo del partitario vedi ProcessAndClassify)
 
-				// L'IdAffidamento è nullo, in questo momento, a meno che non si tratti di un nuovo arrivo su una rata che è
-				// già in affido ma è stata spostata nelle positività (storiainsoluto) e cancellata da Insoluto
-				// In questo caso c'è un'altra conseguenza: se si tratta in realtà di un credito, verrebbe prodotta una nuova
+				// L'IdAffidamento ï¿½ nullo, in questo momento, a meno che non si tratti di un nuovo arrivo su una rata che ï¿½
+				// giï¿½ in affido ma ï¿½ stata spostata nelle positivitï¿½ (storiainsoluto) e cancellata da Insoluto
+				// In questo caso c'ï¿½ un'altra conseguenza: se si tratta in realtï¿½ di un credito, verrebbe prodotta una nuova
 				// riga positiva che, se non ci sono altri debiti maggiori, finisce subito dopo per essere ri-storicizzata 
-				// in storiaRecupero, con conseguenze spesso non correttamente interpretabili. Perciò in questo caso, invece che
-				// aggiungere una riga a insoluto, va a modificare la riga già storicizzata
+				// in storiaRecupero, con conseguenze spesso non correttamente interpretabili. Perciï¿½ in questo caso, invece che
+				// aggiungere una riga a insoluto, va a modificare la riga giï¿½ storicizzata
 			
 				$row = getRow("SELECT * FROM storiainsoluto WHERE IdContratto=$IdContratto AND DataFineAffido>=CURDATE() AND NumRata=$NumRata AND CodAzione='POS'");
 				$IdAffidamento = $row["IdAffidamento"];
 				if ($IdAffidamento>0)
 				{
 					addInsClause($colList,$valList,"IdAffidamento",$IdAffidamento,"N");
-					trace("IdAffidamento=$IdAffidamento ereditato da rata positiva n. $NumRata già storicizzata",FALSE);
+					trace("IdAffidamento=$IdAffidamento ereditato da rata positiva n. $NumRata giï¿½ storicizzata",FALSE);
 				}
 
 				if ($oper=="INS") // se non annullata poco sopra
@@ -2412,9 +2417,9 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 					addInsClause($colList,$valList,"ImpInteressi",$impInt,"N"); 
 					addInsClause($colList,$valList,"ImpSpeseRecupero",$impSpese,"N"); 
 					addInsClause($colList,$valList,"ImpAltriAddebiti",$impAltri,"N"); 
-					addInsClause($colList,$valList,"ImpInsoluto",$curr,"N"); // Att.ne: questo è il debito residuo a saldo dei pagamenti
+					addInsClause($colList,$valList,"ImpInsoluto",$curr,"N"); // Att.ne: questo ï¿½ il debito residuo a saldo dei pagamenti
 
-					// se la stessa rata esiste già storicizzata come positiva, prende il debito iniziale e il capitale affidato da lì
+					// se la stessa rata esiste giï¿½ storicizzata come positiva, prende il debito iniziale e il capitale affidato da lï¿½
 					// altrimenti sono entrambi vuoti
 					$storia = getRow("SELECT s.ImpInsoluto,s.ImpCapitaleDaPagare FROM storiainsoluto s JOIN contratto c ON c.IdContratto=s.IdContratto AND s.DataFineAffido=c.DataFineAffido"
 					                ." WHERE s.IdContratto=$IdContratto AND s.NumRata=$NumRata AND CodAzione='POS'");
@@ -2425,7 +2430,7 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 						if ($impDebitoIniziale!==NULL)	
 						{
 							addInsClause($colList,$valList,"ImpDebitoIniziale",$impDebitoIniziale,"N");  
-							trace("Copiato debito iniziale $impDebitoIniziale da riga già storicizzata per rata n. $NumRata",FALSE);
+							trace("Copiato debito iniziale $impDebitoIniziale da riga giï¿½ storicizzata per rata n. $NumRata",FALSE);
 						}
 						else if ($special) // falsifica per considerare come rata viaggiante
 							addInsClause($colList,$valList,"ImpDebitoIniziale",$impCapitale,"N");  
@@ -2434,7 +2439,7 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 						if ($impCapitaleAffidato!==NULL)	
 						{   
 							addInsClause($colList,$valList,"ImpCapitaleAffidato",$impCapitaleAffidato,"N");  
-							trace("Copiato capitale affidato iniziale $impCapitaleAffidato da riga già storicizzata per rata n. $NumRata",FALSE);
+							trace("Copiato capitale affidato iniziale $impCapitaleAffidato da riga giï¿½ storicizzata per rata n. $NumRata",FALSE);
 						}
 						else if ($special) // falsifica per considerare come rata viaggiante
 							addInsClause($colList,$valList,"ImpCapitaleAffidato",$impCapitale,"N");  
@@ -2464,18 +2469,18 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 					}
 				}
 			}
-			// Insoluto già presente, esegue UPDATE
+			// Insoluto giï¿½ presente, esegue UPDATE
 			else if ($oper=="UPD")
 			{
 				$saldo += $curr;
 				//-------------------------------------------------------------------------------------
 				// Rileva e segnala l'eventuale incasso
 				//-------------------------------------------------------------------------------------
-				if (round($ins["ImpInsoluto"]-$curr,2)>0 && $incasso>$ins["ImpPagato"]) // L'importo da pagare è diminuito e ho riconosciuto qualcosa come incasso
+				if (round($ins["ImpInsoluto"]-$curr,2)>0 && $incasso>$ins["ImpPagato"]) // L'importo da pagare ï¿½ diminuito e ho riconosciuto qualcosa come incasso
 				{
 					if ($curr<=0)
 						$msg = "Incasso rata $NumRata a saldo";
-					else if ($incasso>=$impCapitale) // il capitale è saldato
+					else if ($incasso>=$impCapitale) // il capitale ï¿½ saldato
 						$msg = "Incasso rata $NumRata a copertura del capitale";
 					else
 						$msg = "Incasso rata $NumRata parziale";
@@ -2495,9 +2500,9 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 
 				// NB: il campo "ImpDebitoIniziale" viene impostato solo dall'INSERT e aggiornato solo al riaffido (affidaAgenzia)
 				// Se arriva un addebito che incrementa il debito, veniva corretto anche questo campo, ma dal 24/1/2012
-				// questo è soppresso: ai fini delle provvigioni conta mantenere il debito iniziale così com'era
-				// quando l'affido è avvenuto
-//				if ($ins["ImpInsoluto"]<$curr) // l'insoluto è aumentato: aumenta anche quello su cui si calcola il recupero
+				// questo ï¿½ soppresso: ai fini delle provvigioni conta mantenere il debito iniziale cosï¿½ com'era
+				// quando l'affido ï¿½ avvenuto
+//				if ($ins["ImpInsoluto"]<$curr) // l'insoluto ï¿½ aumentato: aumenta anche quello su cui si calcola il recupero
 //					addSetClause($setClause,"ImpDebitoIniziale",$ins["ImpDebitoIniziale"]+$curr-$ins["ImpInsoluto"],"N");
 
 				addSetClause($setClause,"LastUser","import","S");
@@ -2520,7 +2525,7 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 			{
 				if ($dataInsoluto<$dataScadenzaRataPrecedente  // questa rata scade prima della precedente		
 				&& ISODate($dataInsoluto) >= date("Y-m-d"))    // e sono entrambe nel futuro
-				{ // significa che la rata precedente è stat aaccodata
+				{ // significa che la rata precedente ï¿½ stat aaccodata
 					if (execute("UPDATE contratto SET IdStatoRinegoziazione=8 WHERE IdContratto=$IdContratto"))
 					{
 						$numRataSpostata = $NumRata-1;
@@ -2546,14 +2551,14 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 		}
 
 		//-------------------------------------------------------------------------------------------
-		// Se la somma totale copre l'intero debito, indipendentemente da come è costruito
-		// (ad es. anche nel caso di saldo cumulativo), mette il contratto in positività e storicizza
+		// Se la somma totale copre l'intero debito, indipendentemente da come ï¿½ costruito
+		// (ad es. anche nel caso di saldo cumulativo), mette il contratto in positivitï¿½ e storicizza
 		// tutti i suoi insoluti
 		//------------------------------------------------------------------------------------------
 		$saldo = round($saldo,2); // saldo di tutte le rate
 		trace ("Saldo calcolato su tutte le rate prese in considerazione: $saldo",FALSE);
-		// la positività sotto 26 euro non è corretta; si tratta semplicemente di non affidare sotto i 26 euro e a questo
-		// provvede la soglia sulla tabella classificazione. Perciò va in positività solo se zero.
+		// la positivitï¿½ sotto 26 euro non ï¿½ corretta; si tratta semplicemente di non affidare sotto i 26 euro e a questo
+		// provvede la soglia sulla tabella classificazione. Perciï¿½ va in positivitï¿½ solo se zero.
 		if ($saldo<=0)
 		{
 			trace("Positivo per saldo<=0",FALSE);
@@ -2584,7 +2589,7 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 			$numRata = $ins["NumRata"];
 			if ($ins["ImpInsoluto"]<=0)
 			{
-				if ($ins["ImpDebitoIniziale"]>0)  // in credito o saldo 0 e c'era un debito: significa che questa rata è diventata positiva
+				if ($ins["ImpDebitoIniziale"]>0)  // in credito o saldo 0 e c'era un debito: significa che questa rata ï¿½ diventata positiva
 				{
 					if (!storicizzaInsoluto($IdContratto,$numRata,"POS"))
 					{
@@ -2594,7 +2599,7 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 					}
 				}
 			}
-			// 6/12/2011: se è una riga a zero, la toglie
+			// 6/12/2011: se ï¿½ una riga a zero, la toglie
 			if ($ins["ImpInsoluto"]==0 && $ins["ImpDebitoIniziale"]==0)
 			{
 				if (!execute("DELETE FROM insoluto WHERE IdContratto=$IdContratto AND NumRata=$numRata"))
@@ -2606,14 +2611,14 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 			}
 			$pagato   += ($ins["ImpDebitoIniziale"]>$ins["ImpInsoluto"])?($ins["ImpDebitoIniziale"]-$ins["ImpInsoluto"]):0;
 
-			// Parte del capitale da pagare (cioè non già pagato prima dell'affido)
+			// Parte del capitale da pagare (cioï¿½ non giï¿½ pagato prima dell'affido)
 			$capitaleDaPagare = ($ins["ImpCapitale"]<=0)?0:($ins["ImpCapitale"]-($ins["ImpPagato"]-$pagato));
-			// Può darsi però che il risultato sia troppo alto (se ci sono movimenti di storno, non riconosciuti come pagamenti, che però
+			// Puï¿½ darsi perï¿½ che il risultato sia troppo alto (se ci sono movimenti di storno, non riconosciuti come pagamenti, che perï¿½
 			// abbassano il saldo.
 
-			// tolto il 8/11/2012: perché può provocare difetti, se l'insoluto ha un debito iniziale piccolo, e poi
-			//            l'insoluto sale perché viene registrato un addebito: in questo caso il capitale da
-			// 			  pagare veniva equiparato al debito iniziale, facendo sì che il saldo capitale totale
+			// tolto il 8/11/2012: perchï¿½ puï¿½ provocare difetti, se l'insoluto ha un debito iniziale piccolo, e poi
+			//            l'insoluto sale perchï¿½ viene registrato un addebito: in questo caso il capitale da
+			// 			  pagare veniva equiparato al debito iniziale, facendo sï¿½ che il saldo capitale totale
 			//            calcolato per confrontarlo col pagato poteva risultare falsamente saldato
 			//if ($capitaleDaPagare>$ins["ImpDebitoIniziale"] && $ins["ImpDebitoIniziale"]>0) 
 			//	$capitaleDaPagare = ($ins["ImpDebitoIniziale"]<5)?0:$ins["ImpDebitoIniziale"];
@@ -2622,8 +2627,8 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 		} // fine loop su righe di Insoluto
 
 		//-------------------------------------------------------------------------------------
-		// Se il capitale è comunque pagato (con residui su altre voci)
-		// mette la pratica in positività (ma non storicizza ulteriori righe)
+		// Se il capitale ï¿½ comunque pagato (con residui su altre voci)
+		// mette la pratica in positivitï¿½ (ma non storicizza ulteriori righe)
 		//-------------------------------------------------------------------------------------
 		//trace("Capitale=$capitale pagato=$pagato",FALSE);
 		if ($capitale<=$pagato)
@@ -2653,11 +2658,11 @@ function processInsoluti($IdContratto,$dataRif=NULL)
 		}
 
 		//-------------------------------------------------------------------------------------
-		// Se è stato pagato quanto concordato con un saldo e stralcio (eventualmente dilazionato)
+		// Se ï¿½ stato pagato quanto concordato con un saldo e stralcio (eventualmente dilazionato)
 		// cambia lo stato, passando il resto in proposta di write off
 		//-------------------------------------------------------------------------------------
 		$impSaldo = $dati["ImpSaldoStralcio"];
-		if ($capitale-$pagato <= $impSaldo) // se capitale residuo non superiore al concordato, può procedere al writeoff
+		if ($capitale-$pagato <= $impSaldo) // se capitale residuo non superiore al concordato, puï¿½ procedere al writeoff
 		{
  			writeHistory("NULL","Rilevato completamento del saldo e stralcio: la pratica passa nel workflow di Write Off ",$IdContratto,"");		
  			// Imposta il campo necessario alle uscite dal ciclo di workflow (forse da rivedere per questo caso)
@@ -2724,8 +2729,8 @@ function processInsolutiPrecrimine($IdContratto)
 		$ImpRataFinale  = $dati["ImpRataFinale"]+$dati["ImpSpeseIncasso"];
 
 		//------------------------------------------------------------------------------------------
-		// Loop su ciascun numero di rata, cioè su ciascuna partita elementare
-		// (la rata zero però comprende movimenti di tipo vario)
+		// Loop su ciascun numero di rata, cioï¿½ su ciascuna partita elementare
+		// (la rata zero perï¿½ comprende movimenti di tipo vario)
 		//------------------------------------------------------------------------------------------
 		$rate = fetchValuesArray("SELECT NumRata FROM movimentoprecrimine WHERE IdContratto=$IdContratto And NumRata!=0 ORDER BY NumRata");
 		$saldo = 0; // saldo totale di tutte le rate
@@ -2733,7 +2738,7 @@ function processInsolutiPrecrimine($IdContratto)
 		{
 			//--------------------------------------------------------------------------------------
 			// Legge in ordine le righe della partita, per determinare la data di scadenza
-			// (ultima data in cui si è passati da credito a debito)
+			// (ultima data in cui si ï¿½ passati da credito a debito)
 			//--------------------------------------------------------------------------------------
 			$sql = "SELECT m.*,CategoriaMovimento,m.IdTipoInsoluto"
 			." FROM movimentoprecrimine m LEFT JOIN tipomovimento tm ON m.IdTipoMovimento=tm.IdTipoMovimento"
@@ -2741,7 +2746,7 @@ function processInsolutiPrecrimine($IdContratto)
 			." WHERE IdContratto=$IdContratto AND NumRata=$NumRata"
 			." ORDER BY IdMovimento";
 			$movimenti = getFetchArray($sql);
-			if (count($movimenti)==0) // non può verificarsi a meno di errore su DB, visto quando viene chiamata questa funzione
+			if (count($movimenti)==0) // non puï¿½ verificarsi a meno di errore su DB, visto quando viene chiamata questa funzione
 			{
 				if ($idImportLog>0) writeResult($idImportLog,"K",getLastError());
 				return 2;
@@ -2772,7 +2777,7 @@ function processInsolutiPrecrimine($IdContratto)
 							$impCapitale += $importo;
 							//			trace("Aggiunto a capitale $importo",FALSE);
 							if ($impCapitale == $ImpRataFinale || $impCapitale == $ImpRataNormale )
-							$rataCerta = TRUE; // non serve più cercare quant'è la rata
+							$rataCerta = TRUE; // non serve piï¿½ cercare quant'ï¿½ la rata
 						}
 					}
 					if ($curr<=0.001 && $curr + $importo>0.001) // questo movimento fa diventare debito
@@ -2818,20 +2823,20 @@ function processInsolutiPrecrimine($IdContratto)
 
 			//----------------------------------------------------------------------------------
 			// A causa della determinazione approssimativa di quali causali indicano una rata
-			// e quali un pagamento, avviene abbastanza spesso che la rata venga contata più volte
-			// e il pagamento meno volte del necessario. Nel caso (errato) più frequente,
+			// e quali un pagamento, avviene abbastanza spesso che la rata venga contata piï¿½ volte
+			// e il pagamento meno volte del necessario. Nel caso (errato) piï¿½ frequente,
 			// 	capitale = multiplo di insoluto, e pagato=0. In questo caso, aggiusta l'importo capitale.
 			//----------------------------------------------------------------------------------
 			if ($impCapitale>$curr*1.9 && $incasso==0) // capitale molto maggiore di ins. con pagam=0
 			{
 				if (round($impCapitale/$curr,2)==0 ) // multiplo esatto
 				$impCapitale = $curr;  // imposta il capitale 'reale'
-				// meno frequentemente, il capitale è moltiplicato ma c'è anche un residuo di spese
-				// che fa sì che l'insoluto non sia un sottomultiplo esatto del capitale
+				// meno frequentemente, il capitale ï¿½ moltiplicato ma c'ï¿½ anche un residuo di spese
+				// che fa sï¿½ che l'insoluto non sia un sottomultiplo esatto del capitale
 				else
 				{
 					$newCap = $impCapitale/round($impCapitale/$curr,0); // sottomultiplo esatto
-					if ($curr-$newCap>=0 && $curr-$newCap<5) // insoluto residuo è piccolo
+					if ($curr-$newCap>=0 && $curr-$newCap<5) // insoluto residuo ï¿½ piccolo
 					$impCapitale = $newCap; // imposta il capitale 'reale'
 				}
 			}
@@ -2846,17 +2851,17 @@ function processInsolutiPrecrimine($IdContratto)
 			}
 
 			//-------------------------------------------------------------------------------------
-			// Se la partita è a debito, inserisce o aggiorna la riga in "Insoluto"
-			// Se è a saldo 0 e la riga non è in Insoluto, la ignora; altrimenti la aggiorna.
-			// Se è a saldo positivo la inserisce o aggiorna (serve a calcolare il bilancio totale)
-			// Se però l'insoluto
+			// Se la partita ï¿½ a debito, inserisce o aggiorna la riga in "Insoluto"
+			// Se ï¿½ a saldo 0 e la riga non ï¿½ in Insoluto, la ignora; altrimenti la aggiorna.
+			// Se ï¿½ a saldo positivo la inserisce o aggiorna (serve a calcolare il bilancio totale)
+			// Se perï¿½ l'insoluto
 			//-------------------------------------------------------------------------------------
 			$dataInsoluto = ($dataInsolutoVero=="")?$dataInsoluto:$dataInsolutoVero;
 			$ins = getRow("SELECT * FROM insolutoprecrimine WHERE IdContratto=$IdContratto AND NumRata=$NumRata");
 		//	if ($impCapitale > 26) // Insoluto degno di segnalazione
 			if ($curr >= 26) // Insoluto degno di segnalazione (correzione del 26/1/2015)
 				$oper = ($ins==NULL)?"INS":"UPD";
-			//			else if ($curr < 0) // residuo a credito: scrive perché serve al totale
+			//			else if ($curr < 0) // residuo a credito: scrive perchï¿½ serve al totale
 			//				$oper = ($ins==NULL)?"INS":"UPD";
 			//			else if ($curr == 0) // saldo zero
 			//				$oper = ($ins==NULL)?"":"UPD";
@@ -2876,9 +2881,9 @@ function processInsolutiPrecrimine($IdContratto)
 				addInsClause($colList,$valList,"ImpCapitale",$impCapitale,"N");
 				addInsClause($colList,$valList,"ImpPagato",$incasso,"N"); // importo GIA' pagato
 				addInsClause($colList,$valList,"ImpInteressi",0,"N"); // calcolato solo in aggiornaProvvigioni
-				addInsClause($colList,$valList,"ImpInsoluto",$curr,"N"); // Att.ne: questo è il debito residuo a saldo dei pagamenti
-				addInsClause($colList,$valList,"ImpDebitoIniziale",$curr,"N");  // questo è il debito al momento dell'insert (resta invariato
-				// oppure aumento finché la riga esiste)
+				addInsClause($colList,$valList,"ImpInsoluto",$curr,"N"); // Att.ne: questo ï¿½ il debito residuo a saldo dei pagamenti
+				addInsClause($colList,$valList,"ImpDebitoIniziale",$curr,"N");  // questo ï¿½ il debito al momento dell'insert (resta invariato
+				// oppure aumento finchï¿½ la riga esiste)
 
 				if (!execute("INSERT INTO insolutoprecrimine ($colList) VALUES ($valList)"))
 				{
@@ -2887,7 +2892,7 @@ function processInsolutiPrecrimine($IdContratto)
 					return 2;
 				}
 			}
-			// Insoluto già presente, esegue UPDATE
+			// Insoluto giï¿½ presente, esegue UPDATE
 			else if ($oper=="UPD")
 			{
 				//-------------------------------------------------------------------------------------
@@ -2902,10 +2907,10 @@ function processInsolutiPrecrimine($IdContratto)
 
 				// NB: il campo "ImpDebitoIniziale" viene impostato solo dall'INSERT e aggiornato solo al riaffido (affidaAgenzia)
 				// oppure se arrivano ulteriori addebiti
-				// Se il campo è NULL significa che la riga era stata creata prima dell'introduzione del campo
+				// Se il campo ï¿½ NULL significa che la riga era stata creata prima dell'introduzione del campo
 				if (!$ins["ImpDebitoIniziale"])
 					addSetClause($setClause,"ImpDebitoIniziale",$curr+$incasso,"N");
-				else if ($ins["ImpInsoluto"]<$curr) // l'insoluto è aumentato: aumenta anche quello su cui si calcola il recupero
+				else if ($ins["ImpInsoluto"]<$curr) // l'insoluto ï¿½ aumentato: aumenta anche quello su cui si calcola il recupero
 					addSetClause($setClause,"ImpDebitoIniziale",$ins["ImpDebitoIniziale"]+$curr-$ins["ImpInsoluto"],"N");
 
 				addSetClause($setClause,"LastUser","import","S");
@@ -2959,7 +2964,7 @@ function insertServAcc($json,$todo,$IdContratto,$CodContratto)
 	{
 		beginTrans();
 
-		if($todo == "update") // se è un update
+		if($todo == "update") // se ï¿½ un update
 		{
 			if (!execute("DELETE FROM accessorio WHERE IdContratto =".$IdContratto))
 			{
@@ -3034,7 +3039,7 @@ function insertRecapiti($json,$todo,$idCliente,$dataIni,$dataFin,$codcli)
 		beginTrans();
 
 		// SE E' UN UPDATE VERIFICO I DATI RICEVUTI E LI CONFRONTO CON QUELLI GIA ESISTENTI
-		if($todo == "update") // se è un update
+		if($todo == "update") // se ï¿½ un update
 		{
 			$sql="SELECT IdRecapito,IdTipoRecapito,"
 			." ProgrRecapito, Indirizzo,"
@@ -3095,7 +3100,7 @@ function insertRecapiti($json,$todo,$idCliente,$dataIni,$dataFin,$codcli)
 					}
 				}
 			}
-			else     // se è update e se nn esistono dati di sistema per il cliente allora inserisco i dati arrivati senza constrollare
+			else     // se ï¿½ update e se nn esistono dati di sistema per il cliente allora inserisco i dati arrivati senza constrollare
 			{
 				$todo="insert";
 			}
@@ -3279,7 +3284,7 @@ function processAllegato($from,$type,$id,$codContratto,$titoloAllegato,$tipoAlle
 			return FALSE;
 		}
 
-		// controlla che tipo di allegato è : 'c' = l'allegato contiene il contratto
+		// controlla che tipo di allegato ï¿½ : 'c' = l'allegato contiene il contratto
 		// qualsiasi altro valore indica che l'allegato contiene un qualsiasi altro documento contrattuale
 		if(($tipoAllegato=='c')||($tipoAllegato=='C'))
 			$tipo = "CON";  // contiene contratto
@@ -3303,7 +3308,7 @@ function processAllegato($from,$type,$id,$codContratto,$titoloAllegato,$tipoAlle
 		if($allegatoEsistente>0)
 		{
 			trace("Cancellazione preliminare dell'allegato gia' registrato con IdImportLog=$idImportLog",FALSE);
-			// se l'allegato era già registrato nella tabella importlog, cancello l'allegato dalla tab allegato
+			// se l'allegato era giï¿½ registrato nella tabella importlog, cancello l'allegato dalla tab allegato
 			execute("DELETE FROM allegato where IdImportLog=$idImportLog AND IdContratto=$idContratto");
 		}
 		 
@@ -3335,20 +3340,20 @@ function rielaboraNegativi()
 	if ($lastMovDate==NULL)
 		$lastMovDate = ISODate(getScalar("SELECT MAX(DATE(LastUpd)) FROM movimento"),true);
 	 // cerca le classificazioni che dipendono dal ritardo in giorni o dal numero di insoluti
-	 // 11/7/2012: tolta condizione su numGiorniDa: infatti se un contratto è in classe con numGiorniDa>0 non 
-	 //   cambia classe all'avanzare dei giorni, ma la cambia solo se numGiorniA è >0
+	 // 11/7/2012: tolta condizione su numGiorniDa: infatti se un contratto ï¿½ in classe con numGiorniDa>0 non 
+	 //   cambia classe all'avanzare dei giorni, ma la cambia solo se numGiorniA ï¿½ >0
 	 //$classi = "SELECT IdClasse FROM classificazione WHERE NumInsolutiA IS NOT NULL OR NumGiorniA IS NOT NULL OR NumGiorniDa IS NOT NULL";
 	 $classi = "SELECT IdClasse FROM classificazione WHERE NumInsolutiA IS NOT NULL OR NumGiorniA IS NOT NULL";
 	/*
 	 // cerca contratti delle classi suddette, che non abbiano movimenti registrati con l'ultima infornata
-	 // (cioè i contratti non toccati). Prende sia quelli con pagamento = bollettino, sia quelli con i RID,
-	 // perché possono essere stati già registrati dei RID futuri insoluti, che vengono esaminati solo
+	 // (cioï¿½ i contratti non toccati). Prende sia quelli con pagamento = bollettino, sia quelli con i RID,
+	 // perchï¿½ possono essere stati giï¿½ registrati dei RID futuri insoluti, che vengono esaminati solo
 	 // dalla data di scadenza della rata-
-	 // 13/9/2011: aggiunta condizione per i contratti positivi con bilancio>0, perché questi non vengono
-	 //            mandati da Windows se non ci sono novità nel partitario, e non verrebbero processati
-	 //            perché la classe 18 non è una di quelle considerate.
+	 // 13/9/2011: aggiunta condizione per i contratti positivi con bilancio>0, perchï¿½ questi non vengono
+	 //            mandati da Windows se non ci sono novitï¿½ nel partitario, e non verrebbero processati
+	 //            perchï¿½ la classe 18 non ï¿½ una di quelle considerate.
 	 // 19/9/2011: modificata condizione di cui sopra includendo i contratti con idclasse qualsiasi, soprattutto
-	 //            perché, se non classificato, può essere scaduto un insoluto che lo rende classificabile
+	 //            perchï¿½, se non classificato, puï¿½ essere scaduto un insoluto che lo rende classificabile
 	 $sql = "SELECT IdContratto FROM contratto c
 	 WHERE (IdClasse IN (SELECT IdClasse FROM classificazione WHERE NumInsolutiA IS NOT NULL OR NumGiorniA IS NOT NULL)
 	 OR ImpInsoluto>0)
@@ -3360,11 +3365,11 @@ function rielaboraNegativi()
 	 */
 	/* contratti senza movimenti nell'ultimo import ma con movimenti successivi al loro ultimi import e (entro prossimi giorni oppure a credito)*/
 	/* In aggiunta: contratti con classe nulla ma con movimenti, forse inclassificati per errori pregressi */
-	/* dal 19/3/2012: Semplificato mettendo tutti i contratti nelle classi dipendenti dal tempo non già classificati */ 
-	// NOTA: la query è complosta di 3 query in UNION: la prima delle tre restituisce più dell'80% delle righe totali
+	/* dal 19/3/2012: Semplificato mettendo tutti i contratti nelle classi dipendenti dal tempo non giï¿½ classificati */ 
+	// NOTA: la query ï¿½ complosta di 3 query in UNION: la prima delle tre restituisce piï¿½ dell'80% delle righe totali
 	 
 	// 5/1/2016: aggiunta condizione per escludere dalla prima query i contratti che hanno movimenti rilevanti ma solo
-	// più vecchi di un mese fa e aggiunta condizione between (invece che <=) per individuare meglio quelli con movimento a debito
+	// piï¿½ vecchi di un mese fa e aggiunta condizione between (invece che <=) per individuare meglio quelli con movimento a debito
 	// entro i prossimi giorni. Queste due aggiunte, in particolare la prima, eliminano circa 3000 contratti su 13000,
 	// con un guadagno di circa 30 minuti sulle 3 ore totali [circa 90 contratti al minuto]
 	$sql = "SELECT IdContratto FROM contratto c WHERE NOT EXISTS (SELECT 1 FROM movimento m WHERE m.IdContratto=c.IdContratto AND m.LastUpd>='$lastMovDate')"
@@ -3392,7 +3397,7 @@ function rielaboraNegativi()
 
 //================================================================================
 // cleanTrace()     (by Aldo)
-// Rinomina i file di trace e cancella i file più vecchi di un tot di giorni
+// Rinomina i file di trace e cancella i file piï¿½ vecchi di un tot di giorni
 //================================================================================
 function cleanTrace()
 {
@@ -3474,7 +3479,7 @@ function processDipendente($json,$idCompany)
 			return 2;
 		}
 
-		if ($idCliente>0) // è necessario un UPDATE (la tab. ClienteCompagnia non si deve aggiornare)
+		if ($idCliente>0) // ï¿½ necessario un UPDATE (la tab. ClienteCompagnia non si deve aggiornare)
 		{
 			$setClause = "";
 			addSetClause($setClause,"SiglaNazione","IT","S");
@@ -3491,7 +3496,7 @@ function processDipendente($json,$idCompany)
 				return 2;
 			}
 		}
-		else // è necessario un INSERT
+		else // ï¿½ necessario un INSERT
 		{
 			$colList = ""; // inizializza lista colonne
 			$valList = ""; // inizializza lista valori
@@ -3532,7 +3537,7 @@ function processDipendente($json,$idCompany)
 		// Inserimento nella tabella Contratto
 		//-------------------------------------------------------------------------
 		$codcon = 'KG'.$json->posiz; // cod. contratto artificiale per distinguere da quelli normali TFSI
-		if ($codcon=="")       // se non è stato specificato  il codice contratto
+		if ($codcon=="")       // se non ï¿½ stato specificato  il codice contratto
 		{
 			writeResult($idImportLog,"K","Codice contratto non presente");
 			return 2;
@@ -3578,7 +3583,7 @@ function processDipendente($json,$idCompany)
 		//-------------------------------------------------------------------------
 		$ins = getRow("SELECT * FROM insolutodipendente WHERE IdContratto=$idContratto"
 		." AND DataScadenza='".$json->scadenzarata."'");
-		if (is_array($ins)) // riga già esistente
+		if (is_array($ins)) // riga giï¿½ esistente
 		{
 			$idInsoluto = $ins["IdInsoluto"];
 			$setClause ="";

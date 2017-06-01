@@ -390,7 +390,7 @@ DCS.GridSintesiPratiche = Ext.extend(Ext.grid.GridPanel, {
 			,listeners: {load: DCS.hideMask} 
 		});
 
-		//Imposta la visibilità delle colonne a seconda della configurazione effettuata sul submain
+		//Imposta la visibilitï¿½ delle colonne a seconda della configurazione effettuata sul submain
 		columns = setColumnVisibility(columns);
 		
 		Ext.apply(this,{
@@ -495,7 +495,7 @@ DCS.GridSintesiPratiche = Ext.extend(Ext.grid.GridPanel, {
 		var pnl = new DCS.pnlSearch({stato: idstato, agenzia: idagenzia, classe: idclasse, prodotto: idprodotto, lotto:idlotto,
 						titolo:titolo, IdC: 'PSintesi'});
 		var win = new Ext.Window({
-    		width: 1100, height:600, minWidth: 700, minHeight: 500,
+    		width: 1100, height:700,  
     		autoHeight:true,modal: true,
     	    layout: 'fit', plain:true, bodyStyle:'padding:5px;',
     	    title: 'Lista di dettaglio',
