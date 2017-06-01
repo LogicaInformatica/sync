@@ -1,9 +1,9 @@
 //========================================================================
-// Funzioni di utilità comuni Javascript
+// Funzioni di utilitï¿½ comuni Javascript
 //========================================================================
 Ext.namespace('DCS');
 
-// Funzione Ext.clone copiata dalla versione 4.0 di Exths (nella versione  3 non c'è)
+// Funzione Ext.clone copiata dalla versione 4.0 di Exths (nella versione  3 non c'ï¿½)
 enumerables = ['hasOwnProperty', 'valueOf', 'isPrototypeOf', 'propertyIsEnumerable',
                'toLocaleString', 'toString', 'constructor'];
 Ext.clone = function(item) {
@@ -61,16 +61,16 @@ Ext.clone = function(item) {
  * In particolare, viene usata per metterla prima delle letture preliminari di dati e 
  * toglierla nell'evento load dello store della griglia
  *-------------------------------------------------------------------------------------*/ 
-DCS.pendingMask = null; // può contenere la mask che deve essere tolta a fine load 
+DCS.pendingMask = null; // puï¿½ contenere la mask che deve essere tolta a fine load 
 // Funzione per far apparire il messaggio di attesa
 DCS.showMask    = function (msg,screenCenter)
 { 
-	if (DCS.pendingMask) // già visibile, evita di metterne due
+	if (DCS.pendingMask) // giï¿½ visibile, evita di metterne due
 		return;
 	if (msg==undefined || msg=='')
 		msg = "Elaborazione in corso...";
-	if (!screenCenter && DCS.mainPanel && Ext.WindowMgr.getActive()==null) // solo se non c'è una window aperta
-		body = DCS.mainPanel.el; // se può, maschera solo il pannello centrale
+	if (!screenCenter && DCS.mainPanel && Ext.WindowMgr.getActive()==null) // solo se non c'ï¿½ una window aperta
+		body = DCS.mainPanel.el; // se puï¿½, maschera solo il pannello centrale
 	else
 		body = Ext.getBody();	 // altrimenti tutta la pagina
 	DCS.pendingMask = new Ext.LoadMask(body, {msg: msg, removeMask:true});
@@ -395,7 +395,7 @@ function showPraticheConNoteNonLette()
 {
 	var pnl = new DCS.pnlSearch({IdC: 'NoteNonLette'});
 	var win = new Ext.Window({
-		width: 1100, height:600, minWidth: 700, minHeight: 500,
+		width: 1100, height:700, 
 		autoHeight:true,modal: true,
 	    layout: 'fit', plain:true, bodyStyle:'padding:5px;',
 	    title: 'Lista pratiche con nuove note non ancora lette',
@@ -416,9 +416,9 @@ function showMessaggiNonLetti()
 	var btn  = Ext.getCmp('voceMenuComunicazioni');
 	
 	if (DCS.menu_insoluti.collapsed) 
-		DCS.menu_insoluti.expand(true); // espande il macro menù
+		DCS.menu_insoluti.expand(true); // espande il macro menï¿½
 	btn.toggle(true);
-	// il penultimo tab della pagina Comunicazioni è quello dei messaggi non letti
+	// il penultimo tab della pagina Comunicazioni ï¿½ quello dei messaggi non letti
 	if (btn.panelCmp && btn.panelCmp.items.length>1)
 		btn.panelCmp.setActiveTab(btn.panelCmp.items.length-2);
 }
@@ -430,7 +430,7 @@ function showPraticheWorkflow()
 {
 	var pnl = new DCS.pnlSearch({IdC: 'Wrkflow'});
 	var win = new Ext.Window({
-		width: 1100, height:600, minWidth: 700, minHeight: 500,
+		width: 1100, height:700, 
 		autoHeight:true,modal: true,
 	    layout: 'fit', plain:true, bodyStyle:'padding:5px;',
 	    title: 'Lista pratiche in worflow alla sua attenzione',
@@ -448,7 +448,7 @@ function showPraticheWorkflow()
 function replace_Tospecial_chars(value)
 {
 	string = new Array('&ograve;','&oacute;','&agrave;','&aacute;','&atilde;','&aelig;','&Oslash;','&ccedil;','&Ccedil;','&iacute;','&igrave;','&eacute;','&egrave;','&iuml;','&ugrave;','&uacute;');
-	replace = new Array('ò','ó','à','á','ã','æ','Ø','ç','Ç','í','ì','é','è','ï','ù','ú');
+	replace = new Array('ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½');
 	if(value!=null && value!=''){
 		for(var j=0; j<string.length;j++){
 			value = value.replace(string[j],replace[j]);
@@ -472,7 +472,7 @@ function labObb(flagRO)
 function helpFunc(fileName)
 {
 	/* Usa una Ajax.request per controllare se la pagina esiste */
-    parti = fileName.split("#"); // divide l'anchor HTML se c'è
+    parti = fileName.split("#"); // divide l'anchor HTML se c'ï¿½
     if (parti.length==2)
     {
     	fileName = parti[0];
@@ -502,7 +502,7 @@ function helpButton(fileName)
 }
 //-----------------------------------------------------------
 // Funzione che crea il pulsante di help per pannelli senza
-// toolbar (il risultato va messo nella proprietà .tools) 
+// toolbar (il risultato va messo nella proprietï¿½ .tools) 
 //-----------------------------------------------------------
 function helpTool(fileName)
 {
@@ -558,7 +558,7 @@ function setFormItems(form,valueArray)
 		        	field.setValue(valueArray[fldName].substring(0,10));
 		        }
 		        // Att.ne: le combo ed extendedComboBox possono essere valorizzate solo se sono precaricate
-		        // (cioè con lazyInit: false)
+		        // (cioï¿½ con lazyInit: false)
 		        else
 		        	field.setValue(valueArray[fldName]);
 		   	}
@@ -669,7 +669,7 @@ function resetFormItems(form)
 }
 
 //------------------------------------------------------------------------------
-// Costruisce un container per due colonne di data validità da/a
+// Costruisce un container per due colonne di data validitï¿½ da/a
 // con nomi "DataIni" e "DataFin"
 //------------------------------------------------------------------------------
 function validityDatesInColumns(labelWidth)
