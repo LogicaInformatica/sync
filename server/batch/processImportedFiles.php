@@ -273,7 +273,7 @@ function processFile($dir,$filename)
 
 		// Separa tipo e id del file da processare (il nome file e' Company_idfile_tipofile)
 		$parti = explode("_",$filename);
-        if (count($parts)<3) {
+        if (count($parti)<3) {
   			writeProcessLog(PROCESS_NAME,"File $filename non identificato",0);
 			return FALSE;
         }
