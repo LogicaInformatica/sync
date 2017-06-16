@@ -65,7 +65,7 @@ try {
 	
 /**
  * importProcessorMain
- * Programma principale (nella versione corrente, � chiamato direttamente da processControl.esegueImportProcessor
+ * Programma principale (nella versione corrente, è chiamato direttamente da processControl.esegueImportProcessor)
  */	
 function importProcessorMain($idLotto_in,$idModulo_in,$filePath_in,$tipoOperazione_in,$processName_in,$numFile_in) {
 	// global ereditata da vecchia gestione: per non cambiare tutto muovo dai parametri in input alle globals
@@ -119,6 +119,14 @@ function importProcessorMain($idLotto_in,$idModulo_in,$filePath_in,$tipoOperazio
 			break;
 		case "l": // caricamento finale con storno del precedente
 		case "u": // caricamento finale con aggiornamento
+            // Nel caricamento finale devono essere trasportati tutti i dati generati, anche se non sono stati generati dal modulo
+            // in questione, perché la chiamata a caricaDB è una sola per l'intero processo. Quindi se si caricano N files in una volta
+            // ciascuno può avere alcuni flag settati e altri no, ma l'importante è che i dati predisposti siano caricati
+            $trasf['infoRata'] |= rowExistsInTable("temp_import_posizione","IdLotto=$idLotto");
+            $trasf['infoGarante'] |= rowExistsInTable("temp_import_garante","IdLotto=$idLotto");
+            $trasf['infoMovimento'] |= rowExistsInTable("temp_import_movimento","IdLotto=$idLotto");
+            $trasf['infoRecapito'] |= rowExistsInTable("temp_import_recapito","IdLotto=$idLotto");
+            $trasf['infoStoriaRec'] |= rowExistsInTable("temp_import_storiarecupero","IdLotto=$idLotto");
 			$ret = caricaDB();
 			break;
 		default:
@@ -164,7 +172,7 @@ function verificaFile() {
 	
 	$fileName = pathinfo($filePath,PATHINFO_FILENAME);
 	if (!writeProcessLog($processName, "Inizio verifica file $fileName", 0))
-		return; // se torna false significa che � stata richiesta una interruzione
+		return; // se torna false significa che è stata richiesta una interruzione
 	if($trasf['infoFile']['fileType'] == 'Excel') { 
 		verificaFileExcel();
 	} else {	
@@ -255,10 +263,16 @@ function verificaFileExcel() {
 			$trovato = true;
 			$num_colonne = count($sheet['columns']);
 			break;
-		}
 	}
-	if (!$trovato) 
-		erroreProcesso("Il foglio $sheetName non esiste nel file Excel dato");
+		}
+	if (!$trovato) {
+        if (!writeProcessLog($processName, "Il foglio $sheetName non esiste nel file Excel dato: prende in esame il primo foglio", 0))
+            return; // se torna false significa che è stata richiesta una interruzione
+        $sheet = $info[0];
+        $sheetName = $sheet['sheetName'];
+    	$num_colonne = count($sheet['columns']);
+        trace(print_r($info,true),false);
+	}
 
 	$info = $sheet; // mette in info l'occorrenza che descrive il foglio scelto
 	
@@ -269,7 +283,7 @@ function verificaFileExcel() {
 		." nella definizione delle regole di trasformazione");
 		
 	if (!writeProcessLog($processName, "Inizio analisi del contenuto del foglio '$sheetName' del file Excel", 0))
-		return; // se torna false significa che � stata richiesta una interruzione
+		return; // se torna false significa che è stata richiesta una interruzione
 	
 	$fileType = PHPExcel_IOFactory::identify($filePath);
 	$objReader = PHPExcel_IOFactory::createReader($fileType);
@@ -331,8 +345,13 @@ function caricaFileExcel() {
 			break;
 		}
 	}
-	if (!$trovato)
-		erroreProcesso("Il foglio $sheetName non esiste nel file Excel dato");
+	if (!$trovato) {
+        if (!writeProcessLog($processName, "Il foglio $sheetName non esiste nel file Excel dato: prende in esame il primo foglio", 0))
+            return; // se torna false significa che è stata richiesta una interruzione
+        $sheet = $info[0];
+        $sheetName = $sheet['sheetName'];
+    	$num_colonne = count($sheet['columns']);
+    }
 
 	$info = $sheet; // mette in info l'occorrenza che descrive il foglio scelto
 
@@ -343,7 +362,7 @@ function caricaFileExcel() {
 		." nella definizione delle regole di trasformazione");
 
 	if (!writeProcessLog($processName, "Inizio caricamento del contenuto del foglio '$sheetName' del file Excel", 0))
-		return; // se torna false significa che � stata richiesta una interruzione
+		return; // se torna false significa che è stata richiesta una interruzione
 
 	$fileType = PHPExcel_IOFactory::identify($filePath);
 	$objReader = PHPExcel_IOFactory::createReader($fileType);
@@ -421,11 +440,11 @@ function caricaFileCSV() {
 				return false;
 			}
 			// considera che i separatori di riga potrebbero anche variare, quindi li cerca entrambi
-			$pos = strpos($line,"\n");
+			$pos = strpos($line,"\r");
 			if ($pos===FALSE)
-				$pos = strpos($line,"\r");
-			if ($pos===FALSE) { // il pezzo finale del buffer letto non contiene un salto riga
-				$chunk = $line;
+			$pos = strpos($line,"\n");
+			if ($pos===FALSE) { // il pezzo finale del buffer letto non contiene un salto riga, deve provare ad attaccare il resto
+				$chunk = $line; // memorizza il pezzo e va a leggeer il seguito
 				break;
 			}
 			$riga = substr($line,0,$pos);          // riga da esaminare
@@ -434,12 +453,12 @@ function caricaFileCSV() {
 				$line = substr($line,1);
 			}
 			$row++;
-			$fields = explode($fieldSeparator,$riga);
+            $fields = parseFields($fieldSeparator,$riga);
 			if ($row==1) continue; // non esaminare l'header
 			copiaColonne($row,$fields,$numWarnings);
 			if ($numRows%1000==999) {
 				if (!writeProcessLog($processName, "Caricate ".($numRows+1). " righe...",0))
-					return; // se torna false significa che � stata richiesta una interruzione
+					return; // se torna false significa che è stata richiesta una interruzione
 			}
 			$numRows++;
 		} // fine esame di un buffer letto
@@ -449,7 +468,8 @@ function caricaFileCSV() {
 	if (strlen($chunk>2)) {
 		$row++;
 		$numRows++;
-		$fields = explode($fieldSeparator,$chunk);
+		//$fields = explode($fieldSeparator,$chunk);
+        $fields = parseFields($fieldSeparator,$chunk);
 		copiaColonne($row,$fields,$numWarnings);
 	}
 	fclose($handle);
@@ -459,12 +479,12 @@ function caricaFileCSV() {
 
 /**
  * interpretaNumero
- * Verifica se un numero � numerico e restituisce il valore (arrotondato al max a 5 decimali)
+ * Verifica se un numero è numerico e restituisce il valore (arrotondato al max a 5 decimali)
  * @param {String} (byref) $v campo letto dal file
- * @return {Boolean} false se la stringa non � un numero valido e non � vuota
+ * @return {Boolean} false se la stringa non è un numero valido e non è vuota
  */
 function interpretaNumero(&$v) {
-	$v = trim(str_replace(convertToUTF8('�'),'',str_replace('$','',convertToUTF8($v))));
+	$v = trim(str_replace(convertToUTF8('€'),'',str_replace('$','',convertToUTF8($v))));
 	if ($v=='') {
 		$v = null;
 		return true;
@@ -493,7 +513,12 @@ function interpretaNumero(&$v) {
  */
 function interpretaData($v) {
 	$v = trim($v);
-	if (strpos($v," ")>0) $v = substr($v,0,strpos($v," ")); // tronca eventuale parte Time
+	if (($p=strpos($v," "))>0) {
+        $time = substr($v,$p+1); // conserva la parte time
+        $v = substr($v,0,$p); // tronca eventuale parte Time
+    } else {
+        $time = '';
+    }
 	if (preg_match('/^\d{4}$/',$v)) { // numero di 4 cifre: viene considerato un anno (se compreso tra 1900 e 2100) oppure giorno+mese
 		if ($v>='1900' && $v<='2100') {
 			$data = "$v-01-01";
@@ -503,8 +528,11 @@ function interpretaData($v) {
 	} else if (preg_match('/^\d{5}$/',$v)) { // numero di 5 cifre: viene considerato una data numeric in formato interno Excel
 		$t = mktime(0,0,0,12,30+$v,1899); // Excel conta i giorni dal 30/12/1899
 		$data = date('Y-m-d',$t);
-	} else if (preg_match('/^\d{6}$/',$v)) { // numero di 6 cifre: viene considerato anno+mese
-		if (substr($v,0,2)>='19' && substr($v,0,2)<='21') { // YYYYMM
+	} else if (preg_match('/^\d{6}$/',$v)) { // numero di 6 cifre: viene considerato anno+mese, oppure GGMMAA
+        if (substr($v,0,2)>'00' && substr($v,0,2)<='31'
+            && substr($v,2,2)>'00' && substr($v,2,2)<='12') {
+			$data = '19'.substr($v,5,2).'-'.substr($v,2,2).'-'.substr($v,0,2);          //GGMMAA ==> YYYY-MM-DD   
+        } else if (substr($v,0,2)>='19' && substr($v,0,2)<='21') { // YYYYMM
 			$data = substr($v,0,4).'-'.substr($v,4,2).'-01';
 		} else { // MMYYYY
 			$data = substr($v,2,4).'-'.substr($v,0,2).'-01';
@@ -549,6 +577,9 @@ function interpretaData($v) {
 	} else { // se no, suppone che sia espressa in forma standard riconoscibile
 		$data = $v;
 	}
+    if ($time>'' && preg_match('/^[0-9]{2}.[0-9]{2}.[0-9]{2}$/',$time)) { // c'era una parte time
+        $data .= " $time"; // riattacca
+    }
 	return strtotime($data); // torna null se non valida
 }
 
@@ -604,7 +635,8 @@ function verificaFileCSV() {
 			if ($row%1000==0) {
 				writeProcessLog($processName, "Lette $row righe",0);
 			}
-			$fields = explode($fieldSeparator,$riga);
+			//$fields = explode($fieldSeparator,$riga);
+			$fields = parseFields($fieldSeparator,$riga);
 			if ($row==1) continue; // non esaminare l'header
 			esaminaColonne($row,$fields,$numWarnings);
 			if ($numWarnings>=NUM_MAX_AVVISI) {
@@ -617,7 +649,8 @@ function verificaFileCSV() {
 	// Esamina l'ultima riga
 	if (strlen($chunk>2)) {
 		$row++;
-		$fields = explode($fieldSeparator,$chunk);
+		//$fields = explode($fieldSeparator,$chunk);
+		$fields = parseFields($fieldSeparator,$chunk);
 		esaminaColonne($row,$fields,$numWarnings);
 	}	
 	fclose($handle);   
@@ -643,7 +676,7 @@ function copiaColonne($row,$fields,&$numWarnings) {
 	$valLists = array("workarea"=>"","cliente"=>"", "contratto"=>"", "garante"=>"", "recapito"=>"", "posizione"=>"", "movimento"=>"", "storiarecupero"=>"");
 	$valArrays = array("workarea"=>"","cliente"=>"", "contratto"=>"", "garante"=>"", "recapito"=>"", "posizione"=>"", "movimento"=>"", "storiarecupero"=>"");
 	
-	// Modifica 19/1/2017: elabora le colonne in ordine di priorit� delle tabelle, in modo che i dati di riferimento (cliente, contratto) siano
+	// Modifica 19/1/2017: elabora le colonne in ordine di priorità delle tabelle, in modo che i dati di riferimento (cliente, contratto) siano
 	// preparati prima di quelli subordinati.
 	
 	$insertIds = array(); // array destinato a contenere le chiavi delle tabelle temp_import_cliente e temp_import_contratto
@@ -659,17 +692,19 @@ function copiaColonne($row,$fields,&$numWarnings) {
 			//trace("Colonna $target",false);
 	
 		$colName = $colonneTrasf[$col]['colFileInput']; // nome della colonna nel file di input
-			// Determina se � una colonna che compare pi� volte (concatenazione di note)
+			// Determina se è una colonna che compare più volte (concatenazione di note)
 		$multi = 0;
 		foreach ($colonneTrasf as $colTrasf) {
 			$multi += ($colTrasf['colDB']==$target);
 		}
-			$multi = ($multi>1); // indica che il campo DB target � da creare concatenando pi� stringhe
+			$multi = ($multi>1); // indica che il campo DB target è da creare concatenando più stringhe
 		// Prepara il valore
 		$value = preg_replace('/(^\s+|\s+$)/','',$value); 	// toglie spazi ecc.
 			if (preg_match('/^".*"$/',$value)) { // valore tra virgolette, presume che arrivi da un CSV e toglie le virgolette
 				$value = substr($value,1,strlen($value)-2);
 			}
+            if (!preg_match('/[0-9a-z]/i',$value))
+                $value = ''; // se contiene solo punteggiatura, considera vuoto
 		if ($value=='') continue; // valore vuoto: e' sempre valido, come formato (da fare controllo campi obbligatori)
 		
 		// Non creare INSERT in tabelle che non sono previste (possono esserci campi chiave di altre tabelle senza
@@ -679,29 +714,40 @@ function copiaColonne($row,$fields,&$numWarnings) {
 		if ($table=='cliente' && !$trasf['infoCliente']) {
 			if ($target=='CodCliente') { // l'utente ha specificato quale campo contiene il codice cliente
 				$insertIds['cliente'] = getScalar($sql="SELECT IdImportCliente FROM temp_import_cliente WHERE IdLotto=$idLotto AND CodCliente=".quote_smart($value));
-					// Se non c'� una riga corrispondente in temp_import_cliente pu� darsi che il cliente sia stato creato a parte, quindi ottiene il suo Id
+                    if (getLastError()>'')	erroreProcesso(getLastError()." SQL: $sql");					// Se non c'è una riga corrispondente in temp_import_cliente può darsi che il cliente sia stato creato a parte, quindi ottiene il suo Id
 				// direttamente dalla tabella cliente e scrive una riga su temp_import_cliente
 				if (!$insertIds['cliente']) {
-					$idCliente = getScalar("SELECT IdCliente FROM cliente WHERE CodCliente=".quote_smart($value));
-					execute("INSERT INTO temp_import_cliente (IdLotto,IdModulo,CodCliente,IdCliente) VALUES($idLotto,$idModulo,".quote_smart($value).",$idCliente)");
+						$idCliente = getScalar($sql="SELECT IdCliente FROM cliente WHERE CodCliente=".quote_smart($value));
+                        if (getLastError()>'')	erroreProcesso(getLastError()." SQL: $sql");					// Se non c'è una riga corrispondente in temp_import_cliente può darsi che il cliente sia stato creato a parte, quindi ottiene il suo Id
+						execute($sql="INSERT INTO temp_import_cliente (IdLotto,IdModulo,CodCliente,IdCliente) VALUES($idLotto,$idModulo,".quote_smart($value).",$idCliente)");
+                        if (getLastError()>'')	erroreProcesso(getLastError()." SQL: $sql");					// Se non c'è una riga corrispondente in temp_import_cliente può darsi che il cliente sia stato creato a parte, quindi ottiene il suo Id
 					$insertIds['cliente'] = getInsertId();
 				}
 					// Ottiene anche l'id del contratto, per i casi in cui l'input non include i campi del contratto
 					if (!$trasf['infoContratto'] && $insertIds['cliente']>0) {
-						$insertIds['contratto'] = getScalar("SELECT IdImportContratto FROM temp_import_contratto WHERE IdImportCliente={$insertIds['cliente']}");
+						$insertIds['contratto'] = getScalar($sql="SELECT IdImportContratto FROM temp_import_contratto WHERE IdImportCliente={$insertIds['cliente']}");
+                        if (getLastError()>'')	erroreProcesso(getLastError()." SQL: $sql");					// Se non c'è una riga corrispondente in temp_import_cliente può darsi che il cliente sia stato creato a parte, quindi ottiene il suo Id
 					}
 			}
 			continue; 
 		}
 		if ($table=='contratto' && !$trasf['infoContratto']) {
 			if ($target=='CodContratto') { // l'utente ha specificato quale campo contiene il codice contratto (num. pratica)
+					//writeProcessLog($processName, "passaggio per codcontratto={$value}", 0);
 				$insertIds['contratto'] = getScalar($sql="SELECT IdImportContratto FROM temp_import_contratto WHERE IdLotto=$idLotto AND CodContratto=".quote_smart($value));
-					// Se non c'� una riga corrispondente in temp_import_contratto pu� darsi che il contratto sia stato creato a parte, quindi ottiene il suo Id
+                    if (getLastError()>'')	erroreProcesso(getLastError()." SQL: $sql");					// Se non c'è una riga corrispondente in temp_import_cliente può darsi che il cliente sia stato creato a parte, quindi ottiene il suo Id
+					// Se non c'è una riga corrispondente in temp_import_contratto può darsi che il contratto sia stato creato a parte, quindi ottiene il suo Id
 				// direttamente dalla tabella contratto e scrive una riga su temp_import_contratto
 				if (!$insertIds['contratto']) {
-					$idContratto = getScalar("SELECT IdContratto FROM contratto WHERE CodContratto=".quote_smart($value));
-					execute("INSERT INTO temp_import_contratto (IdLotto,IdModulo,CodContratto,IdContratto) VALUES($idLotto,$idModulo,".quote_smart($value).",$idContratto)");
+						$idContratto = getScalar($sql="SELECT IdContratto FROM contratto WHERE CodContratto=".quote_smart($prefix.$value));
+                        if (getLastError()>'')	erroreProcesso(getLastError()." SQL: $sql");					
+                        if (!$idContratto) erroreProcesso("Non trovato il contratto di codice $prefix$value");
+						execute($sql="INSERT INTO temp_import_contratto (IdLotto,IdModulo,CodContratto,IdContratto) VALUES($idLotto,$idModulo,".quote_smart($value).",$idContratto)");
 					$insertIds['contratto'] = getInsertId();
+					} else if (!$insertIds['cliente']) {
+                        $idCliente = getScalar($sql="SELECT IdImportCliente FROM temp_import_cliente WHERE IdCliente=(SELECT IdCliente FROM contratto WHERE IdContratto=(SELECT IdContratto FROM temp_import_contratto WHERE IdImportContratto={$insertIds['contratto']}))");
+                        if (getLastError()>'')	erroreProcesso(getLastError()." SQL: $sql");					
+                        $insertIds['cliente'] = $idCliente;
 				}
 			}
 			continue;
@@ -712,7 +758,7 @@ function copiaColonne($row,$fields,&$numWarnings) {
 		if ($def['check_ex']>'') {
 			if (!preg_match($def['check_ex'],$value)) {
 				if ($numWarnings<NUM_MAX_AVVISI) {
-					writeProcessLog($processName, "Il valore nella colonna '$colName' a riga $row ($value)"
+						writeProcessLog($processName, "Il valore nella colonna '$colName' a riga $row (".substr($value,0,100).")"
 					." viene scartato  perch&eacute; non &egrave; valido per il campo di destinazione '{$def['title']}'", 1);
 					$numWarnings++;
 				}
@@ -720,9 +766,10 @@ function copiaColonne($row,$fields,&$numWarnings) {
 			} 
 			addOrConcat($colLists[$table],$valLists[$table],$target,$value,$valArrays[$table],$multi,$colName);
 		} else if ($def['length']>0) { // lunghezza massima
+                if ($value=='0') continue; // lo zero in un campo stringa è considerato come fosse vuoto
 			if (strlen($value)>$def['length']) {
 				if ($numWarnings<NUM_MAX_AVVISI) {
-					writeProcessLog($processName, "Il valore nella colonna '$colName' a riga $row ($value)"
+						writeProcessLog($processName, "Il valore nella colonna '$colName' a riga $row (".substr($value,0,100).")"
 					." &egrave; troncato a {$def['length']} caratteri", 1);
 					$numWarnings++;
 				}
@@ -732,7 +779,7 @@ function copiaColonne($row,$fields,&$numWarnings) {
 		} else if ($def['type']=='number') {
 			if (!interpretaNumero($value)) {
 				if ($numWarnings<NUM_MAX_AVVISI) {
-					writeProcessLog($processName, "Il valore nella colonna '$colName' a riga $row ($value)"
+						writeProcessLog($processName, "Il valore nella colonna '$colName' a riga $row (".substr($value,0,100).")"
 					." viene scartato  perch&eacute; perch&eacute; non &egrave; numerico", 1);
 					$numWarnings++;
 				}
@@ -744,11 +791,12 @@ function copiaColonne($row,$fields,&$numWarnings) {
 			}
 			$valArrays[$table][] = addInsClause($colLists[$table],$valLists[$table],$target,$value,"N");
 		} else if ($def['type']=='date') {
+                if ($value=='0') continue; // lo zero in un campo data è considerato come fosse vuoto
 			// Ammette date rappresentate da un numero (anno o AAAAMMGG) o in modo standard con separatori barra, trattino, punto
 			// e anche con il numero di giorno progressivo dal 30/12/1899
 			if (!($data=interpretaData($value))) {
 				if ($numWarnings<NUM_MAX_AVVISI) {
-					writeProcessLog($processName, "Il valore nella colonna '$colName' a riga $row ($value)"
+						writeProcessLog($processName, "Il valore nella colonna '$colName' a riga $row (".substr($value,0,100).")"
 					." viene scartato perch&eacute; non &egrave; una data valida", 1);
 					$numWarnings++;
 				} 
@@ -756,12 +804,13 @@ function copiaColonne($row,$fields,&$numWarnings) {
 			}
 			$valArrays[$table][] = addInsClause($colLists[$table],$valLists[$table],$target,$data,"D");
 		} else if ($def['lookup']>'') { // valore da trovare in una tabella di lookup
+                if ($value=='0') continue; // lo zero in un campo lookup è considerato come fosse vuoto
 			$rr = getRow($sql="SELECT * FROM {$def['lookup']} WHERE ".quote_smart($value)." IN ({$def['lookupField']})",MYSQLI_NUM);
 			if (getLastError()>'')
 				erroreProcesso(getLastError()." SQL: $sql");
 			if (!$rr) {
 				if ($numWarnings<NUM_MAX_AVVISI) {
-					writeProcessLog($processName, "Il valore nella colonna '$colName' a riga $row ($value)"
+						writeProcessLog($processName, "Il valore nella colonna '$colName' a riga $row (".substr($value,0,100).")"
 					." viene scartato perch&eacute; non &egrave; "
 					." definito nella corrispondente tabella di riferimento ({$def['lookup']})", 1);
 					$numWarnings++;
@@ -790,7 +839,7 @@ function copiaColonne($row,$fields,&$numWarnings) {
 		if ($trasf['opzCodClienteEqContratto'] && $currTable=='contratto' && $savedCodCliente>'') {
 			$valArrays['contratto'][] = addInsClause($colLists['contratto'],$valLists['contratto'],'CodContratto',$savedCodCliente,"S");
 		}
-	} // fine loop sulle tabelle (cio� di composizione delle colonne per ciascuna tabella, in ordine di priorit� delle tabelle)
+	} // fine loop sulle tabelle (cioè di composizione delle colonne per ciascuna tabella, in ordine di priorità delle tabelle)
 	$savedCodCliente = "";
 	// Scrittura sulle tabelle temporanee del DB
 	
@@ -857,7 +906,7 @@ function copiaColonne($row,$fields,&$numWarnings) {
 			// Usa replace perche' in "workarea" serve una sola riga per lotto
 			if ($table=='workarea')
 				$sql = "REPLACE INTO temp_import_$table ($colList) VALUES({$valList})";
-			else // usa INSERT perch� la replace senza primary key pu� generare 2 righe (??)
+			else // usa INSERT perché la replace senza primary key può generare 2 righe (??)
 				$sql = "INSERT INTO temp_import_$table ($colList) VALUES({$valList})";
 			//trace("$sql",false);
 			if (!execute($sql)) {
@@ -883,7 +932,7 @@ function copiaColonne($row,$fields,&$numWarnings) {
  * @param {Array)  $valArray (byRef) array dei valori di colonne
  * @param {Boolean} $multi, se true significa che si devono concatenare piu' campi separandoli con newline e
  * antepondendo a ciascuno il nome del campo di input
- * @param {String} $colName nome della colonna nel file di input (cio� header di colonna)
+ * @param {String} $colName nome della colonna nel file di input (cioè header di colonna)
  */
 function addOrConcat(&$colList,&$valList,$target,$value,&$valArray,$multi,$colName) {
 	global $trasf;
@@ -891,15 +940,15 @@ function addOrConcat(&$colList,&$valList,$target,$value,&$valArray,$multi,$colNa
 		$valArray[] = addInsClause($colList,$valList,$target,$value,"S");  // inserimento normale
 		return;
     }
-    // La colonna � con concatenazione ma il nuovo valore e' vuoto
+    // La colonna è con concatenazione ma il nuovo valore e' vuoto
     if ($value=="NULL" or $value=='') 
     	return; // non fare nulla
 
-    // Tenta di capire se il campo di input pu� essere una data in formato Excel: in tal caso la formatta bene
+    // Tenta di capire se il campo di input può essere una data in formato Excel: in tal caso la formatta bene
     //trace("fileType={$trasf['infoFile']['fileType']} colname=$colName value=$value",false);
     if ($trasf['infoFile']['fileType'] == 'Excel'
     and preg_match('/(data|iniz|scad|fine)/i',$colName)  // il nome del campo di input fa presumere che si tratti di una data
-    and preg_match('/^\d{5}$/',$value)) { 		// ed � un numero esattamente di 5 cifre: viene considerato una data numeric in formato interno Excel
+    and preg_match('/^\d{5}$/',$value)) { 		// ed è un numero esattamente di 5 cifre: viene considerato una data numeric in formato interno Excel
 	    //trace('preg ok',false);
     	$t = mktime(0,0,0,12,30+$value,1899); 	// Excel conta i giorni dal 30/12/1899
     	if ($t>=mktime(0,0,0,1,1,1900) && $t<mktime(0,0,0,12,31,2200)) {
@@ -909,7 +958,7 @@ function addOrConcat(&$colList,&$valList,$target,$value,&$valArray,$multi,$colNa
     $cols = explode(',',$colList);
     $index = array_search($target,$cols);
     if ($index===false) { // e' la prima volta
-    	$value = "$colName: $value";
+    	$value = trim($colName).": $value";
     	$valArray[] = addInsClause($colList,$valList,$target,$value,"S");  // inserimento normale
     	return;
     }
@@ -920,7 +969,7 @@ function addOrConcat(&$colList,&$valList,$target,$value,&$valArray,$multi,$colNa
     if (is_numeric($value) and strpos($value,".")!==false) {
     	$value = round($value,5); // evita decimali esagerati causati da arrotondamento Excel
     }
-    $value = "$colName: $value";  
+    $value = trim($colName).": $value";  
     if ($valueOld=="NULL" or $valueOld=='') { // era vuoto
     	$valArray[$index] = quote_smart($value); // sostituisce con il nuovo
     } else { // altrimenti concatena
@@ -948,38 +997,42 @@ function esaminaColonne($row,$fields,&$numWarnings) {
 
 		$value = preg_replace('/(^\s+|\s+$)/','',$value); 	// toglie spazi ecc.
 		if ($value=='') continue; // valore vuoto: e' sempre valido, come formato (da fare controllo campi obbligatori)
+		if (!preg_match('/[a-z0-9]/i',$value)) continue; // valore senza testo: e' sempre valido, viene ridotto a null
 		$def   = $wizardColumns[$target];  			// definizione della colonna nel wizard_config.json
 
 		// Controllo con espressione regolare
 		if ($def['check_ex']>'') {
 			if (!preg_match($def['check_ex'],$value)) {
-				writeProcessLog($processName, "Il valore nella colonna '{$colonneTrasf[$col]['colFileInput']}' a riga $row ($value)"
+				writeProcessLog($processName, "Il valore nella colonna '{$colonneTrasf[$col]['colFileInput']}' a riga $row (".substr($value,0,100).")"
 				." non &egrave; valido per il campo di destinazione '{$def['title']}'", 1);
 				$numWarnings++;
 			}
 		} else if ($def['length']>0) { // lunghezza massima
+            if ($value=='0') continue; // lo zero in un campo stringa è come fosse vuoto
 			if (strlen($value)>$def['length']) {
-				writeProcessLog($processName, "Il valore nella colonna '{$colonneTrasf[$col]['colFileInput']}' a riga $row ($value)"
+				writeProcessLog($processName, "Il valore nella colonna '{$colonneTrasf[$col]['colFileInput']}' a riga $row (".substr($value,0,100).")"
 				." &egrave; troppo lungo per il campo di destinazione '{$def['title']}' e sar&agrave; troncato a {$def['length']} caratteri", 1);
 				$numWarnings++;
 			}
 		} else if ($def['type']=='number') {
 			$v = $value;
 			if (!interpretaNumero($v)) {
-				writeProcessLog($processName, "Il valore nella colonna '{$colonneTrasf[$col]['colFileInput']}' a riga $row ($value)"
+				writeProcessLog($processName, "Il valore nella colonna '{$colonneTrasf[$col]['colFileInput']}' a riga $row (".substr($value,0,100).")"
 				." non pu&ograve; essere copiato nel campo di destinazione '{$def['title']}' perch&eacute; non &egrave; numerico", 1);
 				$numWarnings++;
 			}
 		} else if ($def['type']=='date') {
+            if ($value=='0') continue; // lo zero in un campo data è come fosse vuoto
 			// Ammette date rappresentate da un numero (anno o AAAAMMGG) o in modo standard con separatori barra, trattino, punto
 			if (!interpretaData($value)) {
-				writeProcessLog($processName, "Il valore nella colonna '{$colonneTrasf[$col]['colFileInput']}' a riga $row ($value)"
+				writeProcessLog($processName, "Il valore nella colonna '{$colonneTrasf[$col]['colFileInput']}' a riga $row (".substr($value,0,100).")"
 				." non pu&ograve; essere copiato nel campo di destinazione '{$def['title']}' perch&eacute; non &egrave; una data valida", 1);
 				$numWarnings++;
 			}
 		} else if ($def['lookup']>'') { // valore da trovare in una tabella di lookup
+            if ($value=='0') continue; // lo zero in un campo lookup è come fosse vuoto
 			if (!rowExistsInTable($def['lookup'],quote_smart($value)." IN ({$def['lookupField']})")) {
-				writeProcessLog($processName, "Il valore nella colonna '{$colonneTrasf[$col]['colFileInput']}' a riga $row ($value)"
+				writeProcessLog($processName, "Il valore nella colonna '{$colonneTrasf[$col]['colFileInput']}' a riga $row (".substr($value,0,100).")"
 				." non pu&ograve; essere copiato nel campo di destinazione '{$def['title']}' perch&eacute; non &egrave; "
 				." definito nella corrispondente tabella di riferimento ({$def['lookup']})", 1);
 				$numWarnings++;
@@ -987,7 +1040,7 @@ function esaminaColonne($row,$fields,&$numWarnings) {
 		}
 		// Ulteriori controlli personalizzati sull'input
 		if (!Custom_Import_Check($def['table'],$target,$value,$reason)) {
-			writeProcessLog($processName, "Il valore nella colonna '{$colonneTrasf[$col]['colFileInput']}' a riga $row ($value)"
+			writeProcessLog($processName, "Il valore nella colonna '{$colonneTrasf[$col]['colFileInput']}' a riga $row (".substr($value,0,100).")"
 			." non pu&ograve; essere copiato nel campo di destinazione '{$def['title']}' perch&eacute; $reason", 1);
 			$numWarnings++;
 		}
@@ -997,8 +1050,8 @@ function esaminaColonne($row,$fields,&$numWarnings) {
 /**
  * aggiornaColonneExtra
  * Crea una istruzione di update per aggiornare le colonne "calcolate", dopo che una riga di input ha prodotto
- * aggiornamenti in una data tabella (preceduti da quelle sulle tabelle di priorit� pi� alta)
- * @param {String} $currTable tabella da processare (cio� vengono trattate solo le colonne della tabella data)
+ * aggiornamenti in una data tabella (preceduti da quelle sulle tabelle di priorità più alta)
+ * @param {String} $currTable tabella da processare (cioè vengono trattate solo le colonne della tabella data)
  * @param {Number} $row numero della riga sotto esame (serve ai messaggi di errore
  * @param {Array} $insertIds array degli ID assegnati alle nuove righe inserite (al massimo 1 in ciascun tabella di transito)
  * @param {Number} $numWarnings (byRef) contatore del numero di errori emessi
@@ -1014,7 +1067,7 @@ function aggiornaColonneExtra($currTable,$row,$insertIds,&$numWarnings) {
 		if ($colonna['colonnaInput']) continue; // colonna del file di input, gia' trattata	
 		//trace("Calcolo colonna extra {$colonna['colFileInput']}",false);
 		$target = $colonna['colDB']; 	// colonna di destinazione nel DB
-		if (!($target>' ')) continue; 				// colonna ignorata (non deve capitare, perch� nei campi extra il target � obbligatorio)
+		if (!($target>' ')) continue; 				// colonna ignorata (non deve capitare, perché nei campi extra il target è obbligatorio)
 
 		$def   = $wizardColumns[$target];  			// definizione della colonna nel wizard_config.json
 		$table =  $def['table'];
@@ -1042,6 +1095,7 @@ function aggiornaColonneExtra($currTable,$row,$insertIds,&$numWarnings) {
 			erroreProcesso(getLastError()." SQL: $sql");
 		}		
 		//trace("Risultato = $value",false);
+		if (!($value>'')) erroreProcesso("valore vuoto");
 		
 		// Controllo del valore con espressione regolare
 		if ($def['check_ex']>'') {
@@ -1062,6 +1116,7 @@ function aggiornaColonneExtra($currTable,$row,$insertIds,&$numWarnings) {
 					$numWarnings++;
 				}
 				$value = substr($value,0,$def['length']);
+				trace("value dopo substr=$value, len={$def['length']}");
 			}
 			addSetClause($setLists[$table],$target,$value,'S');
 		} else if ($def['type']=='number') {
@@ -1089,7 +1144,7 @@ function aggiornaColonneExtra($currTable,$row,$insertIds,&$numWarnings) {
 				}
 				$data = null;
 			}
-			addSetClause($setLists[$table],$target,$data,'D');
+			addSetClause($setLists[$table],$target,$data,'X'); // ammette anche la parte time $date è in formato time())
 		} else if ($def['lookup']>'') { // valore da trovare in una tabella di lookup
 			if ($value>'') {
 				$rr = getRow("SELECT * FROM {$def['lookup']} WHERE ". quote_smart($value)." IN ({$def['lookupField']})",MYSQLI_NUM);
@@ -1121,7 +1176,7 @@ function aggiornaColonneExtra($currTable,$row,$insertIds,&$numWarnings) {
 				$sql = "INSERT INTO temp_import_$table (IdLotto,IdModulo) VALUES($idLotto,$idModulo)";
 				if (!execute($sql))
 					erroreProcesso(getLastError()." SQL: $sql");
-				$insertIds[$table] = getInsertId(); // adesso pu� proseguire con l'update come negli altri casi
+				$insertIds[$table] = getInsertId(); // adesso può proseguire con l'update come negli altri casi
 			}
 			$where = "WHERE IdLotto=$idLotto AND IdModulo=$idModulo";
 			if ($table!='workarea')
@@ -1135,15 +1190,14 @@ function aggiornaColonneExtra($currTable,$row,$insertIds,&$numWarnings) {
 }
 
 /**
- * caricaDB Carica i dati dalle tabelle transitorie in quelle definitive
+ * caricaDB Carica i dati dalle tabelle transitorie, create dalla fase 2 agente su uno o più files di input, in quelle definitive,
  */
 function caricaDB() {
-	global $trasf,$processName,$filePath,$idLotto,$idModulo,$tipoOperazione,$numFile;
-	$nomeModulo = getScalar("SELECT DescrModulo FROM moduloimport WHERE IdModulo=$idModulo");
+	global $trasf,$processName,$filePath,$idLotto,$tipoOperazione,$numFile,$prefix,$DataInizioLotto;
 	// Ripulisce eventuale segnale di interruzione precedente
 	execute("DELETE FROM processlog WHERE LogLevel=-2 AND ProcessName='$processName'");
 	
-	if (!writeProcessLog($processName, "Inizio caricamento dati nelle tabelle definitive (modulo: '$nomeModulo')", 0))
+	if (!writeProcessLog($processName, "Inizio caricamento dati nelle tabelle definitive", 0))
 		return; // se torna false significa che e' stata richiesta una interruzione
 
 	// Elimina righe molto vecchie dalla tabella stornoLotto 
@@ -1473,7 +1527,7 @@ function caricaDB() {
 		// Legge le righe di temp_import_movimento e le inserisce in "movimento", usando UPDATE solo nel caso in cui sia
 	
 		// una elaborazione di tipo "aggiornamento" e si tratti di un movimento con stessa data, causale e importo di uno 
-		// gi� registrato
+		// già registrato
 		$chunk = 100; // per evitare problemi di memoria, legge per porzioni
 		$numRows = 0;
 		$nIns = $nUpd = 0;
@@ -1549,7 +1603,6 @@ function caricaDB() {
 		writeProcessLog($processName, "Inserite $nIns righe e aggiornate $nUpd righe nella tabella 'StoriaRecupero'", 0);
 	}
 	
-	
 	// Fine importazione
 	// Aggiorna data import del lotto
         // Parte disabilitata per la versione TOYOTA, che usa solo l'import di note=storiarecupero
@@ -1589,9 +1642,9 @@ function trovaCliente($row,$IdMandante) {
 		$cond = "PartitaIVA LIKE '%".substr($PartitaIVA,-11)."'";
 	} else if ($CodiceFiscale>' ') {
 		if (preg_match('/^([a-z]{2})?([0-9]{0,5})?([0-9]{11})$/i',$CodiceFiscale,$arr)) { // il campo CodiceFiscale contiene una partita IVA
-			$cond = "PartitaIVA LIKE '%{$arr[3]}'";
+			$cond = "PartitaIVA LIKE ".quote_smart("%".$arr[3]);
 		} else {
-			$cond = "CodiceFiscale LIKE '$CodiceFiscale'";
+			$cond = "CodiceFiscale LIKE ".quote_smart($CodiceFiscale);
 		}
 	} else if ($CodCliente>' ') {
 		$cond = "CodCliente LIKE ".quote_smart($CodCliente);
@@ -1748,7 +1801,7 @@ function aggiornaCliente($IdCliente,$row) {
 	addSetClause($setList,'PartitaIVA',$PartitaIVA,'S');
 	addSetClause($setList,'IdArea',$IdArea,'N');
 	addSetClause($setList,'Sesso',$Sesso,'S');
-	// Il campo nota cliente viene aggiornato concatenando il nuovo dato al vecchio, a meno che il vecchio dato non esista gi� 
+	// Il campo nota cliente viene aggiornato concatenando il nuovo dato al vecchio, a meno che il vecchio dato non esista già 
 	$n = "CONCAT(IFNULL(NotaCliente,''),if(notacliente like _latin1'%".addslashes($NotaCliente)."%',_latin1'',_latin1".quote_smart($NotaCliente)."))";
 	addSetClause($setList,'NotaCliente',$n,'G');
 	
@@ -1801,7 +1854,7 @@ function preparaCampiCliente(&$row) {
 	// Prepara l'IdArea
 	if (trim($Area)>'') {
 		$Area = quote_smart(trim($Area));
-		$sql = "SELECT IdArea FROM area WHERE TitoloArea LIKE $Area";
+		$sql = "SELECT IdArea FROM area WHERE CodArea like $Area or TitoloArea LIKE $Area";
 		$IdArea = getScalar($sql);
 		if (getLastError()) erroreProcesso(getLastError()." SQL: $sql");
 		if (!$IdArea) { // crea l'area geografica
@@ -1845,8 +1898,8 @@ function trovaContratto(&$row,$IdMandante,$IdCliente) {
 		if ($NumDocumento>'') {
 			$where = "IdContratto IN (SELECT IdContratto FROM movimento WHERE NumDocumento=".quote_smart($NumDocumento).")";
 		} else {
-			return null; // se non � identificabile, ogni input � un nuovo contratto (soluzione da evitare perch� non funziona
-						 // per la modalit� di aggiornamento del lotto)			
+			return null; // se non è identificabile, ogni input è un nuovo contratto (soluzione da evitare perché non funziona
+						 // per la modalità di aggiornamento del lotto)			
 		}
 	} else { // il codice contratto e' nei dati
 		$where = "IdCliente=$IdCliente AND IdCompagnia=$IdMandante AND CodContratto=".quote_smart($CodContratto);
@@ -2001,10 +2054,10 @@ function creaContratto($IdMandante,$IdCliente,$row) {
 	registraStorno("DELETE FROM storiarecupero WHERE IdContratto=$IdContratto");
 	
 	/* Registra le note, se presenti */
-	if ($Nota1>'') creaNotaContratto($IdContratto,$Nota1,$numInsNote);
-	if ($Nota2>'') creaNotaContratto($IdContratto,$Nota2,$numInsNote);
-	if ($Nota3>'') creaNotaContratto($IdContratto,$Nota3,$numInsNote);
-	if ($Nota4>'') creaNotaContratto($IdContratto,$Nota4,$numInsNote);
+	if (preg_match('/[0-9a-z]/i',$Nota1)) creaNotaContratto($IdContratto,$Nota1,$numInsNote);
+	if (preg_match('/[0-9a-z]/i',$Nota2)) creaNotaContratto($IdContratto,$Nota2,$numInsNote);
+	if (preg_match('/[0-9a-z]/i',$Nota3)) creaNotaContratto($IdContratto,$Nota3,$numInsNote);
+	if (preg_match('/[0-9a-z]/i',$Nota4)) creaNotaContratto($IdContratto,$Nota4,$numInsNote);
 	
 	return $IdContratto;
 }
@@ -2022,7 +2075,7 @@ function aggiornaContratto($IdContratto,$row,&$numInsNote,&$numUpdNote,&$numDelN
 	// Legge la riga prima di aggiornarla
 	$old = getRow($sql="SELECT * FROM contratto WHERE IdContratto=$IdContratto");
 	if (getLastError()>'') erroreProcesso(getLastError()." SQL: $sql");
-	if (!$old)  // la riga non c'�: per quanto improbabile, significa che un altro utente l'ha cancellata: non fare nulla
+	if (!$old)  // la riga non c'è: per quanto improbabile, significa che un altro utente l'ha cancellata: non fare nulla
 		return false;
 
 	// Prepara l'istruzione di storno
@@ -2050,7 +2103,7 @@ function aggiornaContratto($IdContratto,$row,&$numInsNote,&$numUpdNote,&$numDelN
 	$setList = "";
 	addSetClause($setList,'CodContratto',$row['CodContratto'],'S');
 	addSetClause($setList,'Garanzie',$row['Garante'],'S');
-	addSetClause($setList,'IdClasse',$row['IdClasse'],'N');
+	addSetClause($setList,'IdClasse',$row['IdClasse']>0?$row['IdClasse']:1,'N');
 	addSetClause($setList,'IdStatoContratto',$row['IdStatoContratto']>0?$row['IdStatoContratto']:1,'N');
 	addSetClause($setList,'IdStatoRecupero',$row['IdStatoRecupero']>0?$row['IdStatoRecupero']:2,'N');
 	addSetClause($setList,'ImpFinanziato',$row['ImpFinanziato'],'I');
@@ -2079,7 +2132,7 @@ function aggiornaContratto($IdContratto,$row,&$numInsNote,&$numUpdNote,&$numDelN
 		registraStorno("DELETE FROM storiarecupero WHERE IdContratto=$IdContratto");
 		
 		return 1;
-	} else { // non � cambiato alcun campo del contratto
+	} else { // non è cambiato alcun campo del contratto
 		// Aggiorna le note del contratto
 		aggiornaNoteContratto($IdContratto,$row,$numInsNote,$numUpdNote,$numDelNote);
 		return 0;
@@ -2149,13 +2202,12 @@ function aggiornaNoteContratto($IdContratto,$row,&$numInsNote,&$numUpdNote,&$num
 			$valList = "";
 			addInsClause($colList,$valList,'IdContratto',$old['IdContratto'],'N');
 			addInsClause($colList,$valList,'TipoNota',"N",'S');
-			addInsClause($colList,$valList,'TestoNota',$old['Testo'],'S');
+            addInsClause($colList,$valList,'TestoNota',$old['TestoNota'],'S');
 			addInsClause($colList,$valList,'DataCreazione',$old['DataCreazione'],'D');
 			addInsClause($colList,$valList,'DataIni',$old['DataIni'],'D');
 			addInsClause($colList,$valList,'DataFin',$old['DataFin'],'D');
 			addInsClause($colList,$valList,'LastUser','import','S');
 			$sqlStorno = "INSERT INTO nota ($colList) VALUES($valList)";
-				
 			// Prepara l'istruzione DELETE
 			$sql = "DELETE FROM nota WHERE IdNota={$old['IdNota']}";
 			if (!execute($sql))	erroreProcesso(getLastError()." SQL: $sql");
@@ -2164,7 +2216,7 @@ function aggiornaNoteContratto($IdContratto,$row,&$numInsNote,&$numUpdNote,&$num
 		registraStorno($sqlStorno);
 	}
 
-	// Alla fine del loop, se le nuove note sono pi� delle vecchie, le inserisce
+	// Alla fine del loop, se le nuove note sono più delle vecchie, le inserisce
 	for (;$i<4; $i++) {
 		$t = preg_replace('/(\n|<br>|<br\/>)/','',$row['Nota'+($i+1)]);
 		if (trim($t)=='') { // vuota o consistente solo di salti riga
@@ -2202,7 +2254,7 @@ function creaRecapito($row,$IdCliente,$suffix) {
 	// Se i campi significativi di questo gruppo sono vuoti, non scrive nulla
 	$Indirizzo = $row["Indirizzo$suffix"];
 	$Localita = $row["Localita$suffix"];
-	$CAP = $row["CAP$suffix"];
+	$CAP = $row["CAP$suffix"]>''?str_pad($row["CAP$suffix"],5,'0',STR_PAD_LEFT):'';
 	$Telefono = $row["Telefono$suffix"];
 	$Cellulare = $row["Cellulare$suffix"];
 	$Fax = $row["Fax$suffix"];
@@ -2260,7 +2312,7 @@ function aggiornaRecapito($row,$IdRecapito,$suffix) {
 	// Legge la riga prima di aggiornarla
 	$old = getRow($sql="SELECT * FROM recapito WHERE IdRecapito=$IdRecapito");
 	if (getLastError()>'') erroreProcesso(getLastError()." SQL: $sql");
-	if (!$old)  // la riga non c'�: per quanto improbabile, significa che un altro utente l'ha cancellata: non fare nulla
+	if (!$old)  // la riga non c'è: per quanto improbabile, significa che un altro utente l'ha cancellata: non fare nulla
 		return false;
 
 	// Prepara l'istruzione di storno
@@ -2291,7 +2343,7 @@ function aggiornaRecapito($row,$IdRecapito,$suffix) {
 	addSetClause($setList,'IdTipoRecapito',$tipo,'N');
 	addSetClause($setList,'Indirizzo',$row["Indirizzo$suffix"],'S');
 	addSetClause($setList,'Localita',$row["Localita$suffix"],'S');
-	addSetClause($setList,'CAP',$row["CAP$suffix"],'S');
+	addSetClause($setList,'CAP',$row["CAP$suffix"]>''?str_pad($row["CAP$suffix"],5,'0',STR_PAD_LEFT):'','S');
 	addSetClause($setList,'SiglaProvincia',$row["SiglaProvincia$suffix"],'S');
 	addSetClause($setList,'SiglaNazione',$row["SiglaNazione$suffix"],'S');
 	addSetClause($setList,'Telefono',$row["Telefono$suffix"],'S');
@@ -2372,14 +2424,15 @@ function aggiornaMovimento($old,$row) {
  * @return {Boolean} true se l'aggiornamento e' stato effettuato 
  */
 function aggiornaStoriaRecupero($old,$row) {
-
+    global $context;
 	extract($old);
 
 	// Prepara l'istruzione di storno
 	$setList = "";
-	addSetClause($setList,'DataEvento',$DataEvento,'D');
+	addSetClause($setList,'DataEvento',$DataEvento,'S'); // ammette anche la parte time
 	addSetClause($setList,'DescrEvento',$DescrEvento,'S');
 	addSetClause($setList,'NotaEvento',$NotaEvento,'S');
+	addSetClause($setList,'IdUtente',$context['IdUtente'],'N');
 
 	$sqlStorno = "UPDATE storiarecupero $setList WHERE IdStoriaRecupero=$IdStoriaRecupero";
 
@@ -2387,7 +2440,7 @@ function aggiornaStoriaRecupero($old,$row) {
 	extract($row);
 
 	$setList = "";
-	addSetClause($setList,'DataEvento',$DataEvento,'D');
+	addSetClause($setList,'DataEvento',$DataEvento,'S'); // ammette anche la parte time
 	addSetClause($setList,'DescrEvento',$DescrEvento,'S');
 	addSetClause($setList,'NotaEvento',$NotaEvento,'S');
 	
@@ -2396,7 +2449,6 @@ function aggiornaStoriaRecupero($old,$row) {
 	if (!execute($sql))	erroreProcesso(getLastError()." SQL: $sql");
 	if (getAffectedRows()>0) { // effettivamente ha aggiornato qualche riga
 		registraStorno($sqlStorno);
-		return true;
 	} else { // non e' cambiato alcun campo
 		return false;
 	}
@@ -2417,7 +2469,7 @@ function inserisceMovimento($IdContratto,$row) {
 	$valList = "";
 	addInsClause($colList,$valList,'IdContratto',$IdContratto,'N');
 	addInsClause($colList,$valList,'IdTipoMovimento',$IdTipoMovimento,'N');
-	addInsClause($colList,$valList,'IdTipoPartita',1,'N'); // provvisorio: dovrebbe dipendere da che tipo di movimento �
+	addInsClause($colList,$valList,'IdTipoPartita',1,'N'); // provvisorio: dovrebbe dipendere da che tipo di movimento è
 	addInsClause($colList,$valList,'NumDocumento',$NumDocumento>''?$NumDocumento:' ','S');
 	addInsClause($colList,$valList,'DataRegistrazione',$DataRegistrazione,'D');
 	addInsClause($colList,$valList,'DataDocumento',$DataDocumento,'D');
@@ -2437,19 +2489,20 @@ function inserisceMovimento($IdContratto,$row) {
 }
 
 /**
- * inserisceStoriaRecupero Inserisce una riga della tabella storiarecupero a partire da una riga di temp_import_storiarecuper
+ * inserisceStoriaRecupero Inserisce una riga della tabella storiarecupero a partire da una riga di temp_import_storiarecupero
  * @param {Number} $IdContratto ID del contratto
  * @param {Array} $row contenuto della riga di temp_import_storiarecupero
  */
 function inserisceStoriaRecupero($IdContratto,$row) {
-
+    global $context;
 	// Prepara l'istruzione di insert
 	extract($row);
 
 	$colList = "";
 	$valList = "";
+	addInsClause($colList,$valList,'IdUtente',$context['IdUtente'],'N');
 	addInsClause($colList,$valList,'IdContratto',$IdContratto,'N');
-	addInsClause($colList,$valList,'DataEvento',$DataEvento,'D');
+	addInsClause($colList,$valList,'DataEvento',$DataEvento,'S'); // ammette anche la parte time
 	addInsClause($colList,$valList,'DescrEvento',$DescrEvento,'S');
 	addInsClause($colList,$valList,'NotaEvento',$NotaEvento,'S');
 	
@@ -2557,7 +2610,7 @@ function creaMovimento($IdContratto,$row,&$nIns,&$nUpd) {
 		if (!$IdTipoMovimento) // se tipo causale non specificato, mette i default per i mov. di capitale
 			$row['IdTipoMovimento'] = $IdTipoMovimento = $capitale>0 ? 2:13; // incasso e addebito capitale
 		$row['Importo'] = -$capitale; // negativo = a credito, invece in input suppone che siano messi positivi nel giusto campo 
-		// Determina se esiste gi� lo stesso movimento
+		// Determina se esiste già lo stesso movimento
 		if ($tipoOperazione=='u') { // richiesto caricamento di tipo aggiornamento
 			$old = getRow("SELECT * FROM movimento WHERE IdContratto=$IdContratto AND importo=-$capitale AND IdTipoMovimento=$IdTipoMovimento AND DataRegistrazione='$DataRegistrazione'");
 			if ($old) {
@@ -2578,7 +2631,7 @@ function creaMovimento($IdContratto,$row,&$nIns,&$nUpd) {
 		if (!$IdTipoMovimento) // se tipo causale non specificato, mette i default per i mov. interessi
 			$row['IdTipoMovimento'] = $IdTipoMovimento = $interessi>0 ? 4:3; // incasso e addebito interessi
 		$row['Importo'] = -$interessi; // negativo = a credito, invece in input suppone che siano messi positivi nel giusto campo
-		// Determina se esiste gi� lo stesso movimento
+		// Determina se esiste già lo stesso movimento
 		if ($tipoOperazione=='u') { // richiesto caricamento di tipo aggiornamento
 			$old = getRow("SELECT * FROM movimento WHERE IdContratto=$IdContratto AND importo=-$interessi AND IdTipoMovimento=$IdTipoMovimento AND DataRegistrazione='$DataRegistrazione'");
 			if ($old) {
@@ -2599,7 +2652,7 @@ function creaMovimento($IdContratto,$row,&$nIns,&$nUpd) {
 		if (!$IdTipoMovimento) // se tipo causale non specificato, mette i default per i mov. spese
 			$row['IdTipoMovimento'] = $IdTipoMovimento = $spese>0 ? 8:7; // incasso e addebito spese
 		$row['Importo'] = -$interessi; // negativo = a credito, invece in input suppone che siano messi positivi nel giusto campo
-		// Determina se esiste gi� lo stesso movimento
+		// Determina se esiste già lo stesso movimento
 		if ($tipoOperazione=='u') { // richiesto caricamento di tipo aggiornamento
 			$old = getRow("SELECT * FROM movimento WHERE IdContratto=$IdContratto AND importo=-$spese AND IdTipoMovimento=$IdTipoMovimento AND DataRegistrazione='$DataRegistrazione'");
 			if ($old) {
@@ -2678,7 +2731,7 @@ function creaStoriaRecupero($IdContratto,$row,&$nIns,&$nUpd) {
 
 	extract($row);
 
-	// Determina se esiste gi� la stessa registrazione
+	// Determina se esiste già la stessa registrazione
 	if ($tipoOperazione=='u') { // richiesto caricamento di tipo aggiornamento
 		$old = getRow("SELECT * FROM storiarecupero WHERE IdContratto=$IdContratto AND DataEvento='$DataEvento' AND DescrEvento=".quote_smart($DescrEvento));
 		if ($old) {
