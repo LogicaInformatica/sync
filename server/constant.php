@@ -73,11 +73,9 @@ define('MAIL_SENDER','Toyota Financial Services <noreply@tfsi.it>');
 define('MAIL_NEWLINE', "\n");  // salto linea per gli header della mail
 
 // invio SMS
-//define('SMS_USER','mn2971@mclink.it'); vecchio account, di IT non di Collection
-//define('SMS_PWD','t0y0ta.13');
-define('SMS_USER','mn6904@mclink.it');
-define('SMS_PWD','t0y002.q');
-define('SMS_API','476'); // usare 477 per sms di ritorno
+//define('SMS_USER','SMSHSRRL9ESS7X6DZM62R');  
+//define('SMS_PWD','TPFRP1CLSEB35KGFK1DC462LQ17EW78R');
+define('SMS_URL','https://SMSHSRRL9ESS7X6DZM62R:TPFRP1CLSEB35KGFK1DC462LQ17EW78R@api.smshosting.it/rest/api/sms/send'); // SMS URL
 define('SMS_SENDER','Toyota F.S.');
 
 // Directories

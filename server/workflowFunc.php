@@ -3058,39 +3058,38 @@ function inviaSMS($destinatario,$testoSMS,&$ErrMsg)
 				$destinatario = SMS_TEST_NR;
 			else
 				$destinatario = ctrlNumeroCellulare($destinatario);
-//				trace("Dest $destinatario");
 				
 			if ($destinatario!=''){
-				// Preparazione parametri per API di McLink	
-				$buffer = array("authlogin" => SMS_USER,
-							"authpasswd" => SMS_PWD,
-							"sender" => base64_encode(SMS_SENDER),
-							"body" => base64_encode($testoSMS),
-							"destination" => $destinatario,
-							"id_api" => SMS_API); // usare 477 per sms di ritorno
-				
-				//Inizializza e invia
-				$ch = curl_init();
+				// Preparazione parametri per API di SMSHosting	
+                $curl = curl_init();
+                curl_setopt($curl,CURLOPT_URL,SMS_URL);
+                curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+                curl_setopt($curl,CURLOPT_FOLLOWLOCATION,true);
+                //	curl_setopt($curl,CURLOPT_SSLVERSION,3);
 
-				curl_setopt($ch, CURLOPT_URL, "https://secure.apisms.it/http/send_sms");
-				curl_setopt($ch, CURLOPT_HEADER, 0);
-				curl_setopt($ch, CURLOPT_POSTFIELDS, $buffer);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				// proxy
-				curl_setopt($ch, CURLOPT_PROXY, PROXY);
-				curl_setopt($ch, CURLOPT_PROXYPORT, PROXYPORT);
-				curl_setopt($ch, CURLOPT_PROXYUSERPWD, PROXYUSERPWD);
-				curl_setopt($ch, CURLOPT_PROXYAUTH, PROXYAUTH);
-				
-				$ret = curl_exec($ch);
-				curl_close($ch);
-							 
-				if (substr($ret,0,1)=='+'){
-					$invio=TRUE;
-				}else{
-					trace("Invio SMS non riuscito; codice di ritorno='$ret' - destinatario - $destinatario - Testo - $testoSMS",FALSE);
-					$ErrMsg.="Invio SMS al numero $destinatario non riuscito. $ret";
-				}	
+                $headers = array(
+                    'Accept: application/json',
+                    'Content-Type: application/x-www-form-urlencoded'
+                );
+                curl_setopt($curl,CURLOPT_POST,true);
+                curl_setopt($curl,CURLOPT_HTTPHEADER,$headers);
+                curl_setopt($curl,CURLOPT_POSTFIELDS, "to=$destinatario&from=".SMS_SENDER."&text=".urlencode($testoSMS));
+
+                $resp = curl_exec($curl);
+                $json = json_decode($resp);
+                $info = curl_getinfo($curl);
+                curl_close($ch);
+
+                switch ($info['http_code']) {
+                    case 200:
+                    case 204:
+                        $invio=TRUE;
+                        break;
+                    default:
+    					trace("Invio SMS non riuscito; codice di ritorno='{$json->errorMsg}' - destinatario - $destinatario - Testo - $testoSMS",FALSE);
+    					$ErrMsg .= "Invio SMS al numero $destinatario non riuscito. {$json->errorMsg}";
+                        break;
+                }
 			}
 		}
 		catch (Exception $e)
