@@ -17,4 +17,5 @@ JOIN regolaprovvigione r ON r.IdRegolaProvvigione=p.IdRegolaProvvigione
 JOIN reparto a ON a.IdReparto=p.IdReparto
 JOIN target t ON r.FasciaRecupero=t.FasciaRecupero and DATE_FORMAT(p.datafin,'%Y%m') between (FY-1)*100+4 AND ENDFY*100+3 AND p.DataFin BETWEEN t.DataIni AND t.DataFin
 LEFT JOIN regolaprovvigione rNew ON rNew.CodRegolaProvvigione=r.CodRegolaProvvigione AND rNew.DataFin>r.DataFin AND p.DataFin>=rNew.DataIni
+WHERE p.TipoCalcolo NOT IN ('M','X') ## aggiunto il 2017-09-08 per evitare discrepanza col quadro provvigioni STR per mese
 group by t.ordine,CASE WHEN r.DataFin='9999-12-31' OR rNew.IdRegolaProvvigione IS NULL THEN r.CodRegolaProvvigione ELSE CONCAT(r.CodRegolaProvvigione,' old') END,DataFineAffido;
