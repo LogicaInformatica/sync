@@ -171,7 +171,6 @@ DCS.GridPraticheLavInter = Ext.extend(DCS.GridPratiche, {
 				var toolBar = Ext.getCmp(idObj).getTopToolbar();
 				// aggiungo il pulsante per l'export dei dati contenuti nelle griglie in un unico file excel
 				toolBar.insert(8,{
-					   id:'export_all',
 					   xtype: 'button',
 					   style: 'width:15; height:15',
 					   icon: 'images/export.png',

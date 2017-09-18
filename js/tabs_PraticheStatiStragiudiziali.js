@@ -171,13 +171,12 @@ DCS.GridPraticheStatiStragiudiziali = Ext.extend(DCS.GridPratiche, {
 				var toolBar = Ext.getCmp(idObj).getTopToolbar();
 				// aggiungo il pulsante per l'export dei dati contenuti nelle griglie in un unico file excel
 				toolBar.insert(8,{
-					   id:'export_all',
 					   xtype: 'button',
 					   style: 'width:15; height:15',
 					   icon: 'images/export.png',
 					   text: 'Esporta tutto',
 					   tooltip: 'Esporta su excel i dati relativi a tutti gli stati stragiudiziali',
-					   handler: function(){Ext.ux.Printer.exportXLS(this,1,"Pratiche in Affido Legale");},
+					   handler: function(){Ext.ux.Printer.exportXLS(this,1,"Pratiche in Affido Stragiudiziale");},
 					   scope: this,
 					   sm: this.SelmTPratiche, // aggiunge propriet� custom per passare la colonna di selezione 
 					   gstore: this.store // aggiunge propriet� custom per passare lo store

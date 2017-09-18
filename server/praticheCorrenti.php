@@ -337,9 +337,6 @@ function doMain()
 			$queryForCount = "v_insoluti_count_opt v WHERE v.stato IN ('STR1', 'STR2') AND $extraCondition";
 			$ordine = "CodContratto";
 		}
-		$query = "v_insoluti_opt v $join WHERE v.stato IN ('STR1', 'STR2') AND $extraCondition";
-		$queryForCount = "v_insoluti_count_opt v WHERE v.stato IN ('STR1', 'STR2') AND $extraCondition";
-		$ordine = "CodContratto";
 		break;
 	//---------------------------------------------------------------------------------------
 	// Liste rinegoziazioni in affido
