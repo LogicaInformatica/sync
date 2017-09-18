@@ -314,13 +314,29 @@ function doMain()
 	// Stati legali: il parametro di selezione per le varie pagine è passato in extraCondition
 	// vedi tabs_PraticheStatiLegali.js
 	case "statolegale":
-		$query = "v_insoluti_opt v $join WHERE v.stato='LEG' AND $extraCondition";
-		$queryForCount = "v_insoluti_count_opt v WHERE v.stato='LEG' AND $extraCondition";
-		$ordine = "CodContratto";
+		if ($_REQUEST['expAll']==1) {//export di tutte le pratiche in stato legale
+			$query = "v_insoluti_opt v $join WHERE v.stato='LEG' "; //AND (IdStatoLegale IS NULL OR IdStatoLegale>0) ";
+			$queryForCount = "v_insoluti_count_opt v WHERE v.stato='LEG' "; //AND (IdStatoLegale IS NULL OR IdStatoLegale>0) ";
+			$ordine = "CodContratto";
+			//trace("ERROR: ".$query, TRUE);
+		}else{
+			$query = "v_insoluti_opt v $join WHERE v.stato='LEG' AND $extraCondition";
+			$queryForCount = "v_insoluti_count_opt v WHERE v.stato='LEG' AND $extraCondition";
+			$ordine = "CodContratto";
+		}
 		break;
 	// Stati stragiudiziali: il parametro di selezione per le varie pagine è passato in extraCondition
 	// vedi tabs_PraticheStatiStragiudiziali.js
 	case "statostragiudiziale":
+		if ($_REQUEST['expAll']==1) {//export di tutte le pratiche stragiudiziali
+			$query = "v_insoluti_opt v $join WHERE v.stato IN ('STR1', 'STR2') "; //" AND $extraCondition";
+			$queryForCount = "v_insoluti_count_opt v WHERE v.stato IN ('STR1', 'STR2') "; // AND $extraCondition";
+			$ordine = "CodContratto";
+		}else{
+			$query = "v_insoluti_opt v $join WHERE v.stato IN ('STR1', 'STR2') AND $extraCondition";
+			$queryForCount = "v_insoluti_count_opt v WHERE v.stato IN ('STR1', 'STR2') AND $extraCondition";
+			$ordine = "CodContratto";
+		}
 		$query = "v_insoluti_opt v $join WHERE v.stato IN ('STR1', 'STR2') AND $extraCondition";
 		$queryForCount = "v_insoluti_count_opt v WHERE v.stato IN ('STR1', 'STR2') AND $extraCondition";
 		$ordine = "CodContratto";
