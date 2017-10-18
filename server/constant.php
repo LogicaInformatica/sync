@@ -52,8 +52,8 @@ switch ($sito) {
                 define('FOOTER','<div style="text-align:center;font-size:10px;color:gray">&copy; 2011-2015 Toyota Financial Services (UK) PLC - P.IVA 05303901002</div>');
                 break;
 }
-define('NUM_VERSIONE','1.11.30');
-define('DATA_VERSIONE','2017-09-18');
+define('NUM_VERSIONE','1.11.31');
+define('DATA_VERSIONE','2017-10-18');
 
 define('PORTAL_URL',   get_cfg_var('EB_WEB_PROTOCOL')."://portal".get_cfg_var('EB_DNS_SUFFIX').".".get_cfg_var('EB_DNS_DOMAIN')."/");
 define('LINK_URL',   get_cfg_var('EB_WEB_PROTOCOL')."://cnc".get_cfg_var('EB_DNS_SUFFIX').".".get_cfg_var('EB_DNS_DOMAIN')."/");
@@ -75,7 +75,7 @@ define('MAIL_NEWLINE', "\n");  // salto linea per gli header della mail
 // invio SMS
 //define('SMS_USER','SMSHSRRL9ESS7X6DZM62R');  
 //define('SMS_PWD','TPFRP1CLSEB35KGFK1DC462LQ17EW78R');
-define('SMS_URL','https://SMSHSRRL9ESS7X6DZM62R:TPFRP1CLSEB35KGFK1DC462LQ17EW78R@api.smshosting.it/rest/api/sms/send'); // SMS URL
+define('SMS_URL','https://SMSH33HIPK76NBH7K0W3P:BHP35BU26RK8BXMGC8XVJ9XDX9CLWU09@api.smshosting.it/rest/api/sms/send'); // SMS URL
 define('SMS_SENDER','Toyota F.S.');
 
 // Directories
