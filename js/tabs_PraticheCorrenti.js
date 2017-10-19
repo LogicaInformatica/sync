@@ -48,6 +48,13 @@ DCS.GridPraticheCorrenti = Ext.extend(DCS.GridPratiche, {
 					{name: 'UtenteUltimaAzione'}, // solo in Export
 					{name: 'NotaEvento'}, // solo in Export
 					{name: 'Garanzie'}, // solo in Export
+					{name: 'DataNascitaCliente', type:'date'}, //solo in Export
+					{name: 'Venditore', type:'string'}, //solo in Export
+					{name: 'CodOverride', type:'string'}, //solo in Export
+					{name: 'ServiziAssicurativi', type:'string'}, //solo in Export
+					{name: 'TipoAnagrafica', type:'string'}, //solo in Export
+					{name: 'CodFiscGarante', type:'string'}, //solo in Export
+					{name: 'ProvinciaDealer', type:'string'}, //solo in Export
 					{name: 'NumNote', type: 'int'},
 					{name: 'Categoria'},
 					{name: 'NumAllegati', type: 'int'},
@@ -272,11 +279,39 @@ DCS.GridPraticheCorrenti = Ext.extend(DCS.GridPratiche, {
 		}else if(this.task=="nonstarted"){
 			locFields.push({name: 'NumRatePagate', type: 'int'},{name: 'ImpRateInsoluto', type: 'float'},{name:'DataDBT', type:'date'});
 			columns = [
+			        {dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false},
+			        {dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+			        {dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
+		        	{dataIndex:'DataLiquidazione',width:30,xtype:'datecolumn', format:'d/m/y',	header:'Data liquidazione',align:'left',hidden:true,exportable:true,hideable:false,stateful:false},
+		        	{dataIndex:'AbbrStatoRecupero',		width:40,	header:'Stato',hidden:this.hideStato,filterable:true,sortable:true,groupable:true},		        	
 		        	{dataIndex:'DataCambioStato',width:40,xtype:'datecolumn', format:'d/m/y',	header:'Data stato',align:'left', filterable: true, groupable:true, sortable:true},
-		        	{dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false},
-		        	{dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
-{dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
 		        	{dataIndex:'prodotto',	width:120,	header:'Prodotto',filterable:true,sortable:true,groupable:true},
+		        	{dataIndex:'Modello', width:110, header:'Modello',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'Dealer', width:110, header:'Dealer',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'Venditore', width:110, header:'Venditore',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'CodOverride', width:70, header:'Cod.Override',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'ValoreBene', width:70, header:'Valore bene',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'Finanziato', width:70, header:'Finanziato',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'Anticipo', width:70, header:'Anticipo',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'Erogato', width:70, header:'Erogato',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'Rata', width:70, header:'Rata',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'RataFinale', width:70, header:'Rata finale',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'Riscatto', width:70, header:'Riscatto',hidden:true,hideable:true,exportable:true},
+		        	{dataIndex:'ServiziAssicurativi', width:70, header:'Serv.Assicurativi',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'Interessi', width:70, header:'Interessi',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'SpeseIncasso', width:70, header:'Spese incasso',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'Bollo', width:70, header:'Bollo',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'Tasso', width:70, header:'Tasso',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'CodiceFiscale', width:70, header:'Codice Fiscale',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'TipoAnagrafica', width:100, header:'Tipo anagrafica',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'DataNascitaCliente',width:30,xtype:'datecolumn', format:'d/m/y',header:'Data nascita cliente',align:'left', hidden:true, exportable:true, stateful:false, hideable:true},
+		        	{dataIndex:'CodFiscGarante', width:70, header:'Cod.Fisc. Garante',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'Indirizzo', width:70, header:'Indirizzo',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'CAP'    ,   width:30, header:'CAP',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'Localita',  width:70, header:'Localit&agrave;',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'SiglaProvincia', width:30, header:'Prov.',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'TitoloRegione', width:30, header:'Regione',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'ProvinciaDealer', width:30, header:'Prov. Dealer',hidden:true,hideable:true,exportable:true,stateful:false},
 		        	{dataIndex:'rata',		width:30,	header:'N.rata',align:'right',filterable:false,sortable:true},
 		        	{dataIndex:'insoluti',	width:30,	header:'N.ins.',align:'right',filterable:false,sortable:true,groupable:true},
 		        	{dataIndex:'giorni',	width:30,	header:'Gg rit.',align:'right',filterable:false,sortable:true},
@@ -287,50 +322,29 @@ DCS.GridPraticheCorrenti = Ext.extend(DCS.GridPratiche, {
 		        	{dataIndex:'ImpSpeseRecupero',	width:40,	header:'Spese rec.', xtype:'numbercolumn',format:'0.000,00/i',align:'right',filterable:true,sortable:true,hidden:true},
 		        	{dataIndex:'DataScadenza',width:30,xtype:'datecolumn', format:'d/m/y',	header:'Scad.',align:'left', filterable: true, groupable:true, sortable:true},
 		        	{dataIndex:'tipoPag',   width:20,	header:'Pag.', filterable: true},
-		        	{dataIndex:'AbbrStatoRecupero',		width:40,	header:'Stato',hidden:this.hideStato,filterable:true,sortable:true,groupable:true},
 		        	{dataIndex:'AbbrClasse',	width:45,	header:'Class.',filterable:true,sortable:true,groupable:true},
-		        	{dataIndex:'CodiceFiscale', width:70, header:'Codice Fiscale',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'Indirizzo', width:70, header:'Indirizzo',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'CAP'    ,   width:30, header:'CAP',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'Localita',  width:70, header:'Localit&agrave;',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'SiglaProvincia', width:30, header:'Prov.',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'TitoloRegione', width:30, header:'Regione',hidden:true,hideable:true,exportable:true,stateful:false},
 		        	{dataIndex:'CodRegolaProvvigione', width:30, header:'Codice',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'Categoria'    ,   width:30, header:'Categoria', hidden:true,hideable:true,exportable:true,groupable:true},
 		        	{dataIndex:'agenzia',	width:50,	header:'Agenzia',filterable:true,sortable:true,groupable:true,
 		        		hidden:(this.task=='inAttesa' || this.task=='interne'  || this.task=='workflow')},
+		        	{dataIndex:'Categoria'    ,   width:30, header:'Categoria', hidden:true,hideable:true,exportable:true,groupable:true},
 		        	{dataIndex:'CodUtente',	width:30,	header:'Oper.',filterable:true,sortable:true,groupable:true},
 		        	{dataIndex:'ListaRate', width:30, header:'Lista Rate',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'Modello', width:110, header:'Modello',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'Dealer', width:110, header:'Dealer',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'DataLiquidazione',width:30,xtype:'datecolumn', format:'d/m/y',	header:'Data liquidazione',align:'left',hidden:true,exportable:true,hideable:false,stateful:false},
-		        	{dataIndex:'ValoreBene', width:70, header:'Valore bene',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'Finanziato', width:70, header:'Finanziato',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'Anticipo', width:70, header:'Anticipo',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'Erogato', width:70, header:'Erogato',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'Rata', width:70, header:'Rata',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'RataFinale', width:70, header:'Rata finale',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'Riscatto', width:70, header:'Riscatto',hidden:true,hideable:true,exportable:true},
-		        	{dataIndex:'Interessi', width:70, header:'Interessi',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'SpeseIncasso', width:70, header:'Spese incasso',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'Bollo', width:70, header:'Bollo',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'Tasso', width:70, header:'Tasso',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'Taeg', width:70, header:'Taeg',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'TassoReale', width:70, header:'Tasso reale',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'NumeroRate', width:50, header:'N. rate',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'NumRatePagate', width:50, header:'N. rate Pagate',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'ImpRateInsoluto', width:100, header:'Insoluto',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'InteressiDilazione', width:70, header:'Interessi dilazione',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'MesiDilazione', width:50, header:'N. mesi dilazione',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'StatoInDBT', width:100, header:'Stato in DBT',hidden:true,hideable:true,exportable:true,stateful:false}
-		        	,{dataIndex:'StatoLegale', width:100, header:'Stato Legale',hideable:true,exportable:true,stateful:false,hidden:true}
-		        	,{dataIndex:'StatoStragiudiziale', width:100, header:'Stato<br>Stragiudiziale',hideable:true,sortable:true,exportable:true,stateful:false,hidden:true}
-		        	,{dataIndex:'ListaGaranti', width:100, header:'Garanti',hidden:true,hideable:true,exportable:true,stateful:false}
-		        	,{dataIndex:'UltimaAzione', width:100, header:'Ultima azione',hidden:true,hideable:true,exportable:true,stateful:false}
-		        	,{dataIndex:'DataUltimaAzione', width:100, header:'Data ult. azione',hidden:true,hideable:true,exportable:true,stateful:false}
-		        	,{dataIndex:'UtenteUltimaAzione', width:100, header:'Utente Ult.Azione',hidden:true,hideable:true,exportable:true,stateful:false}
-		        	,{dataIndex:'NotaEvento', width:100, header:'Nota',hidden:true,hideable:true,exportable:true,stateful:false}
-		        	,{dataIndex:'Garanzie', width:100, header:'Garanzie',hidden:true,hideable:true,exportable:true,stateful:false}
+		        	{dataIndex:'Taeg', width:70, header:'Taeg',hidden:true,hideable:true,exportable:false,stateful:false},
+		        	{dataIndex:'TassoReale', width:70, header:'Tasso reale',hidden:true,hideable:true,exportable:false,stateful:false},
+		        	{dataIndex:'NumeroRate', width:50, header:'N. rate',hidden:true,hideable:true,exportable:false,stateful:false},
+		        	{dataIndex:'NumRatePagate', width:50, header:'N. rate Pagate',hidden:true,hideable:true,exportable:false,stateful:false},
+		        	{dataIndex:'ImpRateInsoluto', width:100, header:'Insoluto',hidden:true,hideable:true,exportable:false,stateful:false},
+		        	{dataIndex:'InteressiDilazione', width:70, header:'Interessi dilazione',hidden:true,hideable:false,exportable:true,stateful:false},
+		        	{dataIndex:'MesiDilazione', width:50, header:'N. mesi dilazione',hidden:true,hideable:true,exportable:false,stateful:false},
+		        	{dataIndex:'StatoInDBT', width:100, header:'Stato in DBT',hidden:true,hideable:true,exportable:false,stateful:false}
+		        	,{dataIndex:'StatoLegale', width:100, header:'Stato Legale',hideable:true,exportable:false,stateful:false,hidden:true}
+		        	,{dataIndex:'StatoStragiudiziale', width:100, header:'Stato<br>Stragiudiziale',hideable:true,sortable:true,exportable:false,stateful:false,hidden:true}
+		        	,{dataIndex:'ListaGaranti', width:100, header:'Garanti',hidden:true,hideable:true,exportable:false,stateful:false}
+		        	,{dataIndex:'UltimaAzione', width:100, header:'Ultima azione',hidden:true,hideable:true,exportable:false,stateful:false}
+		        	,{dataIndex:'DataUltimaAzione', width:100, header:'Data ult. azione',hidden:true,hideable:true,exportable:false,stateful:false}
+		        	,{dataIndex:'UtenteUltimaAzione', width:100, header:'Utente Ult.Azione',hidden:true,hideable:true,exportable:false,stateful:false}
+		        	,{dataIndex:'NotaEvento', width:100, header:'Nota',hidden:true,hideable:true,exportable:false,stateful:false}
+		        	,{dataIndex:'Garanzie', width:100, header:'Garanzie',hidden:true,hideable:true,exportable:false,stateful:false}
 		        	];
 		}else{
 					
