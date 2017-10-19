@@ -385,7 +385,7 @@ function Custom_Classification($IdContratto)
 //------------------------------------------------------------------------------
 // Custom_List
 // Crea i dati per una lista custom (all'interno di praticheCorrenti.php)
-// Ritorna: FALSE se quella data non � una lista riconosciuta
+// Ritorna: FALSE se quella data non e' una lista riconosciuta
 // Argomenti: $task		task=nome in codice della lista
 //            $join     join da inserire nella SELECT
 //            (byRef) $query  pezzo della query da eseguire
