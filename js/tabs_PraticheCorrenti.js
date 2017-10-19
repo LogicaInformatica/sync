@@ -334,7 +334,7 @@ DCS.GridPraticheCorrenti = Ext.extend(DCS.GridPratiche, {
 		        	{dataIndex:'NumeroRate', width:50, header:'N. rate',hidden:true,hideable:true,exportable:false,stateful:false},
 		        	{dataIndex:'NumRatePagate', width:50, header:'N. rate Pagate',hidden:true,hideable:true,exportable:false,stateful:false},
 		        	{dataIndex:'ImpRateInsoluto', width:100, header:'Insoluto',hidden:true,hideable:true,exportable:false,stateful:false},
-		        	{dataIndex:'InteressiDilazione', width:70, header:'Interessi dilazione',hidden:true,hideable:false,exportable:true,stateful:false},
+		        	{dataIndex:'InteressiDilazione', width:70, header:'Interessi dilazione',hidden:true,hideable:false,exportable:false,stateful:false},
 		        	{dataIndex:'MesiDilazione', width:50, header:'N. mesi dilazione',hidden:true,hideable:true,exportable:false,stateful:false},
 		        	{dataIndex:'StatoInDBT', width:100, header:'Stato in DBT',hidden:true,hideable:true,exportable:false,stateful:false}
 		        	,{dataIndex:'StatoLegale', width:100, header:'Stato Legale',hideable:true,exportable:false,stateful:false,hidden:true}
@@ -713,7 +713,7 @@ DCS.PraticheCorrenti = function(){
 										var grid10 = new DCS.GridPraticheCorrenti({
 											stateId: 'PraCorrentiNoStart',
 											stateful: true,
-											titlePanel: panelTitle+'Lista pratiche non-started (almeno 6 insoluti nei primi 9 mesi)',
+											titlePanel: panelTitle+'Lista pratiche non-started',
 											title: 'Non-started',
 											task: "nonstarted",
 											dsClassi:dsClassi,

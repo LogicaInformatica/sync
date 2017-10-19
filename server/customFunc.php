@@ -385,7 +385,7 @@ function Custom_Classification($IdContratto)
 //------------------------------------------------------------------------------
 // Custom_List
 // Crea i dati per una lista custom (all'interno di praticheCorrenti.php)
-// Ritorna: FALSE se quella data non � una lista riconosciuta
+// Ritorna: FALSE se quella data non e' una lista riconosciuta
 // Argomenti: $task		task=nome in codice della lista
 //            $join     join da inserire nella SELECT
 //            (byRef) $query  pezzo della query da eseguire
@@ -397,8 +397,16 @@ function Custom_List($task,$join,&$query,&$queryForCount,&$fields,&$ordine)
 {
 	switch ($task)
 	{
-		case "nonstarted": // pratiche "non-started": 6 insoluti nei primi 9 mesi
-			$query =   "v_insoluti_opt v $join WHERE DataDBT <= DataPrimaScadenza + INTERVAL 9 MONTH AND insoluti>5";
+		case "nonstarted": 
+            // fino al 2017-10-06 pratiche "non-started": 6 insoluti nei primi 9 mesi
+			//$query =   "v_insoluti_opt v $join WHERE DataDBT <= DataPrimaScadenza + INTERVAL 9 MONTH AND insoluti>5";
+            // dopo il 2017-10-06 : 3 rate insolute consecutive nei primi 12 mesi a partire da DataDecorrenza
+            $subselect = "select distinct c.IdContratto from contratto c 
+join insoluto i1 on i1.IdContratto=c.IdContratto AND i1.numRata>0 and i1.DataInsoluto < c.DataDecorrenza+INTERVAL 12 MONTH AND i1.ImpPagato=0
+join insoluto i2 on i2.IdContratto=c.IdContratto AND i2.numRata=i1.NumRata+1 and i2.DataInsoluto < c.DataDecorrenza+INTERVAL 12 MONTH AND i2.ImpPagato=0
+join insoluto i3 on i3.IdContratto=c.IdContratto AND i3.numRata=i2.NumRata+1 and i3.DataInsoluto < c.DataDecorrenza+INTERVAL 12 MONTH AND i3.ImpPagato=0
+where c.IdStatoRecupero not in (7,11,79,84)";
+            $query =   "v_insoluti_opt v $join WHERE v.IdContratto IN ($subselect)";
 			$queryForCount = $query;
 			break;
 		default:
