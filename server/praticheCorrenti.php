@@ -54,7 +54,11 @@ function doMain()
 		// 6/11/14: aggiunta ultima azione utente
 		$fields .= ",ua.UltimaAzione,ua.DataUltimaAzione,ua.UtenteUltimaAzione,ua.NotaEvento";
 		$join   .= " LEFT JOIN $schema.v_ultima_azione_utente ua ON ua.IdContratto=v.IdContratto";
-		
+		//17/10/2017
+		if($task=='nonstarted'){
+			$fields.= ", nse.*";
+			$join.= " LEFT JOIN $schema.v_non_started_export nse ON nse.IdContratto = v.IdContratto";
+		}
 	} else if ($task=='dipendenti' or $task=='storicodip') {
 		$fields = "v.*,NumNote,$haAllegati as NumAllegati";
 		$join = " LEFT JOIN $nn nu ON nu.IdContratto=v.IdContratto";
