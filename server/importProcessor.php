@@ -188,6 +188,7 @@ function verificaFile() {
 function caricaFile() {
 	global $trasf,$processName,$filePath,$idLotto,$idModulo;
 	$fileName = pathinfo($filePath,PATHINFO_FILENAME);
+    $ext = strtolower(pathinfo($filePath,PATHINFO_EXTENSION));
 	// Ripulisce eventuale segnale di interruzione precedente
 	execute("DELETE FROM processlog WHERE LogLevel=-2 AND ProcessName='$processName'");
 			
@@ -271,17 +272,20 @@ function verificaFileExcel() {
         $sheet = $info[0];
         $sheetName = $sheet['sheetName'];
     	$num_colonne = count($sheet['columns']);
-        trace(print_r($info,true),false);
+        //trace(print_r($info,true),false);
 	}
 
 	$info = $sheet; // mette in info l'occorrenza che descrive il foglio scelto
 	
 	// Controlla che il numero di colonne rilevato coincida con il numero di colonne previste nella definizione della trasformazione
 	$num_colonne_prev = count($trasf['infoFile']['columns']);
-	if ($num_colonne != $num_colonne_prev) 
-		erroreProcesso("Il numero di colonne nel foglio $sheetName &egrave; $num_colonne e quindi non corrisponde al numero previsto ({$num_colonne_prev})"
+	if ($num_colonne < $num_colonne_prev) {
+		erroreProcesso("Il numero di colonne nel foglio $sheetName &egrave; $num_colonne e quindi &egrave; inferiore al numero previsto ({$num_colonne_prev})"
 		." nella definizione delle regole di trasformazione");
-		
+    } else if ($num_colonne > $num_colonne_prev) {
+        writeProcessLog($processName, "Attenzione: il numero di colonne nel foglio $sheetName &egrave; $num_colonne e quindi &egrave; superiore al numero previsto ({$num_colonne_prev})"
+		." nella definizione delle regole di trasformazione: le colonne pi&ugrave; a destra saranno ignorate",1);
+    }
 	if (!writeProcessLog($processName, "Inizio analisi del contenuto del foglio '$sheetName' del file Excel", 0))
 		return; // se torna false significa che è stata richiesta una interruzione
 	
@@ -357,9 +361,13 @@ function caricaFileExcel() {
 
 	// Controlla che il numero di colonne rilevato coincida con il numero di colonne previste nella definizione della trasformazione
 	$num_colonne_prev = count($trasf['infoFile']['columns']);
-	if ($num_colonne != $num_colonne_prev)
-		erroreProcesso("Il numero di colonne nel foglio $sheetName &egrave; $num_colonne e quindi non corrisponde al numero previsto ({$num_colonne_prev})"
+    if ($num_colonne < $num_colonne_prev) {
+		erroreProcesso("Il numero di colonne nel foglio $sheetName &egrave; $num_colonne e quindi &egrave; inferiore al numero previsto ({$num_colonne_prev})"
 		." nella definizione delle regole di trasformazione");
+    } else if ($num_colonne > $num_colonne_prev) {
+        writeProcessLog($processName, "Attenzione: il numero di colonne nel foglio $sheetName &egrave; $num_colonne e quindi &egrave; superiore al numero previsto ({$num_colonne_prev})"
+		." nella definizione delle regole di trasformazione: le colonne pi&ugrave; a destra saranno ignorate",1);
+    }
 
 	if (!writeProcessLog($processName, "Inizio caricamento del contenuto del foglio '$sheetName' del file Excel", 0))
 		return; // se torna false significa che è stata richiesta una interruzione
@@ -420,10 +428,13 @@ function caricaFileCSV() {
 	// Controlla che il numero di colonne rilevato coincida con il numero di colonne previste nella definizione della trasformazione
 	$num_colonne = count($info['columns']);
 	$num_colonne_prev = count($trasf['infoFile']['columns']);
-	if ($num_colonne != $num_colonne_prev)
+	if ($num_colonne < $num_colonne_prev) {
 		erroreProcesso("Il numero di colonne nel file dato &egrave; $num_colonne e quindi non corrisponde al numero previsto ({$num_colonne_prev})"
 		." nella definizione delle regole di trasformazione");
-
+    } else if ($num_colonne > $num_colonne_prev) {
+        writeProcessLog($processName, "Attenzione: il numero di colonne nel file dato &egrave; $num_colonne e quindi &egrave; superiore al numero previsto ({$num_colonne_prev})"
+		." nella definizione delle regole di trasformazione: le colonne pi&ugrave; a destra saranno ignorate",1);
+    }
 	// Legge l'intero contenuto
 	trace("Inizio lettura contenuto file $filePath",false);
 	
@@ -439,21 +450,35 @@ function caricaFileCSV() {
 			if (hasProcessLogInterrupt($processName)) { // il chiamante ha chiesto di interrompere
 				return false;
 			}
+            $riga = "";
+            $pos  = -1;
+            do {
 			// considera che i separatori di riga potrebbero anche variare, quindi li cerca entrambi
-			$pos = strpos($line,"\r");
+                $oldpos = $pos+1;
+                $pos = strpos($line,"\r",$oldpos);
 			if ($pos===FALSE)
-			$pos = strpos($line,"\n");
+                    $pos = strpos($line,"\n",$oldpos);
 			if ($pos===FALSE) { // il pezzo finale del buffer letto non contiene un salto riga, deve provare ad attaccare il resto
-				$chunk = $line; // memorizza il pezzo e va a leggeer il seguito
 				break;
 			}
 			$riga = substr($line,0,$pos);          // riga da esaminare
+                $fields = parseFields($fieldSeparator,$riga,$incompleto);
+                // $incompleto=true se all'ultimo campo mancano le virgolette finali, presumibilmente contiene il salto riga
+            } while ($incompleto);
+
+            if ($pos===FALSE) {
+                $chunk = $line;
+                break;
+            }
+
 			$line = substr($line,$pos+1);          // parte rimanente del buffer da analizzare ancora
 			if (ord(substr($line,0,1))<=13) {      // elimina possibile carattere speciale residuo (salto riga o fine file)
+                $line = substr($line,1);
+                if (ord(substr($line,0,1))<=13) {      // elimina secondo possibile carattere speciale residuo (salto riga o fine file)
 				$line = substr($line,1);
+                }
 			}
 			$row++;
-            $fields = parseFields($fieldSeparator,$riga);
 			if ($row==1) continue; // non esaminare l'header
 			copiaColonne($row,$fields,$numWarnings);
 			if ($numRows%1000==999) {
@@ -462,7 +487,8 @@ function caricaFileCSV() {
 			}
 			$numRows++;
 		} // fine esame di un buffer letto
-		if ($numWarnings>=NUM_MAX_AVVISI) break;
+        // 2017-08-01 non può interrompere il caricamento se si supera il numero max di avvisi: interrompe solo gli avvisi
+		//if ($numWarnings>=NUM_MAX_AVVISI) break;
 	}
 	// Esamina l'ultima riga
 	if (strlen($chunk>2)) {
@@ -474,6 +500,7 @@ function caricaFileCSV() {
 	}
 	fclose($handle);
 	writeProcessLog($processName, "Fine caricamento del contenuto del file CSV ($row righe); numero di avvisi: $numWarnings", $numWarnings>0?1:0);
+    
 	return true;
 }
 
@@ -600,10 +627,13 @@ function verificaFileCSV() {
 	// Controlla che il numero di colonne rilevato coincida con il numero di colonne previste nella definizione della trasformazione
 	$num_colonne = count($info['columns']);
 	$num_colonne_prev = count($trasf['infoFile']['columns']);
-	if ($num_colonne != $num_colonne_prev)
-		erroreProcesso("Il numero di colonne nel file dato &egrave; $num_colonne e quindi non corrisponde al numero previsto ({$num_colonne_prev})"
+	if ($num_colonne < $num_colonne_prev) {
+		erroreProcesso("Il numero di colonne nel file dato &egrave; $num_colonne e quindi &egrave; inferiore al numero previsto ({$num_colonne_prev})"
 		." nella definizione delle regole di trasformazione");
-	
+    } else if ($num_colonne > $num_colonne_prev) {
+	        writeProcessLog($processName, "Attenzione: il numero di colonne nel file dato &egrave; $num_colonne e quindi &egrave; superiore al numero previsto ({$num_colonne_prev})"
+		." nella definizione delle regole di trasformazione: le colonne pi&ugrave; a destra saranno ignorate",1);
+    }
 	// Legge l'intero contenuto
 	$handle = fopen($filePath, 'r');
 	$chunk  = "";
@@ -618,25 +648,38 @@ function verificaFileCSV() {
 			if (hasProcessLogInterrupt($processName)) { // il chiamante ha chiesto di interrompere
 				return false;
 			}
+            $riga = "";
+            $pos = -1;
+            do {
 			// considera che i separatori di riga potrebbero anche variare, quindi li cerca entrambi
-			$pos = strpos($line,"\n");
+                $oldpos = $pos+1;
+                $pos = strpos($line,"\r",$oldpos);
 			if ($pos===FALSE)
-				$pos = strpos($line,"\r");
-			if ($pos===FALSE) { // il pezzo finale del buffer letto non contiene un salto riga
-				$chunk = $line;
+                    $pos = strpos($line,"\n",$oldpos);
+                if ($pos===FALSE) { // il pezzo finale del buffer letto non contiene un salto riga, deve provare ad attaccare il resto
 				break;
 			}
 			$riga = substr($line,0,$pos);          // riga da esaminare
-			$line = substr($line,$pos+1);          // parte rimanente del buffer da analizzare ancora
-			if (ord(substr($line,0,1))<=13) {      // elimina possibile carattere speciale residuo (salto riga o fine file)
-				$line = substr($line,1);
+                $fields = parseFields($fieldSeparator,$riga,$incompleto);
+                // $incompleto=true se all'ultimo campo mancano le virgolette finali, presumibilmente contiene il salto riga
+            } while ($incompleto);
+
+            if ($pos===FALSE) {
+                $chunk = $line;
+                break;
 			}
+            
 			$row++;
 			if ($row%1000==0) {
 				writeProcessLog($processName, "Lette $row righe",0);
 			}
-			//$fields = explode($fieldSeparator,$riga);
-			$fields = parseFields($fieldSeparator,$riga);
+            $line = substr($line,$pos+1);          // parte rimanente del buffer da analizzare ancora
+            if (ord(substr($line,0,1))<=13) {      // elimina possibile carattere speciale residuo (salto riga o fine file)
+                $line = substr($line,1);
+                if (ord(substr($line,0,1))<=13) {      // elimina secondo possibile carattere speciale residuo (salto riga o fine file)
+                    $line = substr($line,1);
+                }
+            }
 			if ($row==1) continue; // non esaminare l'header
 			esaminaColonne($row,$fields,$numWarnings);
 			if ($numWarnings>=NUM_MAX_AVVISI) {
@@ -1034,7 +1077,7 @@ function esaminaColonne($row,$fields,&$numWarnings) {
 			if (!rowExistsInTable($def['lookup'],quote_smart($value)." IN ({$def['lookupField']})")) {
 				writeProcessLog($processName, "Il valore nella colonna '{$colonneTrasf[$col]['colFileInput']}' a riga $row (".substr($value,0,100).")"
 				." non pu&ograve; essere copiato nel campo di destinazione '{$def['title']}' perch&eacute; non &egrave; "
-				." definito nella corrispondente tabella di riferimento ({$def['lookup']})", 1);
+				." definito nella corrispondente tabella di riferimento ({$def['lookup']}, colonne: {$def['lookupField']}})", 1);
 				$numWarnings++;
 			}
 		}
@@ -1231,7 +1274,7 @@ function caricaDB() {
 		$numRows = 0;
 		$nIns = $nUpd = 0;
 		for ($from = 0; ;$from += $chunk) {
-			$sql = "SELECT * FROM temp_import_cliente WHERE IdLotto=$idLotto AND IdModulo=$idModulo ORDER BY IdImportCliente LIMIT $from,$chunk";
+			$sql = "SELECT * FROM temp_import_cliente WHERE IdLotto=$idLotto ORDER BY IdImportCliente LIMIT $from,$chunk";
 			$rows = getRows($sql);
 			if (getLastError()>'') erroreProcesso(getLastError()." SQL=$sql");
 			// Elabora tutte le righe lette
@@ -1285,7 +1328,7 @@ function caricaDB() {
 		$nIns = $nUpd = $numInsNote = $numUpdNote = $numDelNote = 0;
 		for ($from = 0; ;$from += $chunk) {
 			$sql = "SELECT IdCliente,co.* FROM temp_import_contratto co JOIN temp_import_cliente cl ON co.IdImportCliente=cl.IdImportCliente"
-			     . " WHERE co.IdLotto=$idLotto AND co.IdModulo=$idModulo  ORDER BY IdImportContratto LIMIT $from,$chunk";
+			     . " WHERE co.IdLotto=$idLotto ORDER BY IdImportContratto LIMIT $from,$chunk";
 			$rows = getRows($sql);
 			if (getLastError()>'') erroreProcesso(getLastError()." SQL=$sql");
 			// Elabora tutte le righe lette
@@ -1339,7 +1382,7 @@ function caricaDB() {
 		$lastContratto = 0;
 		for ($from = 0; ;$from += $chunk) {
 			$sql = "SELECT IdContratto,po.* FROM temp_import_posizione po JOIN temp_import_contratto co ON co.IdImportContratto=po.IdImportContratto"
-			. " WHERE po.IdLotto=$idLotto  AND po.IdModulo=$idModulo  ORDER BY po.IdImportContratto,IdImportPosizione LIMIT $from,$chunk";
+			. " WHERE po.IdLotto=$idLotto ORDER BY po.IdImportContratto,IdImportPosizione LIMIT $from,$chunk";
 			$rows = getRows($sql);
 			if (getLastError()>'') erroreProcesso(getLastError()." SQL=$sql");
 			// Elabora tutte le righe lette
@@ -1353,17 +1396,18 @@ function caricaDB() {
 				// Alcuni contratti potrebbero non essere stati riconosciuti nel passo precedente
 				if ($IdContratto==null) {
 					writeProcessLog($processName,"La posizione a riga ".($numRows+1)." viene scartata perch&eacute; legata ad una pratica che non &egrave; stata riconosciuta",1);
+                    
 					continue;
 				}
 				
 				// Le posizioni che arrivano producono un refresh delle righe corrispondenti nella tabella movimento
 				// (cioe' si presume che ogni volta contengano la situazione aggiornata, con eventuale aggiunte, poi, 
 				// di movimenti vari attraverso la temp_import_movimento. Quindi al break, vengono ripulite le righe 
-				// precedentemente caricate)
+				// precedentemente caricate MA SOLO QUELLE CON LASTUSER='import')
 				if ($lastContratto!=$IdContratto) {
 					// al break ripulisce i movimenti del contratto che si sta per trattare
 					// per generare le istruzioni di storno e' costretto a fare una delete per volta
-					$mrows = getRows("SELECT * FROM movimento WHERE IdContratto=$IdContratto");
+					$mrows = getRows("SELECT * FROM movimento WHERE IdContratto=$IdContratto AND lastuser='import'");
 					foreach ($mrows as $mrow) {
 						$mrow['IdMovimento'] = null; // elimina l'Id automatico
 						foreach ($mrow as $key=>$col) {
@@ -1374,7 +1418,7 @@ function caricaDB() {
 							}
 						}
 						registraStorno("INSERT INTO movimento VALUES (".implode(',',$mrow).")");
-						if (!execute($sql="DELETE FROM movimento WHERE IdContratto=$IdContratto")) {
+						if (!execute($sql="DELETE FROM movimento WHERE IdContratto=$IdContratto AND lastuser='import'")) {
 							erroreProcesso(getLastError()." SQL=$sql");
 						} else {
 							$nDel += getAffectedRows();
@@ -1411,7 +1455,7 @@ function caricaDB() {
 		$lastContratto = 0;
 		for ($from = 0; ;$from += $chunk) {
 			$sql = "SELECT IdContratto,ga.* FROM temp_import_garante ga JOIN temp_import_contratto co ON co.IdImportContratto=ga.IdImportContratto"
-			. " WHERE ga.IdLotto=$idLotto  AND ga.IdModulo=$idModulo AND (ga.NominativoGarante>'' OR ga.CognomeGarante>'')"
+			. " WHERE ga.IdLotto=$idLotto AND (ga.NominativoGarante>'' OR ga.CognomeGarante>'')"
 			. " ORDER BY ga.IdImportContratto,IdImportGarante LIMIT $from,$chunk";
 			$rows = getRows($sql);
 			if (getLastError()>'') erroreProcesso(getLastError()." SQL=$sql");
@@ -1421,6 +1465,7 @@ function caricaDB() {
 					return false;
 				}
 				extract($row);
+				$numRows++;
 				// Alcuni contratti potrebbero non essere stati riconosciuti nel passo precedente
 				if ($IdContratto==null) {
 					writeProcessLog($processName,"Il garante a riga ".($numRows+2)." viene scartato perch&eacute; legato ad una pratica che non &egrave; stata riconosciuta",1);
@@ -1429,7 +1474,7 @@ function caricaDB() {
 				
 				// I garanti che arrivano producono un refresh delle righe corrispondenti nella tabella controparte
 				// (mentre la tabella cliente non viene toccata)
-				// (cio� si presume che ogni volta contengano l'elenco completo delle controparti
+				// (cioè si presume che ogni volta contengano l'elenco completo delle controparti
 				// Quindi al break sulla pratica, vengono ripulite le righe precedentemente caricate
 				if ($lastContratto!=$IdContratto) {
 					// al break ripulisce le controparti del contratto che si sta per trattare
@@ -1443,7 +1488,7 @@ function caricaDB() {
 								$mrow[$key] = quote_smart($col);
 							}
 						}
-						registraStorno("INSERT INTO controparte VALUES (".implode(',',$mrow).")");
+						registraStorno("REPLACE INTO controparte VALUES (".implode(',',$mrow).")");
 						if (!execute($sql="DELETE FROM controparte WHERE IdContratto=$IdContratto")) {
 							erroreProcesso(getLastError()." SQL=$sql");
 						} else {
@@ -1453,14 +1498,13 @@ function caricaDB() {
 					$lastContratto = $IdContratto;
 				}
 	
-				$n = creaGarante($IdContratto,$row,$nNew); // torna false se per qualche motivo nessuna riga ? stata scritta
+				$n = creaGarante($IdContratto,$row,$nNew); // torna false se per qualche motivo nessuna riga e' stata scritta
 				if ($n!==false) {
 					$nIns += $n;
 				} else {
 					writeProcessLog($processName, "Garante/coobbligato senza Partita IVA/Cod.Fiscale non inserito (riga n. ".($numRows+2).")",0);
 				}
 				
-				$numRows++;
 				if ($numRows%1000==0) {
 					if (!writeProcessLog($processName, "Elaborate $numRows righe relative ai garanti/coobbligati...",0))
 						return; // se torna false significa che e' stata richiesta un' interruzione dal chiamante
@@ -1482,7 +1526,7 @@ function caricaDB() {
 		$nIns = $nUpd = 0;
 		for ($from = 0; ;$from += $chunk) {
 			$sql = "SELECT IdCliente,re.* FROM temp_import_recapito re JOIN temp_import_cliente cl ON re.IdImportCliente=cl.IdImportCliente"
-			     . " WHERE re.IdLotto=$idLotto AND re.IdModulo=$idModulo  ORDER BY IdImportRecapito LIMIT $from,$chunk";
+			     . " WHERE re.IdLotto=$idLotto ORDER BY IdImportRecapito LIMIT $from,$chunk";
 			$rows = getRows($sql);
 			if (getLastError()>'') erroreProcesso(getLastError()." SQL=$sql");
 			// Elabora tutte le righe lette
@@ -1574,7 +1618,7 @@ function caricaDB() {
 		$nIns = $nUpd = 0;
 		for ($from = 0; ;$from += $chunk) {
 			$sql = "SELECT IdContratto,sr.* FROM temp_import_storiarecupero sr JOIN temp_import_contratto co ON co.IdImportContratto=sr.IdImportContratto"
-					. " WHERE sr.IdLotto=$idLotto AND sr.IdModulo=$idModulo  ORDER BY sr.IdImportContratto,IdImportStoriaRecupero LIMIT $from,$chunk";
+					. " WHERE sr.IdLotto=$idLotto ORDER BY sr.IdImportContratto,IdImportStoriaRecupero LIMIT $from,$chunk";
 			$rows = getRows($sql);
 			if (getLastError()>'') erroreProcesso(getLastError()." SQL=$sql");
 			// Elabora tutte le righe lette
@@ -1583,15 +1627,15 @@ function caricaDB() {
 					return false;
 				}
 				extract($row);
+				$numRows++;
 				// Alcuni contratti potrebbero non essere stati riconosciuti nel passo precedente
 				if ($IdContratto==null) {
-					writeProcessLog($processName,"L'evento/nota a riga ".($numRows+2)." viene scartato perch&eacute; legato ad una pratica che non &egrave; stata riconosciuta",1);
+					writeProcessLog($processName,"L'evento/nota a riga ".($numRows+1)." viene scartato perch&eacute; legato ad una pratica che non &egrave; stata riconosciuta",1);
 					continue;
 				}
 
 				creaStoriaRecupero($IdContratto,$row,$nIns,$nUpd);
 						
-				$numRows++;
 				if ($numRows%1000==0) {
 					if (!writeProcessLog($processName, "Elaborate $numRows righe relative alle note / storia recupero...",0))
 						return; // se torna false significa che e' stata richiesta una interruzione

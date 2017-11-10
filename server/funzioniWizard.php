@@ -20,8 +20,7 @@ function doWizard(){
 	
 	global $context;
 
-	$task = ($_REQUEST['task']) ? ($_REQUEST['task']) : null;
-	
+	$task = isset($_REQUEST['task']) ? ($_REQUEST['task']) : null;
 	switch($task)
 	{
 		case "analizzaFile":
@@ -44,6 +43,8 @@ function doWizard(){
 			}	
 			break;
 		default:
+		// ATTENZIONE: passa qui quando viene semplicemente incluso in altro modulo php
+        //    trace("parametro task invalido in funzioniWizard:".print_r($_REQUEST,true),false,true);
 		//	echo "{failure:true, task: '$task', messaggio:'task $task sconosciuto'}";
 	}
 }
@@ -75,8 +76,9 @@ function analizzaFile() {
 	if (!move_uploaded_file ($tmpName, $filePath))	{
 		fail("Impossibile copiare il file nella cartella $localDir");
 	} else {
-		$ext = pathinfo($filePath,PATHINFO_EXTENSION);
-		if ($ext=='xls' or $ext=='xlsx') {
+		$ext = strtolower(pathinfo($filePath,PATHINFO_EXTENSION));
+        trace("Il file caricato ha estensione $ext",false);
+		if ($ext=='xls' || $ext=='xlsx' || $ext=='xlsb') {
 			$info = analizzaFileExcel($filePath,$error);
 			if (!$info) fail($error);
 			success(array("type" => "Excel",  "info"  =>  $info));
@@ -85,13 +87,13 @@ function analizzaFile() {
 			if (!$info) fail($error);
 			success(array("type" => "CSV",  "info"  =>  $info));
 		} else {
-			fail("Tipo di file non gestito (ammesse solo le estensioni .csv, .txt, .xls, .xlsx)");
+			fail("Tipo di file non gestito (ammesse solo le estensioni .csv, .txt, .xls, .xlsx, .xlsb)");
 		}			
 	}
 }
 
 /*
- * analizzaFileCsv � una funzione che analizza il file csv in upload:
+ * analizzaFileCsv Analizza il file csv in upload:
  * conta il numero di righe e delle colonne del file, memorizza i nomi dei campi della testata
  * ed il separatore dei campi
  */
@@ -117,7 +119,7 @@ function analizzaFileCsv($filePath, &$error){
 		return false;
 	} 
 	
-	// Determina qual � il separatore di riga
+	// Determina qual è il separatore di riga
 	$cnt1 = substr_count($chunk,"\r\n");
 	$cnt2 = substr_count($chunk,"\n");
 	$cnt3 = substr_count($chunk,"\r");
@@ -146,17 +148,23 @@ function analizzaFileCsv($filePath, &$error){
 			$fieldSeparator = $sepC;
 		}
 	}
-	trace('Individuato separatore di campo '.addslashes($fieldSeparator),false);
-	// Ottiene l'array con i nomi di colonna e da' un nome a quelle eventualmente senza header
+	trace('Individuato separatore di campo '.str_replace("\\","\\\\",$fieldSeparator),false);
+	// Ottiene l"array con i nomi di colonna e da' un nome a quelle eventualmente senza header
 	$fieldNames = explode($fieldSeparator, $header);
 	foreach ($fieldNames as $i=>$colName) {
 		if (trim($colName)=='') {
+            if ($i==count($fieldNames)-1) { // se è solo l'ultima colonna a non avere nome, lo prende come un separatore in eccesso e la ignora
+                array_pop($fieldNames);
+                break;
+            }
 			$fieldNames[$i] = "Colonna ".($i+1);
 		}		
 	}
 	$numberOfColumns = count($fieldNames);
 	trace("La riga di testata contiene $numberOfColumns colonne",false);
 	fclose($handle);
+	
+	if ($readAll) { // se chiamato per avere tutte le info incluso il numero di righe e i valori campione, legge tutto il file
 	
 	// Riapre il file per leggerlo tutto, contando le righe ed estraendo un valore di esempio per ogni colonna
 	$handle = fopen($filePath, 'r');
@@ -165,33 +173,49 @@ function analizzaFileCsv($filePath, &$error){
 	$sampleRow = array();
 	$residue = $numberOfColumns;
 	while (!!($line = fread($handle,MAX_CSV_LINE_LENGTH))) {
-		trace("Letti ".strlen($line)." bytes dal file",false);
+			//trace("Letti ".strlen($line)." bytes dal file",false);
 		$line = $chunk . $line; // concatena al pezzo di riga rimasto dalla fread precedente
 		$chunk = '';
 		while (strlen($line)>0) { // loop per spezzare le righe contenute nel buffer letto
+
+                $riga = "";
+                $pos = -1;
+                do {
 			// considera che i separatori di riga potrebbero anche variare, quindi li cerca entrambi
-			$pos = strpos($line,"\n");
+                    $oldpos = $pos+1;
+                    $pos = strpos($line,"\r",$oldpos);
 			if ($pos===FALSE)
-				$pos = strpos($line,"\r");
-			if ($pos===FALSE) { // il pezzo finale del buffer letto non contiene un salto riga
+                        $pos = strpos($line,"\n",$oldpos);
+                    if ($pos===FALSE) { // il pezzo finale del buffer letto non contiene un salto riga, deve provare ad attaccare il resto
+                        break;
+                    }
+                    $riga = substr($line,0,$pos);          // riga da esaminare
+                    $fields = parseFields($fieldSeparator,$riga,$incompleto);
+                // $incompleto=true se all'ultimo campo mancano le virgolette finali, presumibilmente contiene il salto riga
+                } while ($incompleto);
+
+                if ($pos===FALSE) {
 				$chunk = $line;
 				break;
 			}
-			$riga = substr($line,0,$pos);          // riga da esaminare
 			$line = substr($line,$pos+1);          // parte rimanente del buffer da analizzare ancora
 			if (ord(substr($line,0,1))<=13) {      // elimina possibile carattere speciale residuo (salto riga o fine file)
+                    $line = substr($line,1);
+                    if (ord(substr($line,0,1))<=13) {      // elimina secondo possibile carattere speciale residuo (salto riga o fine file)
 				$line = substr($line,1);
+                }
 			}
 			if ($numberOfRows>0) { // ho superato l'header
-				$fields = explode($fieldSeparator,$riga);
-				if (count($fields)<=$numberOfColumns) { // riga buona (non contiene separatori di campo nei valori dei campi)
 					for ($col = 0; $col<count($fields) && $residue>0; $col++) {
 						if (!($sampleRow[$col]>'')) { // valore per questa colonna non ancora trovato
 							$text = $fields[$col];
+							$text = preg_replace('/(^\s+|\s+$)/','',$text); 	// toglie spazi ecc.
+							if (preg_match('/^".*"$/',$text)) { // valore tra virgolette, presume che derivino dall'export su CSV e quindi le toglie
+								$text = substr($text,1,strlen($text)-2);
+							}
 							if ($text>''){
 								$sampleRow[$col] = $text;
 								$residue--;
-							}
 						}
 					}
 				}
@@ -202,6 +226,10 @@ function analizzaFileCsv($filePath, &$error){
 	
 	fclose($handle);
 	$numberOfRows--; // detrae l'header dal conteggio
+	} else {
+		$numberOfRows = -1; // non calcolato
+		$sampleRow = array();
+	}
 	
 	$data = array("filePath" => $filePath,
 				  "fileName" => pathinfo($filePath,PATHINFO_FILENAME),
@@ -234,14 +262,17 @@ function analizzaFileExcel($filePath,&$error){
 		$error = "Il file $filePath non e' un file Excel elaborabile";
 		return false;
 	}
+    trace("Inizio analisi del fie Excel $filePath",false);
+
 	$objReader = PHPExcel_IOFactory::createReader($fileType);
 	$objReader->setReadDataOnly(true);
 	$objPHPExcel = $objReader->load($filePath);
 	$sheets = array(); //array dei fogli excel contenuti nel file
-	foreach ($objPHPExcel->getAllSheets() as $sheet) {
+	foreach ($objPHPExcel->getAllSheets() as $iSheet=>$sheet) {
 		$highestRow = $sheet->getHighestRow();
 		$highestColumn = PHPExcel_Cell::columnIndexFromString($sheet->getHighestColumn());// numero massimo di colonne: conversione della stringa posizione in posizione numerica
 		$sheetName = $sheet->getTitle();
+        trace("Analisi del foglio n. $iSheet - $sheetName",false);
 		$realNumberOfColumns = 0;
 		for($row = 1; $row<NUM_RIGHE_RICERCA_HEADER; $row++){
 			$headerRow = array();
@@ -285,6 +316,7 @@ function analizzaFileExcel($filePath,&$error){
 		// numero di righe effettivo che popolano la tabella nel file excel
 		$numRows = $rw - $row;
 		$highestRow = $rw-1;
+        trace("Individuate $numRows righe",false);
 		
 		// in $sampleRow costruisce una riga di esempio, prendendo un valore non nullo per ogni colonna
 		$sampleRow = array_fill(0,$realNumberOfColumns,'');
@@ -317,7 +349,7 @@ function analizzaFileExcel($filePath,&$error){
 		);
 	}
 	if (count($sheets)==0) { 
-		$error = "Il file $filePath sembra contenere alcun foglio contenente dati riconoscibili";
+		$error = "Il file $filePath sembra non contenere alcun foglio contenente dati riconoscibili";
 		return false;
 	}
 	return $sheets;
@@ -353,8 +385,9 @@ function saveTrasformazione(){
 			$colDB = '';
 			// Cerca la prima colonna target plausibile per il dato nome di colonna
 			foreach ($config['columns'] as $coldef) {
-				if (preg_match($coldef['match_re'],$columnName)   // il nome combacia con il pattern
-				and (($coldef['table']=='cliente' and $infoCliente=='on') // non generare se la tabella non � inclusa (questo esculde anche i codice cli/contratto)
+                if ($coldef['match_re']>'' 
+				and preg_match($coldef['match_re'],$columnName)   // il nome combacia con il pattern
+				and (($coldef['table']=='cliente' and $infoCliente=='on') // non generare se la tabella non e' inclusa (questo esculde anche i codice cli/contratto)
 				or   ($coldef['table']=='garante' and $infoGarante=='on') 
 				or   ($coldef['table']=='recapito' and $infoRecapito=='on')
 				or   ($coldef['table']=='contratto' and $infoContratto=='on')
@@ -396,6 +429,7 @@ function saveTrasformazione(){
 			"opzCreaCodCliente" => ($opzCreaCodCliente=='on'),
 			"opzCreaCodGarante" => ($opzCreaCodGarante=='on'),
 			"opzCreaCodContratto" => ($opzCreaCodContratto=='on'),
+			"opzCodClienteEqContratto" => ($opzCodClienteEqContratto=='on'),
 			"opzImportiInCentesimi" => ($opzImportiInCentesimi=='on'),
 			"infoFile"		=> $infoFile,
 			"colonne"       => $colonne,
@@ -561,5 +595,117 @@ function aggiornaSituazioneContabile($processName,$IdLotto,$ids=null) {
 		}
 	}
 	if ($processName) writeProcessLog($processName, "Aggiornate ".count($ids)." pratiche",0);	
+}
+
+/**
+ * parseFields Separa una riga di file csv in campi
+ * @param {String} $sep separatore di campi
+ * @param {String} $riga riga
+ * @param {String} $incompleto (ByRef) ritorn true se l'ultimo campo è tra virgolette e non c'era la chiusura (significa che c'è
+ *   un campo tipo "note" con salti riga interni
+ * @return {Array} array di valori
+ */
+function parseFields($sep,$riga,&$incompleto=false) {
+    $incompleto = false;
+    $pos = 0;
+    $fields = array();
+    for ($i=0;$i<1000;$i++) { // il limite e' solo per sicurezza
+        if (substr($riga,$pos,1)=='"') { // valore tra virgolette
+            for ($p2=$pos+1,$p1=-1;; $p2+=2) { // salta tutte le possibili doppie virgolette
+                $p1 = strpos($riga,'"'.$sep,$p2); // fine possibile
+                $p2 = strpos($riga,'""',$p2);     // prossima virgoletta interna       
+                if ($p2==false or $p1==false or $p1<$p2) break;
+            };
+            if ($p1===false) { // e' l'ultimo campo della riga
+                $value = str_replace('""','"',substr($riga,$pos+1,strlen($riga)-$pos-1));
+                if (substr($value,-1)=='"') {
+                    $value = substr($value,0,strlen($value)-1);
+                } else {
+                    $incompleto=true;
+                }
+                $fields[] = $value;
+                break;  
+            } else { // non e' l'ultimo campo
+                $fields[] = str_replace('""','"',substr($riga,$pos+1,$p1-$pos-1));
+                $pos = $p1+2;
+            }
+         } else { // valore non racchiuso tra virgolette
+            $p1 = strpos($riga,$sep,$pos); // fine campo
+            if ($p1===false) { // e' l'ultimo campo della riga
+                $fields[] = substr($riga,$pos,strlen($riga)-$pos);
+                break;  
+            } else { // non e' l'ultimo campo
+                $fields[] = substr($riga,$pos,$p1-$pos);
+                $pos = $p1+1;
+            }
+         }
+    }
+    return $fields;
+}
+
+/*
+ * creaFileCsv Crea un file csv a partire dal tracciato fisso di cui viene dato il codice
+ */
+function creaFileCsv($filePath, &$error,$idTracciato){	
+	trace("Conversione file a tracciato fisso $filePath in file CSV",false);
+	if(!file_exists($filePath) || !is_readable($filePath)){
+		$error = "Il file non esiste oppure non puo' essere letto";
+		trace($error,false);
+		return false;
+	}
+	
+    // Lettura del modello (tracciato)
+    $tracciato = getScalar("SELECT Filename FROM modello WHERE IdModello=$idTracciato");
+    if (!$tracciato) {
+		$error = "Il tracciato di file con id=$idTracciato (modello) non esiste ";
+		trace($error,false);
+		return false;
+    }
+    
+    $content = file_get_contents(TEMPLATE_PATH."/$tracciato");
+    if (!$content) {
+		$error = "Il file di definizione '$tracciato' non esiste  o non puo' essere letto";
+		trace($error,false);
+		return false;
+    }
+    
+    $json = json_decode($content,true);
+    if (!$json) {
+		$error = "Il file di definizione '$tracciato' non ha un formato json valido";
+		trace($error,false);
+		return false;
+    }
+    
+    // Trasforma il file di input in un file csv  
+    $input = fopen($filePath, 'r');
+	if (!$input){
+		$error = "Il file $filePath non puo' essere aperto";
+		trace($error,false);
+		return false;
+	}
+    $outFile = TMP_PATH."/".pathinfo($tracciato,PATHINFO_FILENAME)."_".date('YmdHis').'.csv';
+    $output = fopen($outFile, 'w+');
+    
+    // Crea la riga di testata
+    $sep = "\t";
+    $columns = array_keys($json);
+    if (!fwrite($output,implode($sep,array_keys($json))."\r\n")) {
+		$error = "Il file $outFile non puo' essere scritto";
+		trace($error,false);
+		return false;
+    }
+    // Legge le righe dell'input, inserisce i separatori e le scrive in output in formato csv
+    $offsets = array_values($json);
+    while (!feof($input)) {
+        $s = fgets($input);
+        $s = preg_replace('/[\r\n]+$/','',$s); // toglie il fine riga letto dalla fgets
+        for ($i=count($offsets)-1; $i>0; $i--) { // mette i separatori a tutti tranne prima del primo campo
+            $s = substr_replace($s,$sep,$offsets[$i]-1,0); // inserisce il separatore
+        }
+        fwrite($output,"$s\r\n");
+    }
+    fclose($output);
+    fclose($input);
+    return $outFile;
 }
 
