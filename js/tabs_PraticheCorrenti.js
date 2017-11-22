@@ -51,6 +51,9 @@ DCS.GridPraticheCorrenti = Ext.extend(DCS.GridPratiche, {
 					{name: 'DataNascitaCliente', type:'date'}, //solo in Export
 					{name: 'Venditore', type:'string'}, //solo in Export
 					{name: 'CodOverride', type:'string'}, //solo in Export
+					{name: 'DescOverride', type:'string'}, //solo in Export
+					{name: 'DescProdotto', type:'string'}, //solo in Export
+					{name: 'Pratica', type:'string'}, //solo in Export
 					{name: 'ServiziAssicurativi', type:'string'}, //solo in Export
 					{name: 'TipoAnagrafica', type:'string'}, //solo in Export
 					{name: 'CodFiscGarante', type:'string'}, //solo in Export
@@ -279,17 +282,19 @@ DCS.GridPraticheCorrenti = Ext.extend(DCS.GridPratiche, {
 		}else if(this.task=="nonstarted"){
 			locFields.push({name: 'NumRatePagate', type: 'int'},{name: 'ImpRateInsoluto', type: 'float'},{name:'DataDBT', type:'date'});
 			columns = [
-			        {dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false},
+			        {dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false,exportable:false},
+			        {dataIndex:'Pratica',width:45,	header:'N.Pratica',align:'left', hidden:true,hideable:true,exportable:true,stateful:false},
 			        {dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
 			        {dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
 		        	{dataIndex:'DataLiquidazione',width:30,xtype:'datecolumn', format:'d/m/y',	header:'Data liquidazione',align:'left',hidden:true,exportable:true,hideable:false,stateful:false},
 		        	{dataIndex:'AbbrStatoRecupero',		width:40,	header:'Stato',hidden:this.hideStato,filterable:true,sortable:true,groupable:true},		        	
 		        	{dataIndex:'DataCambioStato',width:40,xtype:'datecolumn', format:'d/m/y',	header:'Data stato',align:'left', filterable: true, groupable:true, sortable:true},
-		        	{dataIndex:'prodotto',	width:120,	header:'Prodotto',filterable:true,sortable:true,groupable:true},
+		        	{dataIndex:'prodotto',	width:120,	header:'Prodotto',filterable:true,sortable:true,groupable:true,exportable:false},
+		        	{dataIndex:'DescProdotto',	width:120,	header:'Prodotto',hidden:true,hideable:true,exportable:true,stateful:false},
 		        	{dataIndex:'Modello', width:110, header:'Modello',hidden:true,hideable:true,exportable:true,stateful:false},
 		        	{dataIndex:'Dealer', width:110, header:'Dealer',hidden:true,hideable:true,exportable:true,stateful:false},
 		        	{dataIndex:'Venditore', width:110, header:'Venditore',hidden:true,hideable:true,exportable:true,stateful:false},
-		        	{dataIndex:'CodOverride', width:70, header:'Cod.Override',hidden:true,hideable:true,exportable:true,stateful:false},
+		        	{dataIndex:'DescOverride', width:70, header:'Descrizione Override',hidden:true,hideable:true,exportable:true,stateful:false},
 		        	{dataIndex:'ValoreBene', width:70, header:'Valore bene',hidden:true,hideable:true,exportable:true,stateful:false},
 		        	{dataIndex:'Finanziato', width:70, header:'Finanziato',hidden:true,hideable:true,exportable:true,stateful:false},
 		        	{dataIndex:'Anticipo', width:70, header:'Anticipo',hidden:true,hideable:true,exportable:true,stateful:false},
@@ -317,10 +322,10 @@ DCS.GridPraticheCorrenti = Ext.extend(DCS.GridPratiche, {
 		        	{dataIndex:'giorni',	width:30,	header:'Gg rit.',align:'right',filterable:false,sortable:true},
 		        	{dataIndex:'importo',	width:40,	header:'Deb. Tot', xtype:'numbercolumn',format:'0.000,00/i',align:'right',filterable:true,sortable:true},
 		        	{dataIndex:'ImpCapitaleAffidato',	width:70,	header:'Cap. affidato', xtype:'numbercolumn',format:'0.000,00/i',align:'right',filterable:true,sortable:true,exportable:true,hidden:true,hideable:true,stateful:false},
-		        	{dataIndex:'ImpCapitale',	width:70,	header:'Capitale', xtype:'numbercolumn',format:'0.000,00/i',align:'right',filterable:true,sortable:true,exportable:true,hidden:true,stateful:false},
+		        	{dataIndex:'ImpCapitale',	width:70,	header:'Capitale Insoluto', xtype:'numbercolumn',format:'0.000,00/i',align:'right',filterable:true,sortable:true,exportable:true,hidden:true,stateful:false},
 		        	{dataIndex:'ImpInteressiMora',	width:40,	header:'Int.mora', xtype:'numbercolumn',format:'0.000,00/i',align:'right',filterable:true,sortable:true,hidden:true},
 		        	{dataIndex:'ImpSpeseRecupero',	width:40,	header:'Spese rec.', xtype:'numbercolumn',format:'0.000,00/i',align:'right',filterable:true,sortable:true,hidden:true},
-		        	{dataIndex:'DataScadenza',width:30,xtype:'datecolumn', format:'d/m/y',	header:'Scad.',align:'left', filterable: true, groupable:true, sortable:true},
+		        	{dataIndex:'DataScadenza',width:30,xtype:'datecolumn', format:'d/m/y',	header:'Primo scaduto insoluto',align:'left', filterable: true, groupable:true, sortable:true},
 		        	{dataIndex:'tipoPag',   width:20,	header:'Pag.', filterable: true},
 		        	{dataIndex:'AbbrClasse',	width:45,	header:'Class.',filterable:true,sortable:true,groupable:true},
 		        	{dataIndex:'CodRegolaProvvigione', width:30, header:'Codice',hidden:true,hideable:true,exportable:true,stateful:false},

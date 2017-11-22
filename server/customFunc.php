@@ -405,7 +405,7 @@ function Custom_List($task,$join,&$query,&$queryForCount,&$fields,&$ordine)
 join insoluto i1 on i1.IdContratto=c.IdContratto AND i1.numRata>0 and i1.DataInsoluto < c.DataDecorrenza+INTERVAL 12 MONTH AND i1.ImpPagato=0
 join insoluto i2 on i2.IdContratto=c.IdContratto AND i2.numRata=i1.NumRata+1 and i2.DataInsoluto < c.DataDecorrenza+INTERVAL 12 MONTH AND i2.ImpPagato=0
 join insoluto i3 on i3.IdContratto=c.IdContratto AND i3.numRata=i2.NumRata+1 and i3.DataInsoluto < c.DataDecorrenza+INTERVAL 12 MONTH AND i3.ImpPagato=0
-where c.IdStatoRecupero not in (7,11,79,84)";
+where (c.ImpInsoluto > 0 or c.IdStatoRecupero in (79,84)) and c.IdStatoContratto !=29";
             $query =   "v_insoluti_opt v $join WHERE v.IdContratto IN ($subselect)";
 			$queryForCount = $query;
 			break;
