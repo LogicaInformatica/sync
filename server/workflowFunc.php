@@ -3306,6 +3306,35 @@ function cambioCategoria($contratto,$IdCategoria)
 }
 
 //-----------------------------------------------------------------------
+// cambioCategoriaMaxirata
+// cambia la categoria maxirata del contratto
+// Restituisce il nome della categoria assegnata
+//-----------------------------------------------------------------------
+function cambioCategoriaMaxirata($contratto,$IdCategoriaMaxirata)
+{
+	try
+	{
+		if (!$IdCategoriaMaxirata)
+			$IdCategoriaMaxirata = "NULL";
+		//-----------------------------------------------------------------------------
+		// Registra il cambio di categoria
+		//-----------------------------------------------------------------------------
+		if (!execute("UPDATE contratto set IdCategoriaMaxirata=$IdCategoriaMaxirata where IdContratto = $contratto"))
+		{
+			trace("Errore nell'assegnazione della categoria con id $IdCategoriaMaxirata al contratto con id $contratto");
+			return FALSE;
+		}
+		return getScalar("Select CategoriaMaxirata from categoriamaxirata where IdCategoriaMaxirata=$IdCategoriaMaxirata");
+	}
+	catch (Exception $e)
+	{
+		trace($e->getMessage());
+		setLastError($e->getMessage());
+		return FALSE;
+	}
+}
+
+//-----------------------------------------------------------------------
 // cambioStatoLegale
 // Cambia lo stato legale del contratto
 // Restituisce il nome della stato legale assegnato

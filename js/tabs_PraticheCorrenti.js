@@ -83,7 +83,8 @@ DCS.GridPraticheCorrenti = Ext.extend(DCS.GridPratiche, {
 					{name: 'InteressiDilazione', type: 'float'},
 					{name: 'MesiDilazione', type: 'int'},
 					{name: 'FormDettaglio'}, // serve per avere il nome del dettaglio (xtype)
-					{name: 'StatoInDBT'}];
+					{name: 'StatoInDBT'},
+					{name: 'CategoriaMaxirata'}];
 
 		var columns;
 		if (this.task=="inScadenza") {

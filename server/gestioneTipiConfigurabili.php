@@ -78,6 +78,11 @@ function readGrid()
 			$ordine="IdStatoStragiudiziale asc";
 			$campoTitolo="TitoloStatoStragiudiziale";
 			break;
+		case 'categoriaMaxirata':
+		    $query="categoriamaxirata";
+			$ordine="CodMaxirata asc";
+			$campoTitolo="CategoriaMaxirata";
+			break;	
 	}
 	$counter = getScalar("SELECT count(*) FROM $query");
 	if ($counter == NULL)
@@ -325,6 +330,22 @@ function aggiornaTipo()
 			if($indexTab==0)
 				$_POST['isNew']=true;
 			break;
+		case 'categoriaMaxirata':
+			//variabili
+			$tab = 'categoriamaxirata';
+			$idField = 'IdCategoriaMaxirata';
+			$codField = 'CodMaxirata';
+			$titleName = 'categoria maxirata';
+			$codMexName = 'CATEGORIA_MAXIRATA';
+			$neww = Array();
+			$neww[]='Nuova';
+			$neww[]='salvata';	
+			//campi tab
+			$titField = 'CategoriaMaxirata';
+			$isAlfaOmega=false;
+			if($indexTab==0)
+				$_POST['isNew']=true;
+			break;	
 	}
 	//trace("TA ".$_POST['TitoloTipoPartita']);
 	//*****inserimento
@@ -499,6 +520,14 @@ function delete()
 			$titleName = 'richiesta';
 			$titField = 'TitoloTipoRichiesta';
 			break;
+		case 'categoriaMaxirata':
+			//variabili
+			$tab='categoriamaxirata';
+			$idField = 'IdCategoriaMaxirata';
+			$chkField= 'CategoriaMaxirata';
+			$titleName = 'categoria maxirata';
+			$titField = 'CategoriaMaxirata';
+			break;	
 	}
 	
 	$titoliLog = getFetchArray("SELECT $titField FROM $tab where $idField in ($list)");

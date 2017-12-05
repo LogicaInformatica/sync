@@ -178,7 +178,7 @@ function doMain()
 			$query = "v_insoluti_storico v $join WHERE v.NumPratica NOT LIKE 'KG%' AND $extraCondition" ;
 			$queryForCount = "v_insoluti_storico_count v WHERE NumPratica NOT LIKE 'KG%' AND $extraCondition";
 			$ordine = "v.numPratica";
-		} else { // nessun criterio: è la visualizzazione iniziale dello storico, vuota
+		} else { // nessun criterio: ï¿½ la visualizzazione iniziale dello storico, vuota
 			echo '({"total":0,"results":[]})';
 			return;
 		}
@@ -217,6 +217,34 @@ function doMain()
 			$ordine = "$sortDStato,DataCambioStato,DataCambioClasse,DataScadenzaAzione,DataScadenza";
 		}
 		break;
+	case "maxirata":
+		// 21/5/2013: esclude quelle con importo <26 (positive)
+		// Pratiche presso operatore con flag che indica niente affido
+		
+		if ($_REQUEST['expAll']==1) { // export di tutte le pagina in lavorazione interna
+			$query = "v_insoluti_opt v $join WHERE v.stato='INT' AND InRecupero='Y' and v.idclasse not in(12,37,40,41)  AND v.ImpInsoluto>=26 $condNotEstinti" ;
+			$query .= filtroInsolutiOperatore();
+			$queryForCount = "v_insoluti_count_opt v WHERE v.stato='INT' InRecupero='Y' and v.idclasse not in(12,37,40,41)  AND v.ImpInsoluto>=26 $condNotEstinti";
+			$queryForCount .= filtroInsolutiOperatore();
+		} else {
+			$cat = ($_REQUEST['CategoriaMaxirata']) ? ($_REQUEST['CategoriaMaxirata']) : 0;
+			if ($cat>0)
+			{
+				$query = "v_insoluti_opt v $join WHERE v.stato='INT' and v.IdCategoriaMaxirata=$cat  AND InRecupero='Y' and v.idclasse not in(12,37,40,41)  AND v.ImpInsoluto>=26 $condNotEstinti" ;
+				$query .= filtroInsolutiOperatore();
+				$queryForCount = "v_insoluti_count_opt v WHERE v.stato='INT' and v.IdCategoriaMaxirata=$cat AND InRecupero='Y' and v.idclasse not in(12,37,40,41)  AND v.ImpInsoluto>=26 $condNotEstinti";
+				$queryForCount .= filtroInsolutiOperatore();
+			}
+			else
+			{
+				$query = "v_insoluti_opt v $join WHERE v.stato IN ('INT','OPE') and v.categoria='Gestione maxi rate' and v.categoriaMaxirata is null and v.idclasse not in(18,12,37,40,41) AND v.ImpInsoluto>=26 $condNotEstinti" ;
+				$query .= filtroInsolutiOperatore();
+				$queryForCount = "v_insoluti_count_opt v WHERE v.stato IN ('INT','OPE') and v.categoria='Gestione maxi rate' and v.categoriaMaxirata is null and v.idclasse not in(18,12,37,40,41) AND v.ImpInsoluto>=26 $condNotEstinti";
+				$queryForCount .= filtroInsolutiOperatore();
+			}
+			$ordine = "$sortDStato,DataCambioStato,DataCambioClasse,DataScadenzaAzione,DataScadenza";
+		}
+		break;	
 	case "attive":
 		// Pratiche presso agenzia
 		$query = "v_insoluti_opt v $join WHERE v.stato='AGE' AND classif!='POS' $extraCondition";
@@ -286,7 +314,7 @@ function doMain()
 	case "incassiParziali":
 		$ordine = "$sortDStato,DataCambioStato,DataCambioClasse";
 // 28/6/2011 GDF: impPagato indica quanto ha pagato il cliente in questo affido, quindi basta testare
-//      se è non zero e se c'è ancora insoluto
+//      se ï¿½ non zero e se c'ï¿½ ancora insoluto
 		$query = "v_insoluti_opt v $join WHERE v.IdAgenzia>0 AND v.Stato NOT IN ('STR1','STR2','LEG') AND v.ImpPagato>0 AND v.ImpInsoluto>0 $extraCondition";
 		$query .= filtroInsolutiOperatore();
 		$queryForCount = "v_insoluti_count_opt v WHERE v.IdAgenzia>0 AND v.Stato NOT IN ('STR1','STR2','LEG') AND v.ImpPagato>0 AND v.ImpInsoluto>0 $extraCondition";
@@ -307,7 +335,7 @@ function doMain()
 		$ordine = "$sortDStato,DataCambioStato,DataCambioClasse,DataScadenzaAzione,DataScadenza";
 		break;
 
-	// Situazione debitoria: il parametro di selezione per le varie pagine è passato in extraCondition
+	// Situazione debitoria: il parametro di selezione per le varie pagine ï¿½ passato in extraCondition
 	// vedi tabs_PraticheSituazione.js
 	case "situazione":
 		$query = "v_insoluti_situazione v $join WHERE $extraCondition";
@@ -315,7 +343,7 @@ function doMain()
 		$ordine = "CodContratto";
 		break;
 
-	// Stati legali: il parametro di selezione per le varie pagine è passato in extraCondition
+	// Stati legali: il parametro di selezione per le varie pagine ï¿½ passato in extraCondition
 	// vedi tabs_PraticheStatiLegali.js
 	case "statolegale":
 		if ($_REQUEST['expAll']==1) {//export di tutte le pratiche in stato legale
@@ -329,7 +357,7 @@ function doMain()
 			$ordine = "CodContratto";
 		}
 		break;
-	// Stati stragiudiziali: il parametro di selezione per le varie pagine è passato in extraCondition
+	// Stati stragiudiziali: il parametro di selezione per le varie pagine ï¿½ passato in extraCondition
 	// vedi tabs_PraticheStatiStragiudiziali.js
 	case "statostragiudiziale":
 		if ($_REQUEST['expAll']==1) {//export di tutte le pratiche stragiudiziali
@@ -742,7 +770,7 @@ OR v.stato='INT' AND ImpInsoluto>26 AND Classif!='EXIT'";
 			
 	default: // TRATTA LISTE CON CRITERI PARTICOLARI 
 		//---------------------------------------------------------------------------------------
-		// Liste rinegoziazioni per stato (hanno codice = rinegozia_NN dove NN è l'IdStatoRinegoziazione)
+		// Liste rinegoziazioni per stato (hanno codice = rinegozia_NN dove NN ï¿½ l'IdStatoRinegoziazione)
 		//---------------------------------------------------------------------------------------
 	 	if (substr($task,0,10)=='rinegozia_')
 	 	{
@@ -804,7 +832,7 @@ OR v.stato='INT' AND ImpInsoluto>26 AND Classif!='EXIT'";
 	
 	// Gestione abbreviata per l'export
 	if ($exportingToExcel) // rinuncia all'order by, per accelerare l'export
-	{   // la export può passare i parametri per il limit
+	{   // la export puï¿½ passare i parametri per il limit
 		$start = $exportFrom>"" 	? $exportFrom:0;
 		$limit = $exportLimit>"" 	? $exportLimit:9999999;
 		$sql = "SELECT $fields FROM $query AND ($filtroWhere) LIMIT $start,$limit";		
@@ -953,7 +981,7 @@ function filtroInsolutiOperatore()
 {
 	global $context;
 	
-	if (userCanDo("READ_TUTTE")) { // può vedere tutte le pratiche
+	if (userCanDo("READ_TUTTE")) { // puï¿½ vedere tutte le pratiche
 		return ""; // nessuna condizione		
 	}
 	
@@ -1010,8 +1038,8 @@ function filtroInsolutiAgenzia()
 		$clause .= " OR v.IdAgenzia IN (SELECT IdReparto FROM reparto"
 			." WHERE IdCompagnia = (SELECT IdCompagnia FROM reparto WHERE IdReparto=$IdReparto))";
 	}
-	/* aggiunge condizione per non vedere le pratiche affidate dopo il giorni limite di visibilità affidi */
-	/* dal 3/9/2012: crea una condizione che utilizza la data visibilità massima STR/LEG
+	/* aggiunge condizione per non vedere le pratiche affidate dopo il giorni limite di visibilitï¿½ affidi */
+	/* dal 3/9/2012: crea una condizione che utilizza la data visibilitï¿½ massima STR/LEG
 	 * quando opportuno
 	 */ 
 	$dataMassima1 = $context["sysparms"]["DATA_ULT_VIS"]; 

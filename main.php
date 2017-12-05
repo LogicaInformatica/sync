@@ -95,7 +95,7 @@ echo "\n<script>",
 	//--------------------------------------------------------------------
 	var CONTEXT = <?php echo json_encode_plus($context);?>;
 	
-	// Crea una proprietà = true per ogni funzione ammessa dal profilo utente
+	// Crea una proprietï¿½ = true per ogni funzione ammessa dal profilo utente
 	for (f in CONTEXT.functions) {
 		 eval('CONTEXT.' + CONTEXT.functions[f] + '=true;');
 	}
@@ -111,16 +111,16 @@ echo "\n<script>",
 	// Impostazioni per i controlli di autorizzazione sui grafici
 	//--------------------------------------------------------------------
 	//CONTEXT.CAN_GRAPH_ALL		impostato mediante profilo standard
-	if (!CONTEXT.CAN_GRAPH_ALL) // autorizzazioni ai grafici determinate dalla visibilità sulle agenzie
+	if (!CONTEXT.CAN_GRAPH_ALL) // autorizzazioni ai grafici determinate dalla visibilitï¿½ sulle agenzie
 	{
 		<?php 
 			$IdUtente = $context["IdUtente"]; 
 			$fasceVisibili = fetchValuesArray("SELECT FasciaRecupero FROM v_fasce_visibili WHERE IdUtente=$IdUtente");
 			//trace("SELECT FasciaRecupero FROM v_fasce_visibili WHERE IdUtente=$IdUtente",FALSE);
-			// Crea proprietà con nome CONTEXT.CAN_GRAPH_INS ecc.
+			// Crea proprietï¿½ con nome CONTEXT.CAN_GRAPH_INS ecc.
 			foreach ($fasceVisibili as $fascia)
 			{
-				$fascia = str_replace("+","_",str_replace("&deg;","o",str_replace("°","o",str_replace(" ","_",$fascia))));
+				$fascia = str_replace("+","_",str_replace("&deg;","o",str_replace("ï¿½","o",str_replace(" ","_",$fascia))));
 				echo "CONTEXT.CAN_GRAPH_$fascia = true;\n";
 			}
 		?> 
@@ -223,6 +223,7 @@ echo "\n<script>",
 <script type="text/javascript" src="js/tabs_PraticheStatiStragiudiziali.js"></script>
 <script type="text/javascript" src="js/tabs_PraticheRinegoziate.js"></script>
 <script type="text/javascript" src="js/tabs_PratichePianoRientro.js"></script>
+<script type="text/javascript" src="js/tabs_PraticheMaxirata.js"></script>
 <script type="text/javascript" src="js/tabs_ProcedureLista.js"></script>
 <script type="text/javascript" src="js/tabs_Provvigioni.js"></script>
 <script type="text/javascript" src="js/tabs_ProfiliLista.js"></script>
@@ -286,6 +287,7 @@ echo "\n<script>",
 <script type="text/javascript" src="js/grid_TipoControparteOrganizzazione.js"></script>
 <script type="text/javascript" src="js/grid_TipoClienteOrganizzazione.js"></script>
 <script type="text/javascript" src="js/grid_TipoCategorieConfigurabili.js"></script>
+<script type="text/javascript" src="js/grid_TipoCategorieMaxirata.js"></script>
 <script type="text/javascript" src="js/grid_StatoRecuperoConfigurabili.js"></script>
 <script type="text/javascript" src="js/grid_StatiLegaliConfigurabili.js"></script>
 <script type="text/javascript" src="js/grid_StatiStragiudizialiConfigurabili.js"></script>
@@ -368,7 +370,7 @@ echo "\n<script>",
       				include($subMainFile);
       		?>
 		//-------------------------------------------------------------------------------
-		// Se l'utente è abilitato a vedere l'eventuale avviso in ingresso, esegue
+		// Se l'utente ï¿½ abilitato a vedere l'eventuale avviso in ingresso, esegue
 		// l'istruzione js necessaria
 		//-------------------------------------------------------------------------------
 		<?php 
@@ -376,7 +378,7 @@ echo "\n<script>",
 		?>
 		//----------------------------------------------------------------------------
 		// Funzione che entra allo scadere di un timeout: questa serve a mantenere
-		// viva la sessione (che scadrà solo quando scade l'intervallo previsto
+		// viva la sessione (che scadrï¿½ solo quando scade l'intervallo previsto
 		// applicativamente (vedi funzione successiva)). Inoltre questa funzione,
 		// che viene chiamata con intervallo piccolo (1-5 min), serve a rilevare la
 		// presenza di un nuovo messaggio in popup per presentarlo senza che
@@ -390,7 +392,7 @@ echo "\n<script>",
 					params: { task: 'session', redisplay:(CONTEXT.redisplayMsg?'Y':'N') },
 					scope: this,
 	        		success: function(xhr) {
-		        		if (xhr.responseText.length>0)  // se c'è qualcosa, è una istruzione js da eseguire
+		        		if (xhr.responseText.length>0)  // se c'ï¿½ qualcosa, ï¿½ una istruzione js da eseguire
                 			eval(xhr.responseText);     // esegue istruzione
 					}
 				});
@@ -428,11 +430,11 @@ echo "\n<script>",
 			timeoutTask.delay(<?php echo getSysParm("INACTIVITY_TIMEOUT","1200")*1000; ?>); // millisecondi prima dell'avvio del messaggio di timeout
 		};
 			
-		// Imposta un handler per intercettare (come attività utente) tutte le chiamate a funzioni server
+		// Imposta un handler per intercettare (come attivitï¿½ utente) tutte le chiamate a funzioni server
 		Ext.Ajax.on('beforerequest', restartTimeout, this);
 		// Imposta in handler per intercettare i click del mouse (non i movimenti, troppi)
 		Ext.getDoc().on("mouseup", restartTimeout, this);
-		// non c'è bisogno di startare ora il timeout, visto che avverrà comunque
+		// non c'ï¿½ bisogno di startare ora il timeout, visto che avverrï¿½ comunque
 		// qualche chiamata Ajax o movimento del mouse
 <?php
 if (isset($_REQUEST['idcontratto']) && 
