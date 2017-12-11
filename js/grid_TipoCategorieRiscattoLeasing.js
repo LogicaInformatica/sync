@@ -4,7 +4,7 @@ Ext.namespace('DCS');
 var winS;
 var winSAz;
 
-DCS.GridCategoriaMaxirataTab = Ext.extend(Ext.grid.GridPanel, {
+DCS.GridCategoriaRiscattoLeasingTab = Ext.extend(Ext.grid.GridPanel, {
 	pagesize: PAGESIZE,
 	titlePanel: '',
 	btnMenuAzioni: null,
@@ -26,7 +26,7 @@ DCS.GridCategoriaMaxirataTab = Ext.extend(Ext.grid.GridPanel, {
 		{
 			var myMask = new Ext.LoadMask(Ext.getBody(), {msg: "Caricamento in corso ..."});	
 			myMask.show();
-			DCS.showDetailCMR.create('Nuovo tipo categoria maxirata',null,gstore);
+			DCS.showDetailCRL.create('Nuovo tipo categoria riscatto leasing',null,gstore);
 			myMask.hide();
 	    };
 	    
@@ -37,18 +37,18 @@ DCS.GridCategoriaMaxirataTab = Ext.extend(Ext.grid.GridPanel, {
 	    	var vectString='';
 	    	if(Arr.length>0){
 		    	for(var k=0;k<Arr.length;k++){
-		    		if(Arr[k].get('CategoriaMaxirata')==null || Arr[k].get('CategoriaMaxirata')=='')
+		    		if(Arr[k].get('CategoriaRiscattoLeasing')==null || Arr[k].get('CategoriaRiscattoLeasing')=='')
 		    			confString += '<br />	- *Titolo assente*';
 		    		else
-		    			confString += '<br />	-'+Arr[k].get('CategoriaMaxirata');
-		    		vectString = vectString + '|' + Arr[k].get('IdCategoriaMaxirata');
+		    			confString += '<br />	-'+Arr[k].get('CategoriaRiscattoLeasing');
+		    		vectString = vectString + '|' + Arr[k].get('IdCategoriaRiscattoLeasing');
 		    	}
 		    	Ext.MessageBox.alert('Conferma', "Si desidera eliminare: "+confString+" ?",function(btn, text){
 		    	    if (btn == 'ok'){
 		    	    	Ext.Ajax.request({
 					        url: 'server/gestioneTipiConfigurabili.php',
 					        method: 'POST',
-					        params: {task: 'delete',vect: vectString, tipoConf:'categoriaMaxirata'},
+					        params: {task: 'delete',vect: vectString, tipoConf:'categoriaRiscattoLeasing'},
 					        success: function(obj) {
 					            var resp = obj.responseText;
 					            console.log("res "+resp);
@@ -81,16 +81,16 @@ DCS.GridCategoriaMaxirataTab = Ext.extend(Ext.grid.GridPanel, {
 	            items: []
 			};
 
-		var fields = [{name: 'IdCategoriaMaxirata', type: 'int'},
-							{name: 'CategoriaMaxirata'},
-							{name: 'CodMaxirata', type: 'string'},
+		var fields = [{name: 'IdCategoriaRiscattoLeasing', type: 'int'},
+							{name: 'CategoriaRiscattoLeasing'},
+							{name: 'CodRiscattoLeasing', type: 'string'},
 							{name: 'LastUser'},
 							{name: 'LastUpd', type:'date', dateFormat: 'Y-m-d H:i:s'}];
 
     	var columns = [selM,
-    	               	{dataIndex:'IdCategoriaMaxirata',width:10, header:'IdMRCat',hidden: true, hideable: false,filterable:true,groupable:false,sortable:false},
-    		        	{dataIndex:'CategoriaMaxirata',	width:130,	header:'Categoria maxirata', hideable: true,filterable:true,groupable:false,sortable:true},
-    		        	{dataIndex:'CodMaxirata',width:50, header:'Codice',align:'center',hidden: false, hideable: false, filterable:true,groupable:false,sortable:true},    		        	
+    	               	{dataIndex:'IdCategoriaRiscattoLeasing',width:10, header:'IdMRCat',hidden: true, hideable: false,filterable:true,groupable:false,sortable:false},
+    		        	{dataIndex:'CategoriaRiscattoLeasing',	width:130,	header:'Categoria riscatto leasing', hideable: true,filterable:true,groupable:false,sortable:true},
+    		        	{dataIndex:'CodRiscattoLeasing',width:50, header:'Codice',align:'center',hidden: false, hideable: false, filterable:true,groupable:false,sortable:true},    		        	
     		        	{dataIndex:'LastUpd',	width:70,xtype:'datecolumn',header:'Last update',hidden:true, filterable:true,sortable:true,groupable:false},
     		        	{dataIndex:'LastUser',	width:70,header:'Last user',hidden:true, filterable:true,sortable:true,groupable:false}
     		          ];
@@ -101,7 +101,7 @@ DCS.GridCategoriaMaxirataTab = Ext.extend(Ext.grid.GridPanel, {
 				url: 'server/gestioneTipiConfigurabili.php',
 				method: 'POST'
 			}),   
-			baseParams:{task: this.task, group: this.groupOn, tipoConf:'categoriaMaxirata'},
+			baseParams:{task: this.task, group: this.groupOn, tipoConf:'categoriaRiscattoLeasing'},
 			remoteSort: true,
 			groupField: this.groupOn,
 			groupOnSort: false,
@@ -162,11 +162,11 @@ DCS.GridCategoriaMaxirataTab = Ext.extend(Ext.grid.GridPanel, {
 					var myMask = new Ext.LoadMask(Ext.getBody(), {msg: "Caricamento in corso ..."});	
 					myMask.show();
 					var titolo="";
-					if(rec.get('CategoriaMaxirata')!=null)
-						titolo = "Modifica tipo categoria maxirata '"+rec.get('CategoriaMaxirata')+"'";
+					if(rec.get('CategoriaRiscattoLeasing')!=null)
+						titolo = "Modifica tipo categoria riscatto leasing '"+rec.get('CategoriaRiscattoLeasing')+"'";
 					else 
-						titolo = "Modifica tipo categoria maxirata *Titolo assente*";
-					DCS.showDetailCMR.create(titolo,rec,gstore);
+						titolo = "Modifica tipo categoria riscatto leasing *Titolo assente*";
+					DCS.showDetailCRL.create(titolo,rec,gstore);
 					myMask.hide();
 				},
 				scope: this
@@ -225,7 +225,7 @@ DCS.GridCategoriaMaxirataTab = Ext.extend(Ext.grid.GridPanel, {
 	        })		
 		});
 
-		DCS.GridCategoriaMaxirataTab.superclass.initComponent.call(this, arguments);
+		DCS.GridCategoriaRiscattoLeasingTab.superclass.initComponent.call(this, arguments);
 		this.activation();
 		//this.store.load();
 		selM.on('selectionchange', function(selm) {
@@ -251,21 +251,21 @@ DCS.GridCategoriaMaxirataTab = Ext.extend(Ext.grid.GridPanel, {
 	}
 });
 
-DCS.CategoriaMaxirata = function(){
+DCS.CategoriaRiscattoLeasing = function(){
 
 	return {
 		create: function(){
 			var subtitle = '<span class="subtit"><br>Le categorie sono classificazioni liberamente attribuibili ai contratto in stato di "lavorazione interna",'
 				+'<br>e permettono di suddividere tali contratti in pi&ugrave; pagine nella corrispondente lista, per una pi&ugrave; facile gestione.</span>';
-			var gridCategoriaMaxirata = new DCS.GridCategoriaMaxirataTab({
-				titlePanel: 'Lista categorie maxirata'+subtitle,
+			var gridCategoriaRiscattoLeasing = new DCS.GridCategoriaRiscattoLeasingTab({
+				titlePanel: 'Lista categorie riscatto leasing'+subtitle,
 				//title: 'Utenti presenti',
 				//groupOn: "TipoAutomatismo",
 				flex: 1,
 				task: "readMainGrid"
 			});
 
-			return gridCategoriaMaxirata;
+			return gridCategoriaRiscattoLeasing;
 		}
 	};
 	
@@ -276,7 +276,7 @@ DCS.CategoriaMaxirata = function(){
 //--------------------------------------------------------
 var wind;
 
-DCS.dCategorieMaxirataPanel = Ext.extend(Ext.Panel, {
+DCS.dCategorieRiscattoLeasingPanel = Ext.extend(Ext.Panel, {
 	recordMod:null,
 	titoloProc:'',
 	Wmain:'',
@@ -284,9 +284,9 @@ DCS.dCategorieMaxirataPanel = Ext.extend(Ext.Panel, {
 	initComponent: function() {
 		var bDisa=true;
 		var titProc = this.titoloProc;
-		var idDin = "categoriaMaxirata";
+		var idDin = "categoriaRiscattoLeasing";
 		var extStore = this.store;
-		var formMaxirata = new Ext.form.FormPanel({
+		var formRiscattoLeasing = new Ext.form.FormPanel({
 			xtype: 'form',
 			//labelWidth: 40, 
 			frame: true, 
@@ -381,11 +381,11 @@ DCS.dCategorieMaxirataPanel = Ext.extend(Ext.Panel, {
 				  disabled:bDisa,
 				  id:idDin+'bSave',
 				  handler: function() {
-	    		 		if (formMaxirata.getForm().isValid()){
+	    		 		if (formRiscattoLeasing.getForm().isValid()){
 							this.setDisabled(true);
-							formMaxirata.getForm().submit({
+							formRiscattoLeasing.getForm().submit({
 								url: 'server/gestioneTipiConfigurabili.php', method: 'POST',
-								params: {task:"saveAgg", tipoConf:'categoriaMaxirata'},
+								params: {task:"saveAgg", tipoConf:'categoriaRiscattoLeasing'},
 								success: function (frm,action) {
 									Ext.MessageBox.alert('Esito', action.result.messaggio); 
 									extStore.reload();
@@ -400,7 +400,7 @@ DCS.dCategorieMaxirataPanel = Ext.extend(Ext.Panel, {
 		    	 	},
 					scope:this
 				 }, 
-				{text: 'Annulla',handler: function () {quitForm(formMaxirata,wind);} 
+				{text: 'Annulla',handler: function () {quitForm(formRiscattoLeasing,wind);} 
 				}
 			   ]  // fine array buttons
 			   
@@ -408,22 +408,22 @@ DCS.dCategorieMaxirataPanel = Ext.extend(Ext.Panel, {
 
 		Ext.apply(this, {
 			layout:'fit',
-			items: [formMaxirata]
+			items: [formRiscattoLeasing]
 		});
 		
-		DCS.dCategorieMaxirataPanel.superclass.initComponent.call(this);
+		DCS.dCategorieRiscattoLeasingPanel.superclass.initComponent.call(this);
 		//editing
 		if(this.recordMod!=null){
-			Ext.getCmp(idDin+'id').setValue(this.recordMod.get('IdCategoriaMaxirata'));
-			Ext.getCmp(idDin+'nome').setValue(replace_Tospecial_chars(this.recordMod.get('CategoriaMaxirata')));
-			Ext.getCmp(idDin+'codice').setValue(this.recordMod.get('CodMaxirata'));
-			Ext.getCmp(idDin+'nome').fireEvent('change',Ext.getCmp(idDin+'nome'),this.recordMod.get('CategoriaMaxirata'),'');
+			Ext.getCmp(idDin+'id').setValue(this.recordMod.get('IdCategoriaRiscattoLeasing'));
+			Ext.getCmp(idDin+'nome').setValue(replace_Tospecial_chars(this.recordMod.get('CategoriaRiscattoLeasing')));
+			Ext.getCmp(idDin+'codice').setValue(this.recordMod.get('CodRiscattoLeasing'));
+			Ext.getCmp(idDin+'nome').fireEvent('change',Ext.getCmp(idDin+'nome'),this.recordMod.get('CategoriaRiscattoLeasing'),'');
 		}
 	}	// fine initcomponent
 });
-Ext.reg('DCS_DettaglioCategorieMaxirataPanel', DCS.dCategorieMaxirataPanel);
+Ext.reg('DCS_DettaglioCategorieRiscattoLeasingPanel', DCS.dCategorieRiscattoLeasingPanel);
 	
-DCS.showDetailCMR= function(titolo,rec,store)
+DCS.showDetailCRL= function(titolo,rec,store)
 {
 	return {
 		create: function(titolo,rec,store){
@@ -434,10 +434,10 @@ DCS.showDetailCMR= function(titolo,rec,store)
 			    height: h,
 				modal: true,
 				title: titolo,
-				tools: [helpTool("Categoria")],
+				tools: [helpTool("CategoriaRiscattoLeasing")],
 				resizable:false,
 				items: [{
-					xtype: 'DCS_DettaglioCategorieMaxirataPanel',
+					xtype: 'DCS_DettaglioCategorieRiscattoLeasingPanel',
 					titoloProc:'',
 					recordMod:rec,
 					store:store

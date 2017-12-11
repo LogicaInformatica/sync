@@ -75,7 +75,9 @@
  		if (CONTEXT.MENU_GP_LIN)
 			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Lavorazione interna',  	panel: DCS.PraticheLavorInt.create});
 		if (CONTEXT.MENU_GP_MR)
-			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Maxirata',  	            panel: DCS.PraticheMaxirata.create});	
+			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Maxirata',  	            panel: DCS.PraticheMaxirata.create});
+		if (CONTEXT.MENU_GP_RL)
+			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Riscatto leasing',  	    panel: DCS.PraticheRiscattoLeasing.create});			
  		if (CONTEXT.MENU_GP_SLE)
 			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Stati legali',  	panel: DCS.PraticheStatiLegali.create});
 		if (CONTEXT.MENU_GP_SSTG)

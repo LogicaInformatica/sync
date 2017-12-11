@@ -83,6 +83,11 @@ function readGrid()
 			$ordine="CodMaxirata asc";
 			$campoTitolo="CategoriaMaxirata";
 			break;	
+		case 'categoriaRiscattoLeasing':
+		    $query="categoriariscattoleasing";
+			$ordine="CodRiscattoLeasing asc";
+			$campoTitolo="CategoriaRiscattoLeasing";
+			break;		
 	}
 	$counter = getScalar("SELECT count(*) FROM $query");
 	if ($counter == NULL)
@@ -346,6 +351,22 @@ function aggiornaTipo()
 			if($indexTab==0)
 				$_POST['isNew']=true;
 			break;	
+		case 'categoriaRiscattoLeasing':
+			//variabili
+			$tab = 'categoriariscattoleasing';
+			$idField = 'IdCategoriaRiscattoLeasing';
+			$codField = 'CodRiscattoLeasing';
+			$titleName = 'categoria riscatto leasing';
+			$codMexName = 'CATEGORIA_RISCLEAS';
+			$neww = Array();
+			$neww[]='Nuova';
+			$neww[]='salvata';	
+			//campi tab
+			$titField = 'CategoriaRiscattoLeasing';
+			$isAlfaOmega=false;
+			if($indexTab==0)
+				$_POST['isNew']=true;
+			break;		
 	}
 	//trace("TA ".$_POST['TitoloTipoPartita']);
 	//*****inserimento
@@ -527,7 +548,15 @@ function delete()
 			$chkField= 'CategoriaMaxirata';
 			$titleName = 'categoria maxirata';
 			$titField = 'CategoriaMaxirata';
-			break;	
+			break;
+		case 'categoriaRiscattoLeasing':
+			//variabili
+			$tab='categoriariscattoleasing';
+			$idField = 'IdCategoriaRiscattoLeasing';
+			$chkField= 'CategoriaRiscattoLeasing';
+			$titleName = 'categoria riscatto leasing';
+			$titField = 'CategoriaRiscattoLeasing';
+			break;		
 	}
 	
 	$titoliLog = getFetchArray("SELECT $titField FROM $tab where $idField in ($list)");

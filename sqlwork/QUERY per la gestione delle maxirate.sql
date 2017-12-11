@@ -50,7 +50,7 @@ INSERT INTO `db_cnc`.`profilofunzione` (`IdProfilo`, `IdFunzione`, `DataIni`, `D
 INSERT INTO `db_cnc`.`profilofunzione` (`IdProfilo`, `IdFunzione`, `DataIni`, `DataFin`, `LastUser`) VALUES ('10', '2064', '2001-01-01', '9999-12-31', 'system');
 INSERT INTO `db_cnc`.`profilofunzione` (`IdProfilo`, `IdFunzione`, `DataIni`, `DataFin`, `LastUser`) VALUES ('1', '2065', '2001-01-01', '9999-12-31', 'system');
 
-INSERT INTO `db_cnc`.`azione` (`IdAzione`, `IdFunzione`, `CodAzione`, `TitoloAzione`, `DataIni`, `DataFin`, `LastUser`, `TipoFormAzione`, `FlagMultipla`) VALUES ('2064', '2064', 'MAXRAT', 'Cambio categoria maxirata', '2001-01-01', '9999-12-31', 'system', 'CambioCatMaxirata', 'Y');
+INSERT INTO `db_cnc`.`azione` (`IdAzione`, `IdFunzione`, `CodAzione`, `TitoloAzione`, `DataIni`, `DataFin`, `LastUser`, `TipoFormAzione`, `FlagMultipla`) VALUES ('2064', '2064', 'CCM', 'Cambio categoria maxirata', '2001-01-01', '9999-12-31', 'system', 'CambioCatMaxirata', 'Y');
 
 INSERT INTO `db_cnc`.`azionetipoazione` (`IdAzione`, `IdTipoAzione`, `DataIni`, `DataFin`, `LastUser`) VALUES ('2064', '5', '2001-01-01', '9999-12-31', 'system');
 

@@ -1,8 +1,8 @@
 // Crea namespace DCS
 Ext.namespace('DCS');
 
-DCS.GridPraticheLavInter = Ext.extend(DCS.GridPratiche, {
-	IdCategoria:'',
+DCS.GridPraticheRiscattoLeasing = Ext.extend(DCS.GridPratiche, {
+	IdCategoriaRiscattoLeasing:'',
 	
 	initComponent : function() {
 	
@@ -69,7 +69,7 @@ DCS.GridPraticheLavInter = Ext.extend(DCS.GridPratiche, {
 							{name: 'InteressiDilazione', type: 'float'},
 							{name: 'FormDettaglio'}, // serve per avere il nome del dettaglio (xtype)
 							{name: 'MesiDilazione', type: 'int'},
-					        {name: 'CategoriaMaxirata'}							
+							{name: 'CategoriaRiscattoLeasing'}							
 							];
 	
 			var columns;
@@ -105,8 +105,8 @@ DCS.GridPraticheLavInter = Ext.extend(DCS.GridPratiche, {
 			        	{dataIndex:'SiglaProvincia', width:30, header:'Prov.',hidden:true,hideable:true,exportable:true},
 			        	{dataIndex:'TitoloRegione', width:30, header:'Regione',hidden:true,hideable:true,exportable:true},
 			        	{dataIndex:'CodRegolaProvvigione', width:30, header:'Codice',hidden:true,hideable:true,exportable:true},
-			        	{dataIndex:'Categoria'    ,   width:30, header:'Categoria', hidden:true,hideable:true,exportable:true,groupable:true},
-			        	{dataIndex:'CategoriaMaxirata',   width:30, header:'Categoria maxirata', hidden:true,hideable:true,exportable:true,groupable:true},
+                        {dataIndex:'Categoria',   width:30, header:'Categoria', hidden:true,hideable:true,exportable:true,groupable:true},			        	
+			        	{dataIndex:'CategoriaRiscattoLeasing',   width:30, header:'Categoria riscatto leasing', hidden:true,hideable:true,exportable:true,groupable:true},
 			        	{dataIndex:'agenzia',	width:50,	header:'Agenzia',filterable:true,sortable:true,groupable:true,
 			        		hidden:(this.task=='inAttesa' || this.task=='interne'  || this.task=='workflow')},
 			        	{dataIndex:'CodUtente',	width:30,	header:'Oper.',filterable:true,sortable:true,groupable:true},
@@ -165,7 +165,7 @@ DCS.GridPraticheLavInter = Ext.extend(DCS.GridPratiche, {
 			fields: locFields,
 			filters: locFilters,
 			innerColumns: columns,
-			IdCategoria:this.IdCategoria
+			IdCategoriaRiscattoLeasing:this.IdCategoriaRiscattoLeasing
 	    });
 
 	       this.on('render',function(){
@@ -178,7 +178,7 @@ DCS.GridPraticheLavInter = Ext.extend(DCS.GridPratiche, {
 					   icon: 'images/export.png',
 					   text: 'Esporta tutto',
 					   tooltip: 'Esporta su excel i dati contenuti in tutte le categorie',
-					   handler: function(){Ext.ux.Printer.exportXLS(this,1,"Pratiche in Lavorazione Interna");},
+					   handler: function(){Ext.ux.Printer.exportXLS(this,1,"Pratiche RiscattoLeasing");},
 					   scope: this,
 					   sm: this.SelmTPratiche, // aggiunge propriet� custom per passare la colonna di selezione 
 					   gstore: this.store // aggiunge propriet� custom per passare lo store
@@ -188,25 +188,25 @@ DCS.GridPraticheLavInter = Ext.extend(DCS.GridPratiche, {
 				toolBar.doLayout();
 			});
 				
-		DCS.GridPraticheLavInter.superclass.initComponent.call(this,arguments);
+		DCS.GridPraticheRiscattoLeasing.superclass.initComponent.call(this,arguments);
 	}
 });
 	
 //-----------------------------------------
 // Tabpanel 
 //-----------------------------------------
-DCS.PraticheLavorInt = function() {
+DCS.PraticheRiscattoLeasing = function() {
 	//var idTabs;
 
 	return {
 				
 		create: function(){
 			DCS.showMask();
-			var tabPanelLi = new Ext.TabPanel({
+			var tabPanelli = new Ext.TabPanel({
 				activeTab: 0,
 				enableTabScroll: true,
 				flex: 1,
-				id: 'tabLi',
+				id: 'tabRl',
 				items: []
 			});
 			
@@ -214,8 +214,8 @@ DCS.PraticheLavorInt = function() {
 				url: 'server/AjaxRequest.php',
 				params: {
 					task: 'read',
-					sql: "SELECT IdCategoria,CodCategoria,TitoloCategoria FROM categoria"
-						 +" UNION ALL SELECT 0,'NUL','Senza categoria' order by TitoloCategoria"
+					sql: "SELECT IdCategoriaRiscattoLeasing,CodRiscattoLeasing,CategoriaRiscattoLeasing FROM categoriariscattoleasing"
+						 +" UNION ALL SELECT 0,'NUL','Senza categoria' order by CategoriaRiscattoLeasing"
 				},
 				method: 'POST',
 				autoload: true,
@@ -226,21 +226,21 @@ DCS.PraticheLavorInt = function() {
 					var listP = new Array();
 					var grid = new Array();
 					for (i = 0; i < resp.total; i++) {
-						nomeG="Litabs"+i;
-						grid[nomeG] = new DCS.GridPraticheLavInter({
-										IdCategoria:arr[i].IdCategoria,
-										task: "interne",
-										title:arr[i].TitoloCategoria,
-										titlePanel: 'Lista pratiche in '+arr[i].TitoloCategoria,
+						nomeG="RLtabs"+i;
+						grid[nomeG] = new DCS.GridPraticheRiscattoLeasing({
+										IdCategoriaRiscattoLeasing:arr[i].IdCategoriaRiscattoLeasing,
+										task: "riscattoleasing",
+										title:arr[i].CategoriaRiscattoLeasing,
+										titlePanel: 'Lista pratiche in '+arr[i].CategoriaRiscattoLeasing,
 										stateful: true,
-										stateId:arr[i].CodCategoria
+										stateId:"RisLea"+arr[i].CodRiscattoLeasing
 										});
 						//idTabs.push(arr[i].IdCategoria);
 						listP.push(grid[nomeG]);
 					}
-					Ext.getCmp('tabLi').add(listP);
+					Ext.getCmp('tabRl').add(listP);
 					DCS.hideMask();
-					Ext.getCmp('tabLi').setActiveTab(0);
+					Ext.getCmp('tabRl').setActiveTab(0);
 				},
 				failure: function ( result, request) { 
 					DCS.hideMask();
@@ -250,7 +250,7 @@ DCS.PraticheLavorInt = function() {
 				scope: this
 			});
 			
-			return tabPanelLi;
+			return tabPanelli;
 		}
 	};
 }();

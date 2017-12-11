@@ -224,6 +224,7 @@ echo "\n<script>",
 <script type="text/javascript" src="js/tabs_PraticheRinegoziate.js"></script>
 <script type="text/javascript" src="js/tabs_PratichePianoRientro.js"></script>
 <script type="text/javascript" src="js/tabs_PraticheMaxirata.js"></script>
+<script type="text/javascript" src="js/tabs_PraticheRiscattoLeasing.js"></script>
 <script type="text/javascript" src="js/tabs_ProcedureLista.js"></script>
 <script type="text/javascript" src="js/tabs_Provvigioni.js"></script>
 <script type="text/javascript" src="js/tabs_ProfiliLista.js"></script>
@@ -288,6 +289,7 @@ echo "\n<script>",
 <script type="text/javascript" src="js/grid_TipoClienteOrganizzazione.js"></script>
 <script type="text/javascript" src="js/grid_TipoCategorieConfigurabili.js"></script>
 <script type="text/javascript" src="js/grid_TipoCategorieMaxirata.js"></script>
+<script type="text/javascript" src="js/grid_TipoCategorieRiscattoLeasing.js"></script>
 <script type="text/javascript" src="js/grid_StatoRecuperoConfigurabili.js"></script>
 <script type="text/javascript" src="js/grid_StatiLegaliConfigurabili.js"></script>
 <script type="text/javascript" src="js/grid_StatiStragiudizialiConfigurabili.js"></script>

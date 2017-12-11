@@ -3321,10 +3321,39 @@ function cambioCategoriaMaxirata($contratto,$IdCategoriaMaxirata)
 		//-----------------------------------------------------------------------------
 		if (!execute("UPDATE contratto set IdCategoriaMaxirata=$IdCategoriaMaxirata where IdContratto = $contratto"))
 		{
-			trace("Errore nell'assegnazione della categoria con id $IdCategoriaMaxirata al contratto con id $contratto");
+			trace("Errore nell'assegnazione della categoria maxirata con id $IdCategoriaMaxirata al contratto con id $contratto");
 			return FALSE;
 		}
 		return getScalar("Select CategoriaMaxirata from categoriamaxirata where IdCategoriaMaxirata=$IdCategoriaMaxirata");
+	}
+	catch (Exception $e)
+	{
+		trace($e->getMessage());
+		setLastError($e->getMessage());
+		return FALSE;
+	}
+}
+
+//-----------------------------------------------------------------------
+// cambioCategoriaRiscattoLeasing
+// cambia la categoria riscatto leasing del contratto
+// Restituisce il nome della categoria assegnata
+//-----------------------------------------------------------------------
+function cambioCategoriaRiscattoLeasing($contratto,$IdCategoriaRiscattoLeasing)
+{
+	try
+	{
+		if (!$IdCategoriaRiscattoLeasing)
+			$IdCategoriaRiscattoLeasing = "NULL";
+		//-----------------------------------------------------------------------------
+		// Registra il cambio di categoria
+		//-----------------------------------------------------------------------------
+		if (!execute("UPDATE contratto set IdCategoriaRiscattoLeasing=$IdCategoriaRiscattoLeasing where IdContratto = $contratto"))
+		{
+			trace("Errore nell'assegnazione della categoria riscatto leasing con id $IdCategoriaRiscattoLeasing al contratto con id $contratto");
+			return FALSE;
+		}
+		return getScalar("Select CategoriaRiscattoLeasing from categoriariscattoleasing where IdCategoriaRiscattoLeasing=$IdCategoriaRiscattoLeasing");
 	}
 	catch (Exception $e)
 	{

@@ -45,7 +45,7 @@ CodTipoPagamento AS TipoPag,p.IdFamiglia,sc.Ordine AS OrdineStato,cl.FlagNoAffid
 DataScadenzaAzione,u.IdReparto, c.Telefono,IFNULL(cat.TitoloCategoria,'Nessuna') AS Categoria,FlagCambioAgente,
 IFNULL(cl.FlagRecupero,'N') AS InRecupero,TitoloStatoRinegoziazione AS StatoRinegoziazione,NOW() AS LastUpd,
 IF(EXISTS(SELECT 1 FROM storiarecupero sr WHERE sr.idContratto=co.IdContratto),'Y','N') AS FlagStoria,
-leg.TitoloStatoLegale, stg.TitoloStatoStragiudiziale, c.CodCliente, mr.CategoriaMaxirata
+leg.TitoloStatoLegale, stg.TitoloStatoStragiudiziale, c.CodCliente, mr.CategoriaMaxirata, rs.CategoriaRiscattoLeasing
 from contratto co
 join prodotto p on co.IdProdotto = p.IdProdotto
 join cliente c on c.IdCliente = co.IdCliente
@@ -62,6 +62,7 @@ left join statorinegoziazione rin ON rin.IdStatoRinegoziazione=co.IdStatoRinegoz
 left join statolegale leg ON leg.IdStatoLegale=co.IdStatoLegale
 left join statostragiudiziale stg ON stg.IdStatoStragiudiziale=co.IdStatoStragiudiziale
 left join categoriamaxirata mr ON mr.IdCategoriaMaxirata=co.IdCategoriaMaxirata
+left join categoriariscattoleasing rs ON rs.IdCategoriaRiscattoLeasing=co.IdCategoriaRiscattoLeasing
 	WHERE co.IdContratto IN ($ids)"; 
 	if (!execute($sql)) {
 		rollback();

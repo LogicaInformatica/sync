@@ -4,7 +4,7 @@ select co.*,v.stato,
 v.classif,v.FlagNoAffido,v.IdReparto,v.Categoria,
 v.InRecupero,DATEDIFF(CURDATE(), DataRata) AS giorni,v.AbbrClasse,v.tipoPag,
 v.agenzia,co.CodContratto AS numPratica,co.IdStatoRinegoziazione AS FlagRinegoziazione,v.IdFamiglia,
-co.IdCategoriaMaxirata,v.CategoriaMaxirata
+v.CategoriaMaxirata,v.CategoriaRiscattoLeasing
 from contratto co
 JOIN _opt_insoluti v ON v.IdContratto=co.IdContratto;
 

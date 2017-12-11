@@ -841,6 +841,19 @@ try
 					$categoriaMaxirata = "Assegnata categoria maxirata $categoriaMaxirata";	
 				writeHistory($idAzione,$categoriaMaxirata,$idContratto,$nota);	
 			break;
+			case 'CambioCatRiscLeasing':
+				$idCategoriaRiscattoLeasing = $_REQUEST["IdCategoriaRiscattoLeasing"]; // id della categoria
+				$nota = $_REQUEST["nota"]; //nota inserita
+				$categoriaRiscattoLeasing  = cambioCategoriaRiscattoLeasing($idContratto,$idCategoriaRiscattoLeasing);
+				if ($categoriaRiscattoLeasing===FALSE)
+					Throw new Exception(getLastError()); 
+				$esitoAzione = "Effettuato cambio categoria riscatto leasing";
+				if($categoriaRiscattoLeasing =="")
+					$categoriaRiscattoLeasing = "Rimossa categoria riscatto leasing";
+				else
+					$categoriaRiscattoLeasing = "Assegnata categoria riscatto leasing $categoriaRiscattoLeasing";	
+				writeHistory($idAzione,$categoriaRiscattoLeasing,$idContratto,$nota);	
+			break;
 			case 'CambioStatoLegale':
 				$idStatoLegale = $_REQUEST["IdStatoLegale"]; // id dello stato legale
 				$statolegale  = cambioStatoLegale($idContratto,$idStatoLegale);
