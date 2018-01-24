@@ -3,7 +3,7 @@ require_once(dirname(__FILE__)."/../common.php");
 
 $type = $_REQUEST['type'];
 $mese = $_REQUEST['mese'];
-$task = utf8_decode($_REQUEST['task']); // per trattare il simbolo °
+$task = utf8_decode($_REQUEST['task']); // per trattare il simbolo ï¿½
 $task = split(",",$task);
 $where = "FasciaRecupero IN ('".join("','",$task)."')";
 
@@ -47,5 +47,6 @@ $strXML = $strXML . $strCategories . $strDataSetA . $strDataSetB . "</chart>";
 
 //header ( 'Content-type: text/xml' );
 //echo pack ( "C3" , 0xef, 0xbb, 0xbf );
-echo $strXML;
+//echo $strXML;
+echo('{"results":' . json_encode_plus($arrData) . '}');
 ?>

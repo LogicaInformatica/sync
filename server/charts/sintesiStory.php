@@ -33,11 +33,13 @@ if ($type=='store') {
 }
 
 //Initialize <categories> element - necessary to generate a stacked chart
+$categorie = array();
 $strCategories = "<categories>";
 $annoLab = $firstFYMonth / 100;
 $meseLab = $firstFYMonth % 100;
 for ($i=0; $i<12; $i++) {
 	$strCategories .= sprintf("<category name='%02d/%4d' />",$meseLab,$annoLab);
+	$categorie[$i]=sprintf("%02d/%4d",$meseLab,$annoLab);
 	if ($meseLab==12) {
 		$meseLab = 1;
 		$annoLab++;
@@ -100,5 +102,6 @@ if (isset($_REQUEST['task']))
 }
 //header ( 'Content-type: text/xml' );
 //echo pack ( "C3" , 0xef, 0xbb, 0xbf );
-echo "$strXML</chart>";
+//echo "$strXML</chart>";
+echo('{"target":'.json_encode_plus($v).',"categorie":'. json_encode_plus($categorie) .',"results":' . json_encode_plus($arrData) . '}');
 ?>

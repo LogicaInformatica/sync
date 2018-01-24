@@ -123,7 +123,7 @@ DCS.moduliMain = function(){
 		setButton(tabrow1,1,'Attributi del contratto',DCS.Attributo.create,			CONTEXT.MENU_CONF_ATTC);
 		setButton(tabrow2,1,'Categorie',			DCS.CategoriaConf.create,		CONTEXT.MENU_CONF_CAT);
 		setButton(tabrow3,1,'Categorie maxirata',	DCS.CategoriaMaxirata.create,	CONTEXT.MENU_CONF_MR);
-		setButton(tabrow4,1,'Categorie riscatto leasing',	DCS.CategoriaRiscattoLeasing.create,	CONTEXT.MENU_CONF_RL);
+		setButton(tabrow4,1,'Categorie riscatti scaduti',	DCS.CategoriaRiscattoLeasing.create,	CONTEXT.MENU_CONF_RL);
 		setButton(tabrow5,1,'Causali movimento',	DCS.TipoMovimento.create,		CONTEXT.MENU_ANA_CMOV);
 		setButton(tabrow6,1,'Famiglie di prodotti',	DCS.FamigliaProdotto.create,	CONTEXT.MENU_ANA_FMP);
 		setButton(tabrow7,1,'Modelli',				DCS.Modelli.create,				CONTEXT.MENU_CONF_MOD);

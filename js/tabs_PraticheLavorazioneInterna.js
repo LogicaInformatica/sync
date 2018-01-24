@@ -214,7 +214,7 @@ DCS.PraticheLavorInt = function() {
 				url: 'server/AjaxRequest.php',
 				params: {
 					task: 'read',
-					sql: "SELECT IdCategoria,CodCategoria,TitoloCategoria FROM categoria"
+					sql: "SELECT IdCategoria,CodCategoria,TitoloCategoria FROM categoria WHERE IdCategoria not in (1006, 1064) "
 						 +" UNION ALL SELECT 0,'NUL','Senza categoria' order by TitoloCategoria"
 				},
 				method: 'POST',

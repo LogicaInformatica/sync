@@ -106,7 +106,7 @@ DCS.GridPraticheRiscattoLeasing = Ext.extend(DCS.GridPratiche, {
 			        	{dataIndex:'TitoloRegione', width:30, header:'Regione',hidden:true,hideable:true,exportable:true},
 			        	{dataIndex:'CodRegolaProvvigione', width:30, header:'Codice',hidden:true,hideable:true,exportable:true},
                         {dataIndex:'Categoria',   width:30, header:'Categoria', hidden:true,hideable:true,exportable:true,groupable:true},			        	
-			        	{dataIndex:'CategoriaRiscattoLeasing',   width:30, header:'Categoria riscatto leasing', hidden:true,hideable:true,exportable:true,groupable:true},
+			        	{dataIndex:'CategoriaRiscattoLeasing',   width:30, header:'Categoria riscatti scaduti', hidden:true,hideable:true,exportable:true,groupable:true},
 			        	{dataIndex:'agenzia',	width:50,	header:'Agenzia',filterable:true,sortable:true,groupable:true,
 			        		hidden:(this.task=='inAttesa' || this.task=='interne'  || this.task=='workflow')},
 			        	{dataIndex:'CodUtente',	width:30,	header:'Oper.',filterable:true,sortable:true,groupable:true},
@@ -207,7 +207,48 @@ DCS.PraticheRiscattoLeasing = function() {
 				enableTabScroll: true,
 				flex: 1,
 				id: 'tabRl',
-				items: []
+				items: [
+				   {
+		                xtype: 'tabpanel',
+		                title: 'Riscatti scaduti 0-30gg',
+		                id:'tabRl30',
+		                activeTab: 0,
+						enableTabScroll: true,
+						flex: 1,
+						lotto:'30',
+		                items: []
+		           },
+		           {
+		                xtype: 'tabpanel',
+		                title: 'Riscatti scaduti 30-60gg',
+		                id:'tabRl60',
+		                activeTab: 0,
+						enableTabScroll: true,
+						flex: 1,
+						lotto:'60',
+		                items: []
+		           },
+		           {
+		                xtype: 'tabpanel',
+		                title: 'Riscatti scaduti 60-90gg',
+		                id:'tabRl90',
+		                activeTab: 0,
+						enableTabScroll: true,
+						flex: 1,
+						lotto:'90',
+		                items: []
+		           },
+		           {
+		                xtype: 'tabpanel',
+		                title: 'Riscatti scaduti oltre 90',
+		                id:'tabRl90+',
+		                activeTab: 0,
+						enableTabScroll: true,
+						flex: 1,
+						lotto:'90+',
+		                items: []
+		           }
+				]
 			});
 			
 			Ext.Ajax.request({
@@ -215,30 +256,30 @@ DCS.PraticheRiscattoLeasing = function() {
 				params: {
 					task: 'read',
 					sql: "SELECT IdCategoriaRiscattoLeasing,CodRiscattoLeasing,CategoriaRiscattoLeasing FROM categoriariscattoleasing"
-						 +" UNION ALL SELECT 0,'NUL','Senza categoria' order by CategoriaRiscattoLeasing"
+						 +" UNION ALL SELECT 0,'NULL','Senza categoria' order by CategoriaRiscattoLeasing"
 				},
 				method: 'POST',
 				autoload: true,
 				success: function(result, request){
 					eval('var resp = ' + result.responseText);
 					var arr = resp.results;
-					var nomeG='';
-					var listP = new Array();
-					var grid = new Array();
-					for (i = 0; i < resp.total; i++) {
-						nomeG="RLtabs"+i;
-						grid[nomeG] = new DCS.GridPraticheRiscattoLeasing({
+					var items = Ext.getCmp('tabRl').items.length;
+					for (j=0; j < items; j++) {
+						var tab = Ext.getCmp('tabRl').getItem(j);
+						for (i=0; i < resp.total; i++) {
+							tab.add(new DCS.GridPraticheRiscattoLeasing({
+								        Lotto: tab.lotto,
 										IdCategoriaRiscattoLeasing:arr[i].IdCategoriaRiscattoLeasing,
 										task: "riscattoleasing",
 										title:arr[i].CategoriaRiscattoLeasing,
 										titlePanel: 'Lista pratiche in '+arr[i].CategoriaRiscattoLeasing,
 										stateful: true,
 										stateId:"RisLea"+arr[i].CodRiscattoLeasing
-										});
-						//idTabs.push(arr[i].IdCategoria);
-						listP.push(grid[nomeG]);
+										}));
+						}
+						tab.setActiveTab(0);
 					}
-					Ext.getCmp('tabRl').add(listP);
+					//Ext.getCmp('tabRl').add(listP);
 					DCS.hideMask();
 					Ext.getCmp('tabRl').setActiveTab(0);
 				},

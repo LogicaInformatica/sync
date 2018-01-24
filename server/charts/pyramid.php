@@ -27,7 +27,7 @@ if (isset($_REQUEST['mese'])) {
 if ($type=="stack")
 {		
 	
-	$sql = "SELECT replace(FasciaRecupero,'°','&deg;') AS FasciaRecupero, SUM(NumAffidati) Affidati 
+	$sql = "SELECT replace(FasciaRecupero,'&deg;','°') AS chartFasciaRecupero, replace(FasciaRecupero,'°','&deg;') AS FasciaRecupero, SUM(NumAffidati) Affidati 
 			FROM v_graph_provvigione v $where group by FasciaRecupero";
 	$arrData = getFetchArray($sql);
 //trace($sql);	
@@ -35,6 +35,7 @@ if ($type=="stack")
 		die('{"results":' . json_encode_plus($arrData) . '}');
 	}
 	$cat = fetchValuesArray("SELECT DISTINCT replace(CONVERT(FasciaRecupero USING utf8),'°','&deg;') AS FasciaRecupero FROM target $whereTarget ORDER BY Ordine");
+	$category = getFetchArray("SELECT DISTINCT replace(CONVERT(FasciaRecupero USING utf8),'&deg;','°') AS FasciaRecupero FROM target $whereTarget ORDER BY Ordine");
 //	$cat = array('INS','PHONE LOAN','PHONE LEASING','PHONE REC','I ESA','II ESA','LEASING','III ESA','IV ESA','FLOTTE');
 	$colori = array('aa88ff','3588aa','489999','66aa88','02b955','55ca00','a2ca00','ff4400','ffca00','cc0088','aa2266','bbaa99');
 //	$col = array('INS'=>'aa88ff','PHONE'=>'3588aa','PHONE REC'=>'489999','I ESA'=>'66aa88','II ESA'=>'02b955',
@@ -68,7 +69,8 @@ if ($type=="stack")
 	
 	//header ( 'Content-type: text/xml' );
 	//echo pack ( "C3" , 0xef, 0xbb, 0xbf );
-	echo $totale . "\n" . $strXML; // restituisce anche il totale, su una riga davanti all'XML
+	//echo $totale . "\n" . $strXML; // restituisce anche il totale, su una riga davanti all'XML
+	echo('{"categorie":'.json_encode_plus($category).',"results":' . json_encode_plus($arrData) . '}'); 
 }
 //-----------------------------------------
 // Lettura dati per la tabella dei target

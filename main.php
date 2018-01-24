@@ -324,6 +324,9 @@ echo "\n<script>",
 <script type="text/javascript" src="ux/grid/filter/BooleanFilter.js"></script>
 <script type="text/javascript" src="ext/examples/shared/examples.js"></script><!-- EXAMPLES -->
 
+<script type="text/javascript" src="ChartJs/Chart.js"></script>
+<script type="text/javascript" src="ChartJs/Chart_min.js"></script>
+
 <script type="text/javascript" src="js/ButtonSubmenu.js"></script>
 <script type="text/javascript" src="js/MainViewport.js"></script>
         <style type="text/css">

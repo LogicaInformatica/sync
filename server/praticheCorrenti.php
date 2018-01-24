@@ -250,24 +250,42 @@ function doMain()
 		// Pratiche presso operatore con flag che indica niente affido
 		
 		if ($_REQUEST['expAll']==1) { // export di tutte le pagina in lavorazione interna
-			$query = "v_insoluti_opt v $join WHERE v.stato='INT' AND InRecupero='Y' and v.idclasse not in(12,37,40,41)  AND v.ImpInsoluto>=26 $condNotEstinti" ;
+			$query = "v_insoluti_opt v $join WHERE v.IdAttributo=86 $condNotEstinti" ;
 			$query .= filtroInsolutiOperatore();
-			$queryForCount = "v_insoluti_count_opt v WHERE v.stato='INT' InRecupero='Y' and v.idclasse not in(12,37,40,41)  AND v.ImpInsoluto>=26 $condNotEstinti";
+			$queryForCount = "v_insoluti_count_opt v WHERE v.IdAttributo=86 $condNotEstinti";
 			$queryForCount .= filtroInsolutiOperatore();
 		} else {
+			$confrontoData='';
 			$cat = ($_REQUEST['CategoriaRiscattoLeasing']) ? ($_REQUEST['CategoriaRiscattoLeasing']) : 0;
+			$lotto = ($_REQUEST['lotto']) ? ($_REQUEST['lotto']) : 0;
+			if ($lotto>0) {
+			  switch($lotto) {
+			  	case '30':
+					$confrontoData = " AND CURDATE() < (DataChiusura + INTERVAL 30 DAY) ";
+					break;
+				case '60':
+				    $confrontoData = " AND CURDATE() BETWEEN (DataChiusura + INTERVAL 30 DAY) AND (DataChiusura + INTERVAL 60 DAY) ";
+					break;
+				case '90':
+					$confrontoData = " AND CURDATE() BETWEEN (DataChiusura + INTERVAL 60 DAY) AND (DataChiusura + INTERVAL 90 DAY) "; 
+				    break;
+                case '90+':
+					$confrontoData = " AND CURDATE() > (DataChiusura + INTERVAL 90 DAY) ";
+                    break;			
+			  }
+			}
 			if ($cat>0)
 			{
-				$query = "v_insoluti_opt v $join WHERE v.stato='INT' and v.IdCategoriaRiscattoLeasing=$cat  AND InRecupero='Y' and v.idclasse not in(12,37,40,41)  AND v.ImpInsoluto>=26 $condNotEstinti" ;
+				$query = "v_insoluti_opt v $join WHERE v.IdCategoriaRiscattoLeasing=$cat  AND v.IdAttributo=86 $condNotEstinti $confrontoData" ;
 				$query .= filtroInsolutiOperatore();
-				$queryForCount = "v_insoluti_count_opt v WHERE v.stato='INT' and v.IdCategoriaRiscattoLeasing=$cat AND InRecupero='Y' and v.idclasse not in(12,37,40,41)  AND v.ImpInsoluto>=26 $condNotEstinti";
+				$queryForCount = "v_insoluti_count_opt v WHERE v.IdCategoriaRiscattoLeasing=$cat AND v.IdAttributo=86 $condNotEstinti $confrontoData";
 				$queryForCount .= filtroInsolutiOperatore();
 			}
 			else
 			{
-				$query = "v_insoluti_opt v $join WHERE v.stato IN ('INT','OPE') and v.categoria='Nessuna' and v.CategoriaRiscattoLeasing is null and v.idclasse not in(18,12,37,40,41) AND v.ImpInsoluto>=26 $condNotEstinti" ;
+				$query = "v_insoluti_opt v $join WHERE v.categoria='Nessuna' and v.CategoriaRiscattoLeasing is null AND v.IdAttributo=86 $condNotEstinti $confrontoData" ;
 				$query .= filtroInsolutiOperatore();
-				$queryForCount = "v_insoluti_count_opt v WHERE v.stato IN ('INT','OPE') and v.categoria='Nessuna' and v.CategoriaRiscattoLeasing is null and v.idclasse not in(18,12,37,40,41) AND v.ImpInsoluto>=26 $condNotEstinti";
+				$queryForCount = "v_insoluti_count_opt v WHERE v.categoria='Nessuna' and v.CategoriaRiscattoLeasing is null AND v.IdAttributo=86 $condNotEstinti $confrontoData";
 				$queryForCount .= filtroInsolutiOperatore();
 			}
 			$ordine = "$sortDStato,DataCambioStato,DataCambioClasse,DataScadenzaAzione,DataScadenza";

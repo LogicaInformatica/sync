@@ -15,6 +15,9 @@ DCS.Charts.Sintesi = Ext.extend(Ext.Panel, {
 	comboMese: null,
 	comboAnni: null,
 	comboData: null,
+	gc: null,
+	gc2: null,
+	gcStory :null,
 		
 	initComponent : function() {
 	/* da usare con FusionChart vers. 3, omesso per la vers. 2 
@@ -53,6 +56,7 @@ DCS.Charts.Sintesi = Ext.extend(Ext.Panel, {
 			width: 100,
 			listeners: {
 				select: function(combo, record, index) {
+					//aaaa
 					this.comboMese.setVisible(index==0);
 					Ext.getCmp(this.task+'_pnl').setVisible(index==0);
 					if (!this.comboMese.hidden) {
@@ -135,26 +139,334 @@ DCS.Charts.Sintesi = Ext.extend(Ext.Panel, {
 					g = new FusionCharts("FusionCharts/"+DCS.Charts.tipi[this.itipo]+".swf", this.task+"_chartId", "100%", "90%", "0", "1" );
 					// non va: � asincrono anche se la guida non lo dice
 					//g.setXMLUrl("server/charts/sintesi.php?type=stack&mese="+record.data.num+"&task="+this.task);
-
-					Ext.Ajax.request({
+                    Chart.plugins.register({
+						afterDraw: function(chart) {
+						  	if (chart.data.datasets.length === 0) {
+						    	// No data is present
+						      var ctx = chart.chart.ctx;
+						      var width = chart.chart.width;
+						      var height = chart.chart.height;
+						      chart.clear();
+						      
+						      ctx.save();
+						      ctx.textAlign = 'center';
+						      ctx.textBaseline = 'middle';
+						      ctx.font = '12px "Helvetica Nueue"';
+						      ctx.fontColor = 'black';
+						      ctx.fillText('No data to display', width / 2, height / 2);
+						      ctx.restore();
+						    }
+					    }
+					});
+					
+					Chart.Tooltip.positioners.cursor = function(chartElements, coordinates) {
+					  return coordinates;
+					};
+					
+					var canvas = document.getElementById(this.id+'_canvas');
+					var ctx = canvas.getContext("2d");
+					
+                    if (this.gc!=null) {
+                      this.gc.destroy();	
+                    }
+                    this.gc = new Chart(ctx, {
+			            type: 'bar',
+						data: {
+							labels: [],
+				            datasets: []
+				        },
+			            options: {
+			                responsive: true,
+			                showTooltips : false,
+			                showInlineValues : true,
+				            centeredInllineValues : true,
+				            tooltipCaretSize : 0,
+							hover: {
+							    animationDuration : 0
+							},
+							layout: {
+					            padding: {
+					                left: 15,
+					                right: 0,
+					                top: 40,
+					                bottom: 0
+					            }
+					        },
+							barValueDisplay: {
+						        color: 'rgba(0, 0, 0, 1)'
+						    },
+			                legend: {
+			                    position: 'bottom',
+			                },
+			                tooltips: {
+			                	mode: 'single',
+			                	position: 'cursor',
+			                	backgroundColor: 'rgba(0, 0, 0, 1)',
+			                	titleFontSize: 0,
+			                	intersect: false,
+			                	callbacks: {
+						            label: function(tooltipItem, data) {
+						                return data.datasets[tooltipItem.datasetIndex].label+', '+tooltipItem.xLabel+', \u20ac '+Ext.util.Format.number(tooltipItem.yLabel, '0.0,00/i');
+						            }
+						        }
+						    },
+						    scales: {
+					            yAxes: [{
+					            	ticks: {
+					                	padding: 5,
+					                	maxTicksLimit: 5,
+					                	beginAtZero: true,
+						                callback: function (value) {
+				                            return '\u20ac '+Ext.util.Format.number(value, '0.0/i');
+				                        }
+					                }
+					            }]
+					        },
+					        animation: {
+						        duration: 2000,
+						        onComplete: function (animation) {
+						        	var chartInstance = this.chart,
+						                ctx = chartInstance.ctx;
+						            var configOptions = this.chart.config.options;
+						            ctx.font = '12px "Helvetica Nueue"';
+						            ctx.textAlign = 'center';
+						            ctx.textBaseline = 'bottom';
+						
+						            this.data.datasets.forEach(function (dataset, i) {
+						                var meta = chartInstance.controller.getDatasetMeta(i);
+						                meta.data.forEach(function (bar, index) {
+						                    var data = dataset.data[index];
+						                    data = '\u20ac '+Ext.util.Format.number(data, '0.0,00/i');                            
+						                    ctx.fillStyle = configOptions.barValueDisplay.color;
+						                    ctx.fillText(data, bar._model.x, bar._model.y);
+						                });
+						            });
+						        }
+						    }
+			            }
+			        });
+			        /*Ext.Ajax.request({
 				        url: 'server/charts/sintesi.php',
 				        method: 'GET',
 				        params: {type: 'stack', mese: record.data.num, task: this.task},
 				        success: function(obj) {
 							g.setXMLData(obj.responseText);
 							g.render(this.task+"_cc");
-				        },	scope: this});	
+				        },	scope: this});*/
+				    Ext.Ajax.request({
+				        url: 'server/charts/sintesi.php',
+				        method: 'GET',
+				        params: {type: 'stack', mese: record.data.num, task: this.task},
+				        success: function(obj) {
+				        	var jsonData = Ext.util.JSON.decode(obj.responseText);
+				        	arrRes = jsonData.results;
+				        	if (arrRes.length>0) {
+				        	  var newDatasetCapRecupero = {
+				                 label: 'Capitale recuperato',
+				                 backgroundColor:'#99BBE8',
+				                 borderColor: window.chartColors.red,
+				                 borderWidth: 1,
+				                 data: []
+				              }; 
+				              var newDatasetCapAffidato = {
+				                 label: 'Capitale affidato',
+				                 backgroundColor:'#88FF88',
+				                 borderColor: window.chartColors.blue,
+				                 borderWidth: 1,
+				                 data: []
+				              };
+				              this.gc.data.datasets.push(newDatasetCapRecupero);
+							  this.gc.data.datasets.push(newDatasetCapAffidato);
+							  if (arrRes.length>2) {
+							  	this.gc.options.scales.xAxes[0].ticks.minor.fontSize = 9;
+							  	this.gc.options.scales.xAxes[0].ticks.fontSize = 9;
+							  }
+							  for (i = 0; i < arrRes.length; i++) {
+							     this.gc.data.labels[i]=arrRes[i].Agenzia +" ("+arrRes[i].NumIncassati+"/"+arrRes[i].NumAffidati+")";
+							     this.gc.data.datasets[0].data.push(arrRes[i].ImpCapitaleIncassato);
+							     this.gc.data.datasets[1].data.push(arrRes[i].ImpCapitaleAffidato);
+							  }	
+				        	} 
+				        	this.gc.update();
+						},	scope: this});  	
 
 					g2 = new FusionCharts("FusionCharts/"+DCS.Charts.tipi[this.itipo]+".swf", this.task+"_chartId2", "100%", "90%", "0", "1" );
 //                    g2.setXMLUrl("server/charts/sintesiPerc.php?type=stack&mese="+record.data.num+"&task="+this.task);
 //                    g2.render(this.task+"_cc2");
-					Ext.Ajax.request({
+                    //var ctx2 = document.getElementById(this.task+'_canvas2').getContext("2d");
+                    var canvas2 = document.getElementById(this.id+'_canvas2');
+                    var ctx2 = canvas2.getContext("2d");
+                    if (this.gc2!=null) {
+                      this.gc2.destroy();	
+                    }
+		            this.gc2 = new Chart(ctx2, {
+			            type: 'bar',
+			            data: {
+							labels: [],
+				            datasets: []
+				        },
+				        plugins: [{
+					        afterDatasetDraw: function(chartInstance, options) {
+					            var yScale = chartInstance.scales["y-axis-0"];
+					            var canvas = chartInstance.chart;
+			                    var ctx = canvas.ctx;
+			                    var index;
+			                    var line;
+			                    var style;
+			
+			                    if (chartInstance.options.horizontalLine) {
+			                        for (index = 0; index < chartInstance.options.horizontalLine.length; index++) {
+			                            line = chartInstance.options.horizontalLine[index];
+							            style = (line.style) ? line.style : "rgba(169,169,169, .6)";
+							            yValue = (line.y) ? yScale.getPixelForValue(line.y) : 0;
+							            ctx.lineWidth = (line.width) ? line.width : 3;
+							            if (yValue) {
+							               ctx.beginPath();
+							               ctx.moveTo(chartInstance.chartArea.left, yValue);
+							               ctx.lineTo(chartInstance.chartArea.right, yValue);
+							               ctx.strokeStyle = style;
+							               ctx.stroke();
+							            }
+							            if (line.text) {
+							               ctx.fillStyle = style;
+							               ctx.fillText(line.text, 5, yValue + ctx.lineWidth);
+							            }
+			                        }
+			                        return;
+			                    };
+					        }
+					    }],
+			            options: {
+			                responsive: true,
+			                hover: {
+							    animationDuration : 0
+							},
+							layout: {
+					            padding: {
+					                left: 0,
+					                right: 0,
+					                top: 0,
+					                bottom: 0
+					            }
+					        },
+							barValueDisplay: {
+						        color: 'rgba(0, 0, 0, 1)'
+						    },
+						    title: {
+					            display: true,
+					            text: '(Valori calcolati sulla media ponderata dei lotti scaduti nel mese di riferimento)'
+					        },
+			                legend: {
+			                    position: 'bottom',
+			                },
+			                tooltips: {
+			                	mode: 'single',
+			                	position: 'cursor',
+			                	backgroundColor: 'rgba(0, 0, 0, 1)',
+			                	titleFontSize: 0,
+			                	intersect: false,
+							    callbacks: {
+						            label: function(tooltipItem, data) {
+						            	return data.datasets[tooltipItem.datasetIndex].label+', '+tooltipItem.xLabel+', '+tooltipItem.yLabel+'%';
+						            }
+						        }
+						    },
+						    scales: {
+					            yAxes: [{
+					                gridLines: {
+		                                display: true
+		                            },
+		                            ticks: {
+					                    padding: 30,
+					                    min: 0,
+					                    suggestedMax: 100,
+					                    stepSize: 20,
+						                beginAtZero: true,
+						                callback: function(label, index, labels) {
+					                        return label+'%';
+					                    }
+					                }
+					            }]
+					        },
+		                    horizontalLine: [],
+					        animation: {
+						        duration: 2000,
+						        onComplete: function (animation) {
+						        	var chartInstance = this.chart,
+						                ctx = chartInstance.ctx;
+						            var configOptions = this.chart.config.options;    
+						            ctx.font = '12px "Helvetica Nueue"';
+						            ctx.textAlign = 'center';
+						            ctx.textBaseline = 'bottom';
+						            						
+						            this.data.datasets.forEach(function (dataset, i) {
+						                var meta = chartInstance.controller.getDatasetMeta(i);
+						                meta.data.forEach(function (bar, index) {
+						                    var data = dataset.data[index];
+						                    data = data+"%";                            
+						                    ctx.fillStyle = configOptions.barValueDisplay.color;
+						                    ctx.fillText(data, bar._model.x, bar._model.y);
+						                });
+						            });
+						        }
+						    }
+			            }
+			        });
+			        /*Ext.Ajax.request({
 				        url: 'server/charts/sintesiPerc.php',
 				        method: 'GET',
 				        params: {type: 'stack', mese: record.data.num, task: this.task},
 				        success: function(obj) {
 							g2.setXMLData(obj.responseText);
 							g2.render(this.task+"_cc2");
+				        },	scope: this});*/	
+                    Ext.Ajax.request({
+				        url: 'server/charts/sintesiPerc.php',
+				        method: 'GET',
+				        params: {type: 'stack', mese: record.data.num, task: this.task},
+				        success: function(obj) {
+				        	var jsonData = Ext.util.JSON.decode(obj.responseText);
+				        	var arrRes = jsonData.results;
+				        	var arrTarget = jsonData.target;
+				        	if (arrRes.length>0) {
+				        	  for (i = 0; i < arrTarget.length; i++) {
+				        	  	target = arrTarget[i];
+				        	  	var newHorizontalLine = {
+			                        style: 'rgba(255, 0, 0, .7)',
+			                        font: '10px "Helvetica Nueue"',
+							        fontColor: 'rgba(255, 0, 0, .7)',
+							        y: target,
+							        text: "Target "+target+"%"
+			                    };
+			                    this.gc2.options.horizontalLine.push(newHorizontalLine);
+				        	  }
+				        	  var newDatasetIPR = {
+						         label: 'IPR (Recuperato/Affidato)',
+						         backgroundColor:'#99BBE8',
+				                 borderColor: window.chartColors.red,
+				                 borderWidth: 1,
+				                 data: []
+							  };
+							  var newDatasetIPM = {
+						         label: 'IPM (Movimentate/Affidate)',
+						         backgroundColor:'#88FF88',
+				                 borderColor: window.chartColors.blue,
+				                 borderWidth: 1,
+				                 data: []
+							  };
+							  this.gc2.data.datasets.push(newDatasetIPR);
+							  this.gc2.data.datasets.push(newDatasetIPM);
+							  if (arrRes.length>2) {
+							  	this.gc2.options.scales.xAxes[0].ticks.minor.fontSize = 9;
+							  	this.gc2.options.scales.xAxes[0].ticks.fontSize = 9;
+							  }	
+				        	  for (i = 0; i < arrRes.length; i++) {
+							    this.gc2.data.labels[i]=arrRes[i].Agenzia;
+							    this.gc2.data.datasets[0].data.push(arrRes[i].IPR);
+							    this.gc2.data.datasets[1].data.push(arrRes[i].IPM);
+							  }	
+				        	} 
+				        	this.gc2.update();
 				        },	scope: this});	
 
 				},
@@ -180,17 +492,203 @@ DCS.Charts.Sintesi = Ext.extend(Ext.Panel, {
 					var g = FusionCharts(this.task+"_chartId3"); 
 					if (g) g.dispose();
 					g = new FusionCharts("FusionCharts/"+DCS.Charts.tipi[this.itipo]+".swf", this.task+"_chartId3", "100%", "90%", "0", "1" );
-                  //g.setXMLUrl("server/charts/sintesiStory.php?type=stack&anno="+record.data.num+"&task="+this.task+"&data="+dataType); //pie");
+                    //g.setXMLUrl("server/charts/sintesiStory.php?type=stack&anno="+record.data.num+"&task="+this.task+"&data="+dataType); //pie");
                     //g.render(this.task+"_story");
-					Ext.Ajax.request({
+                    var idPanel = this.id;
+					var canvasStory = document.getElementById(this.id+'_canvasStory');
+					var ctxStory = canvasStory.getContext("2d");
+					if (this.gcStory!=null) {
+                      this.gcStory.destroy();	
+                    }
+					this.gcStory = new Chart(ctxStory, {
+			            type: 'bar',
+			            data: {
+				            labels: [],
+				            datasets: []
+				        },
+				        plugins: [{
+					        afterDatasetDraw: function(chartInstance, options) {
+					            var yScale = chartInstance.scales["y-axis-0"];
+					            var canvas = chartInstance.chart;
+			                    var ctx = canvas.ctx;
+			                    var index;
+			                    var line;
+			                    var style;
+			
+			                    if (chartInstance.options.horizontalLine) {
+			                        for (index = 0; index < chartInstance.options.horizontalLine.length; index++) {
+			                            line = chartInstance.options.horizontalLine[index];
+							            style = (line.style) ? line.style : "rgba(169,169,169, .6)";
+							            yValue = (line.y) ? yScale.getPixelForValue(line.y) : 0;
+							            ctx.lineWidth = (line.width) ? line.width : 3;
+							            if (yValue) {
+							               ctx.beginPath();
+							               ctx.moveTo(chartInstance.chartArea.left, yValue);
+							               ctx.lineTo(chartInstance.chartArea.right, yValue);
+							               ctx.strokeStyle = style;
+							               ctx.stroke();
+							            }
+							            if (line.text) {
+							               ctx.fillStyle = style;
+							               ctx.fillText(line.text, 5, yValue + ctx.lineWidth);
+							            }
+			                        }
+			                        return;
+			                    };
+					        },
+					    }],
+			            data: {
+				            labels: [],
+				            datasets: []
+				        },
+			            options: {
+			                responsive: true,
+			                hover: {
+							    animationDuration : 0,
+							    onHover: function(e, el) {
+							      canvasStory.style.cursor = el[0] ? "pointer" : "";
+							    }
+							},
+							layout: {
+					            padding: {
+					                left: 0,
+					                right: 0,
+					                top: 15,
+					                bottom: 0
+					            }
+					        },
+							barValueDisplay: {
+						        color: 'rgba(0, 0, 0, 1)'
+						    },
+			                maintainAspectRatio: false,
+			                legend: {
+			                    position: 'bottom'
+			                },
+			                tooltips: {
+			                	mode: 'single',
+			                	position: 'cursor',
+			                	backgroundColor: 'rgba(0, 0, 0, 1)',
+			                	titleFontSize: 0,
+			                	intersect: false,
+							    callbacks: {
+						            label: function(tooltipItem, data) {
+						                return data.datasets[tooltipItem.datasetIndex].label+', '+tooltipItem.xLabel+', '+tooltipItem.yLabel+'%';
+						            }
+						        }
+						    },
+						    scales: {
+					            yAxes: [{
+					            	gridLines: {
+		                                display: true
+		                            },
+		                            ticks: {
+		                            	padding: 30,
+					                    min: 0,
+					                    suggestedMax: 100, 
+						                stepSize: 20,
+						                beginAtZero: true,
+						                callback: function(label, index, labels) {
+					                        return label+'%';
+					                    }
+					                }
+					            }]
+					        },
+		                    horizontalLine: [],
+					        animation: {
+						        duration: 2000,
+						        onComplete: function (animation) {
+						        	var chartInstance = this.chart,
+						                ctx = chartInstance.ctx;
+						            var configOptions = this.chart.config.options;
+						            ctx.font = '12px "Helvetica Nueue"';
+						            ctx.textAlign = 'center';
+						            ctx.textBaseline = 'bottom';
+						
+						            this.data.datasets.forEach(function (dataset, i) {
+						                var meta = chartInstance.controller.getDatasetMeta(i);
+						                meta.data.forEach(function (bar, index) {
+						                    var data = dataset.data[index];
+						                    data = data+"%";
+						                    ctx.fillStyle = configOptions.barValueDisplay.color;                            
+						                    ctx.fillText(data, bar._model.x, bar._model.y);
+						                });
+						            });
+						        }
+						    },
+                            onClick: handleClickStory
+			            }
+			        });
+			        function handleClickStory(evt)
+					{
+					    var activePoints = this.getElementAtEvent(evt);
+					    var firstPoint = activePoints[0];
+						var label = this.data.labels[firstPoint._index];
+						var res = label.split("/");
+						DCS.Charts.presentaMese(idPanel,res[1]+res[0]);
+					};    
+			        /*Ext.Ajax.request({
 				        url: 'server/charts/sintesiStory.php',
 				        method: 'GET',
 				        params: {type: 'stack', id:this.id, anno: record.data.num, task: this.task, data: dataType},
 				        success: function(obj) {
 							g.setXMLData(obj.responseText);
 							g.render(this.task+"_story");
-				        },	scope: this});	
-
+				        },	scope: this});*/	
+                    Ext.Ajax.request({
+				        url: 'server/charts/sintesiStory.php',
+				        method: 'GET',
+				        params: {type: 'stack', id:this.id, anno: record.data.num, task: this.task, data: dataType},
+				        success: function(obj) {
+							strDataSet = new Array();
+                            var jsonData = Ext.util.JSON.decode(obj.responseText);
+                            var arrLabel = jsonData.categorie; 
+                            var arrRes = jsonData.results;
+                            var arrTarget = jsonData.target;
+                            var colori = ['#99bbe8','#88ff88','#aa88ff','#3588aa','#489999','#66aa88','#02b955','#55ca00','#a2ca00','#ff4400','#ffca00','#cc0088','#aa2266','#bbaa99'];
+                            if(arrRes.length>0) {
+                            	for (i = 0; i < arrLabel.length; i++) {
+                            	  this.gcStory.data.labels.push(arrLabel[i]);	
+                            	}
+                            	for (i = 0; i < arrTarget.length; i++) {
+                            		target = arrTarget[i];
+					        	  	var newHorizontalLine = {
+				                        style: 'rgba(255, 0, 0, .7)',
+				                        font: '10px "Helvetica Nueue"',
+								        fontColor: 'rgba(255, 0, 0, .7)',
+								        y: target,
+								        text: "Target "+target+"%"
+				                    };
+				                    this.gcStory.options.horizontalLine.push(newHorizontalLine);
+					        	}
+                            	for (i = 0; i < arrRes.length; i++) {
+					        		agenzia = arrRes[i].Agenzia;
+					        		var ind = strDataSet.indexOf(agenzia);
+									if (ind<0) {
+										var newDataset = {
+									        label: arrRes[i].Agenzia,
+									        backgroundColor: colori[this.gcStory.data.datasets.length],
+									        borderColor: 'rgba(99, 255, 132, 1)',
+									        borderWidth: 1,
+									        data: new Array(12),
+									    };
+									    this.gcStory.data.datasets.push(newDataset);
+										strDataSet.push(agenzia);
+										ind = strDataSet.indexOf(agenzia);
+									}
+									//inserisco i valori dell'agenzia al mese corrispondente
+								    data = arrRes[i].Mese;
+								    anno = data.substr(0,4);
+								    mese = data.substr(4,data.length);
+								    indexLabel =this.gcStory.data.labels.indexOf(mese+"/"+anno); 
+								    if (dataType=='IPR') {
+								      this.gcStory.data.datasets[ind].data[indexLabel] = arrRes[i].IPR;	
+								    } else {
+								    	this.gcStory.data.datasets[ind].data[indexLabel] = arrRes[i].IPM;
+								    }
+								}
+					        }
+				        	this.gcStory.update();
+				        },	scope: this});
 				},
 				scope: this
 			}
@@ -208,22 +706,26 @@ DCS.Charts.Sintesi = Ext.extend(Ext.Panel, {
 					style: 'text-align:center;',
 					flex: 1
 				},this.comboTipo,this.comboData,this.comboAnni,this.comboMese]
-			}, {
+			},{
 				xtype:'panel',
 				layout: 'column',
 				id:this.task+'_pnl',
+				margin: '20 0 0 0',
 				items: [{
 					xtype:'panel',
 					columnWidth: .5,
-					id:this.task+'_cc'
+					id:this.task+'_cc',
+					html: '<canvas id="'+this.id+'_canvas" height="200px"></canvas>',
 				},{
 					xtype:'panel',
 					columnWidth: .5,
-					id:this.task+'_cc2'
+					id:this.task+'_cc2',
+					html: '<canvas id="'+this.id+'_canvas2" height="200px"></canvas>',
 			}]}, {
 				xtype:'panel',
 				hidden: true,
-				id:this.task+'_story'
+				id:this.task+'_story',
+				html: '<canvas id="'+this.id+'_canvasStory" height="420px"></canvas>'
 			}],
 			listeners: {
 				activate: function(pnl) {
@@ -274,8 +776,10 @@ DCS.Charts.Sintesi = Ext.extend(Ext.Panel, {
 		if (this.dsMese) // se inizializzato
 		{
 			var idx = this.dsMese.find('num',mese);
-			var rec = this.dsMese.getAt(idx);
-			this.comboMese.fireEvent('select',this.comboMese,rec,idx); 
+			if (idx>0) {
+			  var rec = this.dsMese.getAt(idx);
+			  this.comboMese.fireEvent('select',this.comboMese,rec,idx); 	
+			}
 		}
     },
 	
@@ -299,10 +803,15 @@ DCS.Charts.Sintesi = Ext.extend(Ext.Panel, {
 //--------------------------------------------------------------------
 DCS.Charts.presentaMese = function(idGrafico,numMese)
 {
+	//aaaa
 	var pannello = Ext.getCmp(idGrafico);
-	pannello.comboTipo.setValue('Mensile');
-	pannello.comboTipo.fireEvent('select',pannello.comboTipo,null,0); // Imposta la combo su mensile
-	pannello.selectMonth(numMese);
+	var idx = pannello.dsMese.find('num',numMese);
+    if (idx>0) {
+      pannello.comboTipo.setValue('Mensile');
+	  pannello.comboMese.setValue(numMese);	
+	  pannello.comboTipo.fireEvent('select',pannello.comboTipo,null,0); // Imposta la combo su mensile
+	}  
+	//pannello.selectMonth(numMese);
 };
 
 //--------------------------------------------------------------------
@@ -611,14 +1120,90 @@ DCS.Charts.Pyramid = Ext.extend(Ext.Panel, {
 				// alla selezione di anno o mese nella combobox, riempie grafico e tabella
 				select: function(combo, record, index) {
 					Ext.getCmp(this.task+'_title').update('<h1>' + record.data.FY + ' - ' + record.data.mese  + ' </h1>');
-		
-					// Costruisce il grafico
+		            // Costruisce il grafico
 					var g = FusionCharts(this.task+"_chartId");
 					if (g) g.dispose();
 					g = new FusionCharts("FusionCharts/"+DCS.Charts.tipi[this.itipo]+".swf", this.task+"_chartId", "100%", "90%", "0", "1" );
-                  //  g.setXMLUrl("server/charts/pyramid.php?type=stack&mese="+record.data.num);
-                  //  g.render(this.task+"_pnl");
-					Ext.Ajax.request({
+                    //  g.setXMLUrl("server/charts/pyramid.php?type=stack&mese="+record.data.num);
+                    //  g.render(this.task+"_pnl");
+                    var canvasTFSI = document.getElementById(this.id+'_canvasTFSI');
+                    var ctxTFSI = canvasTFSI.getContext("2d");
+                    if (this.gcTFSI!=null) {
+                      this.gcTFSI.destroy();	
+                    }
+                    this.gcTFSI = new Chart(ctxTFSI, {
+			            type: 'horizontalBar',
+						data: {
+				            labels: [],
+				            datasets: []
+				        },
+			            options: {
+			                responsive: true,
+							hover: {
+							    animationDuration : 0
+							},
+							layout: {
+					            padding: {
+					                left: 15,
+					                right: 30,
+					                top: 0,
+					                bottom: 0
+					            }
+					        },
+							barValueDisplay: {
+						        color: 'rgba(0, 0, 0, 1)'
+						    },
+			                legend: {
+						    	display: false
+						    },
+			                tooltips: {
+			                	mode: 'single',
+			                	position: 'cursor',
+			                	backgroundColor: 'rgba(0, 0, 0, 1)',
+			                	titleFontSize: 0,
+			                	intersect: false,
+							    callbacks: {
+						            label: function(tooltipItem, data) {
+						                return tooltipItem.yLabel+', '+Ext.util.Format.number(tooltipItem.xLabel, '0.0/i');
+						            }
+						        }
+						    },
+						    scales: {
+					            xAxes: [{
+					            	ticks: {
+					                	padding: 5,
+					                	maxTicksLimit: 5,
+					                	beginAtZero: true,
+					                	callback: function (value) {
+				                            return Ext.util.Format.number(value, '0.0/i');
+				                        }
+					                }
+					            }]
+					        },
+					        animation: {
+						        duration: 2000,
+						        onComplete: function (animation) {
+						        	var chartInstance = this.chart,
+						                ctx = chartInstance.ctx;
+						            var configOptions = this.chart.config.options;
+						            ctx.font = '12px "Helvetica Nueue"';
+						            ctx.textAlign = 'center';
+						            ctx.textBaseline = 'bottom';
+						
+						            this.data.datasets.forEach(function (dataset, i) {
+						                var meta = chartInstance.controller.getDatasetMeta(i);
+						                meta.data.forEach(function (bar, index) {
+						                    var data = dataset.data[index];
+						                    data = Ext.util.Format.number(data, '0.0/i');
+						                    ctx.fillStyle = configOptions.barValueDisplay.color;                            
+						                    ctx.fillText(data, bar._model.x+15, bar._model.y+7);
+						                });
+						            });
+						        }
+						    }
+			            }
+			        });
+			        /*Ext.Ajax.request({
 				        url: 'server/charts/pyramid.php',
 				        method: 'GET',
 				        params: {type: 'stack', mese: record.data.num, gruppo: this.gruppo},
@@ -630,6 +1215,42 @@ DCS.Charts.Pyramid = Ext.extend(Ext.Panel, {
 							
 							g.setXMLData(parti[1]);
 							g.render(this.task+"_pnl");
+			        },	scope: this});*/	
+			        Ext.Ajax.request({
+				        url: 'server/charts/pyramid.php',
+				        method: 'GET',
+				        params: {type: 'stack', mese: record.data.num, gruppo: this.gruppo},
+				        success: function(obj) {
+				        	var jsonData = Ext.util.JSON.decode(obj.responseText);
+				        	catRes = jsonData.categorie;
+				        	arrRes = jsonData.results;
+				        	affidati=0;
+				        	if (arrRes.length>0) {
+					        	var newDatasetTFSI = {
+					                 //backgroundColor:'#99BBE8',
+					                 backgroundColor: ['#99bbe8','#88ff88','#aa88ff','#3588aa','#489999','#66aa88','#02b955','#55ca00','#a2ca00','#ff4400','#ffca00','#cc0088','#aa2266','#bbaa99'],
+					                 borderColor: window.chartColors.red,
+					                 borderWidth: 1,
+					                 data: []
+					            };
+					            this.gcTFSI.data.datasets.push(newDatasetTFSI); 
+					        	for (i = 0; i < catRes.length; i++) {
+					        		if (this.gcTFSI.data.labels.indexOf(catRes[i].FasciaRecupero)<0) {
+					        		  this.gcTFSI.data.labels.push(catRes[i].FasciaRecupero);
+					        		  this.gcTFSI.data.datasets[0].data.push(null);	
+					        		}
+					        	}
+					        	for (i = 0; i < arrRes.length; i++) {
+								    idx = this.gcTFSI.data.labels.indexOf(arrRes[i].chartFasciaRecupero);
+								    //this.gcTFSI.data.labels[i]=arrRes[i].chartFasciaRecupero;
+								    //this.gcTFSI.data.datasets[idx].data=[];
+								    this.gcTFSI.data.datasets[0].data[idx]=arrRes[i].Affidati;
+								    affidati += parseInt(arrRes[i].Affidati);
+								}
+							}	
+				        	Ext.getCmp(this.task+'_title').update('<h1>' + record.data.FY + ' - ' + record.data.mese  + 
+									'<br>('+ affidati +' pratiche affidate in totale)</h1>');
+							this.gcTFSI.update();
 			        },	scope: this});	
 					
 					// Aggiorna la griglia dei target
@@ -661,11 +1282,90 @@ DCS.Charts.Pyramid = Ext.extend(Ext.Panel, {
 					g = new FusionCharts("FusionCharts/"+DCS.Charts.tipi[this.itipo]+".swf", this.task+"_chartId2", "100%", "90%", "0", "1" );
 					//g.setXMLUrl("server/charts/pyramid.php?type=stack&anno="+record.data.num);
                     //g.render(this.task+"_story");
-					Ext.Ajax.request({
+					var canvasStoryTFSI = document.getElementById(this.id+'_canvasStoryTFSI');
+					var ctxStoryTFSI = canvasStoryTFSI.getContext("2d");
+                    if (this.gcStoryTFSI!=null) {
+                      this.gcStoryTFSI.destroy();	
+                    }
+                    this.gcStoryTFSI = new Chart(ctxStoryTFSI, {
+			            type: 'horizontalBar',
+						data: {
+				            labels: [],
+				            datasets: []
+				        },
+			            options: {
+			                responsive: true,
+			                hover: {
+							    animationDuration : 0
+							},
+							layout: {
+					            padding: {
+					                left: 15,
+					                right: 30,
+					                top: 0,
+					                bottom: 0
+					            }
+					        },
+							barValueDisplay: {
+						        color: 'rgba(0, 0, 0, 1)'
+						    },
+			                maintainAspectRatio: false,
+			                legend: {
+						    	display: false
+						    },
+			                tooltips: {
+			                	mode: 'single',
+			                	position: 'cursor',
+			                	backgroundColor: 'rgba(0, 0, 0, 1)',
+			                	titleFontSize: 0,
+			                	intersect: false,
+							    callbacks: {
+						            label: function(tooltipItem, data) {
+						                return tooltipItem.yLabel+', '+Ext.util.Format.number(tooltipItem.xLabel, '0.0/i');
+						            }
+						        }
+						    },
+						    scales: {
+					            xAxes: [{
+					            	ticks: {
+					                	padding: 5,
+					                	maxTicksLimit: 5,
+					                	beginAtZero: true,
+						                callback: function (value) {
+				                            return Ext.util.Format.number(value, '0.0/i');
+				                        }
+					                }
+					            }]
+					        },
+					        animation: {
+						        duration: 2000,
+						        onComplete: function (animation) {
+						        	var chartInstance = this.chart,
+						                ctx = chartInstance.ctx;
+						            var configOptions = this.chart.config.options;
+						            ctx.font = '12px "Helvetica Nueue"';
+						            ctx.textAlign = 'center';
+						            ctx.textBaseline = 'bottom';
+						
+						            this.data.datasets.forEach(function (dataset, i) {
+						                var meta = chartInstance.controller.getDatasetMeta(i);
+						                meta.data.forEach(function (bar, index) {
+						                    var data = dataset.data[index];
+						                    data = Ext.util.Format.number(data, '0.0/i');
+						                    ctx.fillStyle = configOptions.barValueDisplay.color;                            
+						                    ctx.fillText(data, bar._model.x+15, bar._model.y+7);
+						                });
+						            });
+						        }
+						    }
+			            }
+			        });
+					/*Ext.Ajax.request({
 				        url: 'server/charts/pyramid.php',
 				        method: 'GET',
 				        params: {type: 'stack', anno: record.data.num, gruppo: this.gruppo},
 				        success: function(obj) {
+				        	debugger;
 				        	var result = obj.responseText;
 				        	var parti  = result.split("\n");
 							Ext.getCmp(this.task+'_title').update('<h1>Fiscal Year '+record.data.num  + 
@@ -673,7 +1373,40 @@ DCS.Charts.Pyramid = Ext.extend(Ext.Panel, {
 							
 							g.setXMLData(parti[1]);
 							g.render(this.task+"_story");
-				        },	scope: this});	
+				        },	scope: this});*/
+				    Ext.Ajax.request({
+				        url: 'server/charts/pyramid.php',
+				        method: 'GET',
+				        params: {type: 'stack', anno: record.data.num, gruppo: this.gruppo},
+				        success: function(obj) {
+				        	var jsonData = Ext.util.JSON.decode(obj.responseText);
+				        	catRes = jsonData.categorie;
+				        	arrRes = jsonData.results;
+				        	affidati=0;
+				        	if (arrRes.length>0) {
+				        	    var newDatasetStoryTFSI = {
+					                 backgroundColor: ['#99bbe8','#88ff88','#aa88ff','#3588aa','#489999','#66aa88','#02b955','#55ca00','#a2ca00','#ff4400','#ffca00','#cc0088','#aa2266','#bbaa99'],
+					                 borderColor: window.chartColors.red,
+					                 borderWidth: 1,
+					                 data: []
+					            };
+					            this.gcStoryTFSI.data.datasets.push(newDatasetStoryTFSI); 
+					        	for (i = 0; i < catRes.length; i++) {
+					        		if (this.gcStoryTFSI.data.labels.indexOf(catRes[i].FasciaRecupero)<0) {
+					        		  this.gcStoryTFSI.data.labels.push(catRes[i].FasciaRecupero);
+					        		  this.gcStoryTFSI.data.datasets[0].data.push(null);	
+					        		}
+					        	}
+					        	for (i = 0; i < arrRes.length; i++) {
+								    idx = this.gcStoryTFSI.data.labels.indexOf(arrRes[i].chartFasciaRecupero);
+								    this.gcStoryTFSI.data.datasets[0].data[idx]=arrRes[i].Affidati;
+								    affidati += parseInt(arrRes[i].Affidati);
+								}	
+				        	}
+				        	Ext.getCmp(this.task+'_title').update('<h1>Fiscal Year '+record.data.num  + 
+									'<br>('+affidati+' pratiche affidate in totale)</h1>');
+							this.gcStoryTFSI.update();
+				        },	scope: this});    	
 					// Aggiorna la griglia dei target
 					this.grid.titlePanel = "Target Fiscal Year "+record.data.num;
 					var gstore = this.grid.getStore();
@@ -704,17 +1437,18 @@ DCS.Charts.Pyramid = Ext.extend(Ext.Panel, {
 					xtype:'panel',
 					columnWidth: .6,
 					layout: 'column',
-					id:this.task+'_pnl'
+					id:this.task+'_pnl',
+					html: '<canvas id="'+this.id+'_canvasTFSI"></canvas>'
 				},{
 					xtype:'panel',
 					hidden: true,
 					columnWidth: .6,
 					layout: 'column',
-					id:this.task+'_story'
+					id:this.task+'_story',
+					html: '<canvas id="'+this.id+'_canvasStoryTFSI" height="420px"></canvas>'
 				},{
 					xtype:'panel',
 					columnWidth: .4,
-					padding:'20 0 0 0',
 					id:this.task+'_table',
 height:450,
 					layout:'fit',
@@ -767,9 +1501,11 @@ height:450,
 	selectMonth: function(mese) {
 		this.comboMese.setValue(mese);
 		var idx = this.dsMese.find('num',mese);
-		var rec = this.dsMese.getAt(idx);
-		this.comboMese.fireEvent('select',this.comboMese,rec,idx); 
-    },
+		if (idx>0) {
+		  var rec = this.dsMese.getAt(idx);
+		  this.comboMese.fireEvent('select',this.comboMese,rec,idx);	
+		}
+	},
 	
 	//--------------------------------------------------------
     // 
@@ -938,9 +1674,11 @@ DCS.Charts.Geography = Ext.extend(Ext.Panel, {
 	selectMonth: function(mese) {
 		this.comboMese.setValue(mese);
 		var idx = this.dsMese.find('num',mese);
-		var rec = this.dsMese.getAt(idx);
-		this.comboMese.fireEvent('select',this.comboMese,rec,idx); 
-    },
+		if (idx>0) {
+		  var rec = this.dsMese.getAt(idx);
+		  this.comboMese.fireEvent('select',this.comboMese,rec,idx);	
+		}
+	},
 	
 	//--------------------------------------------------------
     // 
@@ -1064,7 +1802,7 @@ DCS.Charts.Tabs = function(){
 				items.push(new DCS.Charts.Pyramid({
 				titlePanel: 'Cruscotto TFSI',
 				title: 'Cruscotto TFSI',
-				task: 'PYRAMID',
+				task: 'PYRAMID', id:'graphTFSI',
 				grid: targetGrid, gruppo: 1
 				}));
 
@@ -1127,7 +1865,7 @@ DCS.Charts.Tabs = function(){
 				items.push(new DCS.Charts.Pyramid({
 				titlePanel: 'Cruscotto TFSI',
 				title: 'Cruscotto TFSI',
-				task: 'PYRAMID',
+				task: 'PYRAMIDSTR', id:'graphTFSISTR',
 				grid: targetGrid, gruppo: 2
 				}));
 				

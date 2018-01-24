@@ -26,7 +26,7 @@ DCS.GridCategoriaRiscattoLeasingTab = Ext.extend(Ext.grid.GridPanel, {
 		{
 			var myMask = new Ext.LoadMask(Ext.getBody(), {msg: "Caricamento in corso ..."});	
 			myMask.show();
-			DCS.showDetailCRL.create('Nuovo tipo categoria riscatto leasing',null,gstore);
+			DCS.showDetailCRL.create('Nuovo tipo categoria riscatti scaduti',null,gstore);
 			myMask.hide();
 	    };
 	    
@@ -89,7 +89,7 @@ DCS.GridCategoriaRiscattoLeasingTab = Ext.extend(Ext.grid.GridPanel, {
 
     	var columns = [selM,
     	               	{dataIndex:'IdCategoriaRiscattoLeasing',width:10, header:'IdMRCat',hidden: true, hideable: false,filterable:true,groupable:false,sortable:false},
-    		        	{dataIndex:'CategoriaRiscattoLeasing',	width:130,	header:'Categoria riscatto leasing', hideable: true,filterable:true,groupable:false,sortable:true},
+    		        	{dataIndex:'CategoriaRiscattoLeasing',	width:130,	header:'Categoria riscatti scaduti', hideable: true,filterable:true,groupable:false,sortable:true},
     		        	{dataIndex:'CodRiscattoLeasing',width:50, header:'Codice',align:'center',hidden: false, hideable: false, filterable:true,groupable:false,sortable:true},    		        	
     		        	{dataIndex:'LastUpd',	width:70,xtype:'datecolumn',header:'Last update',hidden:true, filterable:true,sortable:true,groupable:false},
     		        	{dataIndex:'LastUser',	width:70,header:'Last user',hidden:true, filterable:true,sortable:true,groupable:false}
@@ -163,9 +163,9 @@ DCS.GridCategoriaRiscattoLeasingTab = Ext.extend(Ext.grid.GridPanel, {
 					myMask.show();
 					var titolo="";
 					if(rec.get('CategoriaRiscattoLeasing')!=null)
-						titolo = "Modifica tipo categoria riscatto leasing '"+rec.get('CategoriaRiscattoLeasing')+"'";
+						titolo = "Modifica tipo categoria riscatti scaduti '"+rec.get('CategoriaRiscattoLeasing')+"'";
 					else 
-						titolo = "Modifica tipo categoria riscatto leasing *Titolo assente*";
+						titolo = "Modifica tipo categoria riscatti scaduti *Titolo assente*";
 					DCS.showDetailCRL.create(titolo,rec,gstore);
 					myMask.hide();
 				},
@@ -258,7 +258,7 @@ DCS.CategoriaRiscattoLeasing = function(){
 			var subtitle = '<span class="subtit"><br>Le categorie sono classificazioni liberamente attribuibili ai contratto in stato di "lavorazione interna",'
 				+'<br>e permettono di suddividere tali contratti in pi&ugrave; pagine nella corrispondente lista, per una pi&ugrave; facile gestione.</span>';
 			var gridCategoriaRiscattoLeasing = new DCS.GridCategoriaRiscattoLeasingTab({
-				titlePanel: 'Lista categorie riscatto leasing'+subtitle,
+				titlePanel: 'Lista categorie riscatti scaduti'+subtitle,
 				//title: 'Utenti presenti',
 				//groupOn: "TipoAutomatismo",
 				flex: 1,

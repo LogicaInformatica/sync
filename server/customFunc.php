@@ -371,6 +371,15 @@ function Custom_Classification($IdContratto)
 			}
 		}
 		
+		//-----------------------------------------------------------------------------------------------------------
+		// Imposta classificazione per riscatto scaduto
+		//-----------------------------------------------------------------------------------------------------------
+		if ($pratica["IdAttributo"]==86 && $pratica["ImpInsoluto"]<=0) 
+		{
+			trace("Custom_Classification: riscatto scaduto",FALSE);
+		    return getScalar("SELECT IdClasse FROM classificazione WHERE CodClasse='RIS'");	             
+		}
+		
 		trace("Custom_Classification: nessuna classificazione speciale",FALSE);
 		return FALSE; /* non e' un caso speciale, chiede di applicare classificazione standard */
 		

@@ -13,6 +13,7 @@ DCS.GridPratiche = Ext.extend(Ext.grid.GridPanel, {
 	btnMenuAzioni: null,
 	btnMenuAzioniNote: null,
 	task: '',
+	lotto: '',
 	hideStato: false,
 	agenzia:'',
 	idAgenz:'',
@@ -298,7 +299,7 @@ DCS.GridPratiche = Ext.extend(Ext.grid.GridPanel, {
 				method: 'POST'
 			}),   
 			baseParams:{attiva:'N', task: this.task, sqlExtraCondition : this.sqlExtraCondition, agenzia: this.agenzia, idA: this.idAgenz, idUtente:this.utenteId ,Procedura:this.IdProcedura, 
-				Categoria:this.IdCategoria, CategoriaMaxirata:this.IdCategoriaMaxirata, CategoriaRiscattoLeasing:this.IdCategoriaRiscattoLeasing, StatoRecupero: this.IdStatoRecupero, anno: this.anno},
+				Categoria:this.IdCategoria, CategoriaMaxirata:this.IdCategoriaMaxirata, CategoriaRiscattoLeasing:this.IdCategoriaRiscattoLeasing, StatoRecupero: this.IdStatoRecupero, anno: this.anno, lotto: this.Lotto},
 			remoteSort: true,
 			groupField: this.grpField,
 			groupDir: this.grpDir,

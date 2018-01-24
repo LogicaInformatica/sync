@@ -67,5 +67,6 @@ if (count($v)>0)
 
 //header ( 'Content-type: text/xml' );
 //echo pack ( "C3" , 0xef, 0xbb, 0xbf );
-echo "$strXML</chart>";
+//echo "$strXML</chart>";
+echo('{"target":'.json_encode_plus($v).',"results":' . json_encode_plus($arrData) . '}');
 ?>

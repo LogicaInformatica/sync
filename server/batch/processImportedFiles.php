@@ -2002,6 +2002,13 @@ function processAndClassify($IdContratto)
 
 		// 27/9/2011: mette in attesa di affido la pratica, se previsto dalla classificazione
 		metteInAttesa($IdContratto);
+		
+		// 23/1/2018: riscatto scaduto allo scadere dei 90 gg la pratica passa in proposta passaggio DBT
+		$passaggioPropostaDBT = getScalar("SELECT COUNT(*) FROM contratto WHERE IdContratto=$IdContratto AND IdClasse=36 AND CURDATE() > (DataChiusura + INTERVAL 90 DAY) AND ImpInsoluto>0");
+		if ($passaggioPropostaDBT > 0) 
+		{
+			impostaStato("WRKPROPDBT",$IdContratto);
+		}
 		return 0;
 	} // fine if processInsoluti ha ritornato 0
 	else if ($ret == 3) // ret 3 corrisponde a contratto divenuto positivo

@@ -356,7 +356,7 @@ function aggiornaTipo()
 			$tab = 'categoriariscattoleasing';
 			$idField = 'IdCategoriaRiscattoLeasing';
 			$codField = 'CodRiscattoLeasing';
-			$titleName = 'categoria riscatto leasing';
+			$titleName = 'categoria riscatti scaduti';
 			$codMexName = 'CATEGORIA_RISCLEAS';
 			$neww = Array();
 			$neww[]='Nuova';
@@ -554,7 +554,7 @@ function delete()
 			$tab='categoriariscattoleasing';
 			$idField = 'IdCategoriaRiscattoLeasing';
 			$chkField= 'CategoriaRiscattoLeasing';
-			$titleName = 'categoria riscatto leasing';
+			$titleName = 'categoria riscatti scaduti';
 			$titField = 'CategoriaRiscattoLeasing';
 			break;		
 	}

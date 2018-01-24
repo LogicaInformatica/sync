@@ -847,12 +847,19 @@ try
 				$categoriaRiscattoLeasing  = cambioCategoriaRiscattoLeasing($idContratto,$idCategoriaRiscattoLeasing);
 				if ($categoriaRiscattoLeasing===FALSE)
 					Throw new Exception(getLastError()); 
-				$esitoAzione = "Effettuato cambio categoria riscatto leasing";
+				$esitoAzione = "Effettuato cambio categoria riscatti scaduti";
 				if($categoriaRiscattoLeasing =="")
-					$categoriaRiscattoLeasing = "Rimossa categoria riscatto leasing";
+					$categoriaRiscattoLeasing = "Rimossa categoria riscatti scaduti";
 				else
-					$categoriaRiscattoLeasing = "Assegnata categoria riscatto leasing $categoriaRiscattoLeasing";	
+					$categoriaRiscattoLeasing = "Assegnata categoria riscatti scaduti $categoriaRiscattoLeasing";	
 				writeHistory($idAzione,$categoriaRiscattoLeasing,$idContratto,$nota);	
+			break;
+			case 'CambioDataRiscScad':
+				$dataChiusura = ISODate($_REQUEST["dataChiusura"]); // data chiusura da aggiornare
+				if (!cambioDataRiscattoScaduto($idContratto,$dataChiusura))
+					Throw new Exception(getLastError()); 
+				$esitoAzione = "Effettuato cambio data chiusura riscatto leasing scaduto";
+				writeHistory($idAzione,"Effettuato cambio data chiusura riscatto leasing scaduto",$idContratto,$nota);	
 			break;
 			case 'CambioStatoLegale':
 				$idStatoLegale = $_REQUEST["IdStatoLegale"]; // id dello stato legale

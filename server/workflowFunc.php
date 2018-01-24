@@ -3336,7 +3336,7 @@ function cambioCategoriaMaxirata($contratto,$IdCategoriaMaxirata)
 
 //-----------------------------------------------------------------------
 // cambioCategoriaRiscattoLeasing
-// cambia la categoria riscatto leasing del contratto
+// cambia la categoria riscatti scaduti del contratto
 // Restituisce il nome della categoria assegnata
 //-----------------------------------------------------------------------
 function cambioCategoriaRiscattoLeasing($contratto,$IdCategoriaRiscattoLeasing)
@@ -3350,7 +3350,7 @@ function cambioCategoriaRiscattoLeasing($contratto,$IdCategoriaRiscattoLeasing)
 		//-----------------------------------------------------------------------------
 		if (!execute("UPDATE contratto set IdCategoriaRiscattoLeasing=$IdCategoriaRiscattoLeasing where IdContratto = $contratto"))
 		{
-			trace("Errore nell'assegnazione della categoria riscatto leasing con id $IdCategoriaRiscattoLeasing al contratto con id $contratto");
+			trace("Errore nell'assegnazione della categoria riscatti scaduti con id $IdCategoriaRiscattoLeasing al contratto con id $contratto");
 			return FALSE;
 		}
 		return getScalar("Select CategoriaRiscattoLeasing from categoriariscattoleasing where IdCategoriaRiscattoLeasing=$IdCategoriaRiscattoLeasing");
@@ -3362,6 +3362,35 @@ function cambioCategoriaRiscattoLeasing($contratto,$IdCategoriaRiscattoLeasing)
 		return FALSE;
 	}
 }
+
+//-----------------------------------------------------------------------
+// cambioDataRiscattoScaduto
+// modifica la data di chiusura per riaffidare la pratiche ad uno dei tre periodi 
+// di affido del “Riscatto leasing”
+// Restituisce true o false
+//-----------------------------------------------------------------------
+function cambioDataRiscattoScaduto($contratto,$dataChiusura)
+{
+	try
+	{
+		//-----------------------------------------------------------------------------
+		// modifica della data di chiusura per riaffidare la pratiche ad uno dei tre periodi di affido del “Riscatto leasing”
+		//-----------------------------------------------------------------------------
+		if (!execute("UPDATE contratto set DataChiusura='$dataChiusura' where IdContratto = $contratto"))
+		{
+			trace("Errore nella modifica data chiusura per riaffidare pratiche Riscatto leasing al contratto con id $contratto");
+			return FALSE;
+		}
+		return TRUE;
+	}
+	catch (Exception $e)
+	{
+		trace($e->getMessage());
+		setLastError($e->getMessage());
+		return FALSE;
+	}
+}
+
 
 //-----------------------------------------------------------------------
 // cambioStatoLegale
