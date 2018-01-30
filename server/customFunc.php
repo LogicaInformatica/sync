@@ -411,15 +411,16 @@ function Custom_List($task,$join,&$query,&$queryForCount,&$fields,&$ordine)
 			//$query =   "v_insoluti_opt v $join WHERE DataDBT <= DataPrimaScadenza + INTERVAL 9 MONTH AND insoluti>5";
             // dopo il 2017-10-06 : 3 rate insolute consecutive nei primi 12 mesi a partire da DataDecorrenza
             $subselect = "select distinct c.IdContratto from contratto c 
-join insoluto i1 on i1.IdContratto=c.IdContratto AND i1.numRata>0 and i1.DataInsoluto < c.DataDecorrenza+INTERVAL 12 MONTH AND i1.ImpPagato=0
-join insoluto i2 on i2.IdContratto=c.IdContratto AND i2.numRata=i1.NumRata+1 and i2.DataInsoluto < c.DataDecorrenza+INTERVAL 12 MONTH AND i2.ImpPagato=0
-join insoluto i3 on i3.IdContratto=c.IdContratto AND i3.numRata=i2.NumRata+1 and i3.DataInsoluto < c.DataDecorrenza+INTERVAL 12 MONTH AND i3.ImpPagato=0
+join insoluto i1 on i1.IdContratto=c.IdContratto AND i1.numRata>0 and i1.DataInsoluto < c.DataDecorrenza+INTERVAL 12 MONTH AND i1.ImpInsoluto=0
+join insoluto i2 on i2.IdContratto=c.IdContratto AND i2.numRata=i1.NumRata+1 and i2.DataInsoluto < c.DataDecorrenza+INTERVAL 12 MONTH AND i2.ImpInsoluto=0
+join insoluto i3 on i3.IdContratto=c.IdContratto AND i3.numRata=i2.NumRata+1 and i3.DataInsoluto < c.DataDecorrenza+INTERVAL 12 MONTH AND i3.ImpInsoluto=0
 where (c.ImpInsoluto > 0 or c.IdStatoRecupero in (79,84)) and c.IdStatoContratto !=29
 UNION 
 select distinct c.IdContratto from contratto c 
 where c.DataDBT < c.DataDecorrenza + INTERVAL 12 MONTH AND (c.ImpInsoluto > 0 or c.IdStatoRecupero in (79,84)) and c.IdStatoContratto !=29";
             $query =   "v_insoluti_opt v $join WHERE v.IdContratto IN ($subselect)";
 			$queryForCount = $query;
+			trace($query);
 			break;
 		default:
 			return FALSE;

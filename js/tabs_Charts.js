@@ -264,14 +264,14 @@ DCS.Charts.Sintesi = Ext.extend(Ext.Panel, {
 				        	  var newDatasetCapRecupero = {
 				                 label: 'Capitale recuperato',
 				                 backgroundColor:'#99BBE8',
-				                 borderColor: window.chartColors.red,
+				                 borderColor: '#FF6384',
 				                 borderWidth: 1,
 				                 data: []
 				              }; 
 				              var newDatasetCapAffidato = {
 				                 label: 'Capitale affidato',
 				                 backgroundColor:'#88FF88',
-				                 borderColor: window.chartColors.blue,
+				                 borderColor: '#FF6384',
 				                 borderWidth: 1,
 				                 data: []
 				              };
@@ -443,14 +443,14 @@ DCS.Charts.Sintesi = Ext.extend(Ext.Panel, {
 				        	  var newDatasetIPR = {
 						         label: 'IPR (Recuperato/Affidato)',
 						         backgroundColor:'#99BBE8',
-				                 borderColor: window.chartColors.red,
+				                 borderColor: '#FF6384',
 				                 borderWidth: 1,
 				                 data: []
 							  };
 							  var newDatasetIPM = {
 						         label: 'IPM (Movimentate/Affidate)',
 						         backgroundColor:'#88FF88',
-				                 borderColor: window.chartColors.blue,
+				                 borderColor: '#FF6384',
 				                 borderWidth: 1,
 				                 data: []
 							  };
@@ -667,7 +667,7 @@ DCS.Charts.Sintesi = Ext.extend(Ext.Panel, {
 										var newDataset = {
 									        label: arrRes[i].Agenzia,
 									        backgroundColor: colori[this.gcStory.data.datasets.length],
-									        borderColor: 'rgba(99, 255, 132, 1)',
+									        borderColor: '#FF6384',
 									        borderWidth: 1,
 									        data: new Array(12),
 									    };
@@ -1229,7 +1229,7 @@ DCS.Charts.Pyramid = Ext.extend(Ext.Panel, {
 					        	var newDatasetTFSI = {
 					                 //backgroundColor:'#99BBE8',
 					                 backgroundColor: ['#99bbe8','#88ff88','#aa88ff','#3588aa','#489999','#66aa88','#02b955','#55ca00','#a2ca00','#ff4400','#ffca00','#cc0088','#aa2266','#bbaa99'],
-					                 borderColor: window.chartColors.red,
+					                 borderColor: '#FF6384',
 					                 borderWidth: 1,
 					                 data: []
 					            };
@@ -1386,7 +1386,7 @@ DCS.Charts.Pyramid = Ext.extend(Ext.Panel, {
 				        	if (arrRes.length>0) {
 				        	    var newDatasetStoryTFSI = {
 					                 backgroundColor: ['#99bbe8','#88ff88','#aa88ff','#3588aa','#489999','#66aa88','#02b955','#55ca00','#a2ca00','#ff4400','#ffca00','#cc0088','#aa2266','#bbaa99'],
-					                 borderColor: window.chartColors.red,
+					                 borderColor: '#FF6384',
 					                 borderWidth: 1,
 					                 data: []
 					            };
