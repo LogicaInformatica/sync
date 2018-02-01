@@ -263,6 +263,7 @@ echo "\n<script>",
 <script type="text/javascript" src="js/eliminaAvviso.js"></script>
 <script type="text/javascript" src="js/avvisoAgenzia.js"></script>
 <script type="text/javascript" src="js/importNote.js"></script>
+<script type="text/javascript" src="js/importVisureACI.js"></script>
 <script type="text/javascript" src="js/parametroSistema.js"></script>
 <script type="text/javascript" src="js/tabs_PraticheAzioniSpeciali.js"></script>
 <script type="text/javascript" src="js/dettaglioAzioneSpeciale.js"></script>

@@ -420,7 +420,6 @@ select distinct c.IdContratto from contratto c
 where c.DataDBT < c.DataDecorrenza + INTERVAL 12 MONTH AND (c.ImpInsoluto > 0 or c.IdStatoRecupero in (79,84)) and c.IdStatoContratto !=29";
             $query =   "v_insoluti_opt v $join WHERE v.IdContratto IN ($subselect)";
 			$queryForCount = $query;
-			trace($query);
 			break;
 		default:
 			return FALSE;

@@ -4856,6 +4856,17 @@ function eseguiCreazioneFileCerved($IdProvvigione,&$errorMsg,&$fileURL,$tipoClie
 }
 
 //--------------------------------------------------------------------
+// eseguiCreazioneFileAci  25-Gen-2018
+// Vengono creati i file di input ACI  
+//--------------------------------------------------------------------
+function eseguiCreazioneFileAci($IdProvvigione,&$errorMsg,&$fileURL){
+	$myFileURL=$fileURL;
+	$retVal[0]=creaFileAci($IdProvvigione,$errorMsg,$myFileURL); // solo persone giuridiche
+	$fileURL[0]=$myFileURL;
+	return $retVal;
+}
+
+//--------------------------------------------------------------------
 // creaFileCerved
 // Crea un file da inviare a Cerved per un dato IdProvvigione
 //--------------------------------------------------------------------
@@ -5032,6 +5043,70 @@ function creaFileCervedFisiche($IdProvvigione,&$errorMsg,&$fileURL)
 		}
 		$tipoWrite = FILE_APPEND;
 	}	
+	return $filePath;
+}
+
+//--------------------------------------------------------------------
+// creaFileAci
+// Crea un file col tracciato d’input ad ACI per un dato IdProvvigione
+//--------------------------------------------------------------------
+function creaFileAci($IdProvvigione,&$errorMsg,&$fileURL)
+{
+	// Individua le pratiche da includere nel file
+	$lotto = getScalar("SELECT CONCAT(CONVERT(CodRegolaProvvigione USING UTF8),'-',DATE_FORMAT(p.DataFin,'%Y%m%d'))
+	                    FROM provvigione p JOIN regolaprovvigione rp ON p.IdRegolaProvvigione=rp.IdRegolaProvvigione
+	                    WHERE IdProvvigione=$IdProvvigione");
+	
+	$sql ="SELECT c.CodBene 
+	       FROM v_dettaglio_provvigioni v  
+	       LEFT JOIN contratto c ON c.IdContratto=v.IdContratto 
+	       WHERE IdProvvigione=$IdProvvigione";
+	
+
+	$rows = getFetchArray($sql);
+	if (!is_array($rows))
+	{
+		$errorMsg = getLastError();
+		return ""; // nessun file generato
+	}	
+//	trace($sql,false);
+	$fileName = "File_ACI_".$lotto.".txt"; 
+	trace("Preparazione file estratto per ACI $fileName (".count($rows)." righe)",FALSE);
+	if (count($rows)==0)
+		return "0";
+		
+	// 16/1/2013: per evitare problemi di permission, genera il file in un subfolder che si chiama come lo userid
+	// del processo corrente (siccome la creazione pu� essere lanciata da web o da batch)
+	$processUser = posix_getpwuid(posix_geteuid());
+	$localDir = TMP_PATH."/".$processUser['name'];
+	$fileURL = TMP_REL_PATH."/".$processUser['name']."/$fileName";
+	
+	if (!file_exists($localDir)) // se necessario crea il folder che ha per nome il path della cartella allegati + id Compagnia + codice Contratto
+		mkdir($localDir,0777,true); // true --> crea le directory ricorsivamente
+		
+	$filePath = "$localDir/$fileName"; 
+	$tipoWrite = 0;
+		
+	// Looop principale (un record per ogni pratica inclusa)
+	foreach ($rows as $row)
+	{
+		if ($row["CodBene"]!=="" && $row["CodBene"]!==null) {
+		  $dataconsultazione = date('Ymd'); // formato richiesto AAAAMMGG	
+		  $tipoConsultazione = "T";
+          $serieTarga        = 1;
+          $targa             = $row["CodBene"];
+        
+          $rec = "$dataconsultazione$tipoConsultazione$serieTarga$targa\r\n";
+		  if (!file_put_contents($filePath,$rec,$tipoWrite))
+		  {
+			 $errorMsg = "Fallita scrittura file $filePath";
+			 trace($errorMsg,FALSE);
+			 return "";
+		  }
+		  $tipoWrite = FILE_APPEND;	
+		}	
+		
+	}
 	return $filePath;
 }
 

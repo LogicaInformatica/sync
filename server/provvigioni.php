@@ -69,7 +69,7 @@ function doMain()
 			break;
 		case "sintesiPerLAgenzia": // sintesi di un'agenzia vista dal manager dell'agenzia
 			                       // non vede quelle prima di agosto 2011 ne' quelle piu' vecchie di 2 mesi
-			                       // inoltre vede le provv. di tipo "X" e non "C" perché è limitata dalla data di max visibilità STR
+			                       // inoltre vede le provv. di tipo "X" e non "C" perchï¿½ ï¿½ limitata dalla data di max visibilitï¿½ STR
 			$dataIntroduzioneTipoX = getScalar("SELECT MIN(DataFin) FROM provvigione WHERE TipoCalcolo='X'");                    
 			$query = "v_provvigione WHERE IdReparto=".$context["IdReparto"] . 
 				" AND (StatoProvvigione<2 OR DataFineAffido>CURDATE()-INTERVAL 2 MONTH AND DataFineAffido>'2011-08-01')";
@@ -118,7 +118,7 @@ function doMain()
 			      echo "{success:false, error:\"Ricalcolo provvigione non riuscito (ricarica la lista e riprova)\"}";
 				  die();		
 			}
-			// Se si tratta di riga tipo C, ricalcola anche la riga corrispondente di tipo X (è come la C, ma con visibilità
+			// Se si tratta di riga tipo C, ricalcola anche la riga corrispondente di tipo X (ï¿½ come la C, ma con visibilitï¿½
 			// ristretta per le agenzie) 
 			$idprovv  = $_REQUEST['idProvvigione'];
 			$tipocalc = "'".$row["TipoCalcolo"]."'";
@@ -165,6 +165,27 @@ function doMain()
 				}
 			}
 			break;
+		case "fileAci":
+			$filePath = eseguiCreazioneFileAci($_REQUEST['idProvvigione'],$errmsg,$fileURL,$_REQUEST['tipoCliente']);
+			if ($errmsg>"")
+			    die("{success:false, error:\"$errmsg\"}");
+			else if ($filePath[0]=="0")
+			{
+	   			die("{success:true, message:\"Non ci sono pratiche da estrarre\"}");
+			}
+			else
+			{
+				$parti = split("/",$filePath[0]);
+				$filename = $parti[count($parti)-1];
+				if (count($filePath)==1)
+		   			die("{success:true, message:\"Creato file per ACI: <a href='$fileURL[0]' target='_blank'>$filename</a>\"}");
+				else {
+					$parti1 = split("/",$filePath[1]);
+					$filename1 = $parti1[count($parti1)-1];
+					die("{success:true, message:\"Creati file per ACI: <a href='$fileURL[0]' target='_blank'>$filename</a>&nbsp;&nbsp;<a href='$fileURL[1]' target='_blank'>$filename1</a>\"}");
+				}
+			}
+			break;	
 		default:
 			echo "{failure:true, task: '$task'}";
 			return;

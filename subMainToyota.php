@@ -114,6 +114,8 @@
 			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Azioni con convalida',panel: DCS.PraticheAzioniSpeciali});
 		if (CONTEXT.MENU_GP_EXPERIAN)
 			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Experian',panel: DCS.Experian.create});
+		if(CONTEXT.MENU_GP_VA)
+    		menu_insoluti.add({xtype:'btnsubmenu', text: 'Importa visure ACI',  panel: DCS.ImportVisureACI.create});	
 		
     	//----------------SOTTOMENU AFFIDAMENTI------------------
     	var menu_affidamenti = new DCS.Menu ({title: 'Affidamenti',items: []});
@@ -161,7 +163,7 @@
 			menu_gestPratiche_Agenzia.add({xtype: 'btnsubmenu',text: 'Azioni con convalida',panel: DCS.PraticheAzioniSpeciali});
     	if(CONTEXT.MENU_GPA_IMP)
     		menu_gestPratiche_Agenzia.add({xtype:'btnsubmenu', text: 'Importa Note',  panel: DCS.ImportNote.create});
-    		
+    	    		
     	//----------------SOTTOMENU GESTIONE INCASSI PER OPERATORE INTERNO ------------------
     	var menu_incassi = new DCS.Menu ({title: 'Gestione incassi',items: []});
     	if (CONTEXT.MENU_INC_VAL_CORR)

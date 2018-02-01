@@ -108,6 +108,14 @@ DCS.GridProvvigioni = Ext.extend(Ext.grid.GridPanel, {
 						                            var rec = grid.gstore.getAt(rowIndex);
 						                            grid.azione("fileCerved",rec);
 						                   }
+		        		             },
+									 {
+				    		               icon   : 'images/exportAci.png',               
+						                   tooltip: 'Produce file ACI',
+						                   handler: function(grid, rowIndex, colIndex) {
+						                            var rec = grid.gstore.getAt(rowIndex);
+						                            grid.azione("fileAci",rec);
+						                   }
 		        		             }]
 						}
 			    	    ];
@@ -192,6 +200,14 @@ DCS.GridProvvigioni = Ext.extend(Ext.grid.GridPanel, {
 						                   handler: function(grid, rowIndex, colIndex) {
 						                            var rec = grid.gstore.getAt(rowIndex);
 						                            grid.azione("fileCerved",rec);
+						                   }
+		        		             },
+									 {
+				    		               icon   : 'images/exportAci.png',               
+						                   tooltip: 'Produce file ACI',
+						                   handler: function(grid, rowIndex, colIndex) {
+						                            var rec = grid.gstore.getAt(rowIndex);
+						                            grid.azione("fileAci",rec);
 						                   }
 		        		             }]
 						}
@@ -288,6 +304,14 @@ DCS.GridProvvigioni = Ext.extend(Ext.grid.GridPanel, {
 						                   handler: function(grid, rowIndex, colIndex) {
 						                            var rec = grid.gstore.getAt(rowIndex);
 						                            grid.azione("fileCerved",rec);
+						                   }
+		        		             },
+									 {
+				    		               icon   : 'images/exportAci.png',               
+						                   tooltip: 'Produce file ACI',
+						                   handler: function(grid, rowIndex, colIndex) {
+						                            var rec = grid.gstore.getAt(rowIndex);
+						                            grid.azione("fileAci",rec);
 						                   }
 		        		             }]
 							}
@@ -427,7 +451,7 @@ DCS.GridProvvigioni = Ext.extend(Ext.grid.GridPanel, {
    	   				scope:this
    	   			}); 		 									
    	   		} else {
-   	   			showAnswFormProvvigione(task, task=='fileCerved'?'creazione file CERVED':'ricalcolo' ,idProvvigione, this.gstore);
+   	   			showAnswFormProvvigione(task, task=='fileCerved'?'creazione file CERVED':'fileAci'?'creazione file ACI':'ricalcolo' ,idProvvigione, this.gstore);
    	   		}
 		}
 	},	
