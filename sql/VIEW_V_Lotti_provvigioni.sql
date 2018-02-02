@@ -1,26 +1,25 @@
 #
 # Lista delle coppie regola provvigione + lotto per le quali esiste qualche assegnazione
 #
-# nel caso dello stragiudiziale, la chiusura provvigioni è mensile, quindi visualizza tutti i lotti in corso come
+# nel caso dello stragiudiziale, la chiusura provvigioni ï¿½ mensile, quindi visualizza tutti i lotti in corso come
 # se scadessero al prossimo fine mese
 #
-# Dal 10/12/2012, viene creata anche una riga per ogni lotto STR/LEG vero e proprio (arrotondato a fine mese, perché LEG prevede
-# date fine affido qualsiasi). Tale riga serve per la lista provvigioni STR/LEG organizzata per lotto anziché per mese
+# Dal 10/12/2012, viene creata anche una riga per ogni lotto STR/LEG vero e proprio (arrotondato a fine mese, perchï¿½ LEG prevede
+# date fine affido qualsiasi). Tale riga serve per la lista provvigioni STR/LEG organizzata per lotto anzichï¿½ per mese
 # di chiusura intermedio
 #
-# Dal 5/5/14, genera righe tipoCalcolo=X che sono uguali al tipo C, ma limitate dalla data max visibilità STR
-# (cioè sono usate per la lista visibile alle agenzie)
+# Dal 5/5/14, genera righe tipoCalcolo=X che sono uguali al tipo C, ma limitate dalla data max visibilitï¿½ STR
+# (cioï¿½ sono usate per la lista visibile alle agenzie)
 #
 # ==> PER ORA ESCLUDE I LEGALI, anche se nella select sono gestiti (ma esclusi dalla WHERE)
 create or replace view v_lotti_provvigioni
 AS
 select distinct 1 as ordine,a.IdAgenzia,r.idregolaprovvigione as IdRegola,
 IF (FasciaRecupero LIKE 'DBT%' OR FasciaRecupero LIKE '%REPO%',
-	DATE_FORMAT(
-    LEAST(LAST_DAY(a.DataFin), curdate() + INTERVAL 1 MONTH - INTERVAL DAY(CURDATE()) DAY) ,"%M %Y"),
+	DATE_FORMAT( LEAST(a.DataFin,curdate()) ,"%M %Y"),
 	CONCAT('Fino al ',DATE_FORMAT(a.DataFin,'%d/%m/%y'))) AS Lotto,
 IF (FasciaRecupero LIKE 'DBT%' OR FasciaRecupero LIKE '%REPO%',
-	LEAST(LAST_DAY(a.DataFin),curdate() + INTERVAL 1 MONTH - INTERVAL DAY(CURDATE()) DAY),a.DataFin) as DataFineAffido,
+	LAST_DAY(LEAST(a.DataFin,curdate())),a.DataFin) as DataFineAffido,
 IF (FasciaRecupero LIKE 'DBT%' OR FasciaRecupero LIKE '%REPO%' ,'C','N') AS TipoCalcolo
 ,r.CodRegolaProvvigione
 FROM regolaprovvigione r
@@ -31,12 +30,8 @@ where a.IdAgenzia>0 AND FasciaRecupero!='RINE' AND FasciaRecupero!='LEGALE'
 UNION ALL
 
 select distinct 2 as ordine,a.IdAgenzia,r.idregolaprovvigione as IdRegola,
-	DATE_FORMAT( LEAST(a.DataFin,
-                     curdate() + INTERVAL 1 MONTH - INTERVAL DAY(CURDATE()) DAY
-                     ) ,"%M %Y"
-             ) AS Lotto,
-	LEAST(LAST_DAY(a.DataFin),
-        curdate() + INTERVAL 1 MONTH - INTERVAL DAY(CURDATE()) DAY) as DataFineAffido,
+	DATE_FORMAT( LEAST(a.DataFin,curdate()),"%M %Y") AS Lotto,
+	LAST_DAY(LEAST(a.DataFin,curdate())) as DataFineAffido,
 	'X' AS TipoCalcolo,r.CodRegolaProvvigione
 FROM regolaprovvigione r
 JOIN assegnazione a ON a.idregolaprovvigione=r.idregolaprovvigione
