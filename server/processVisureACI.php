@@ -153,17 +153,24 @@ function importFile(){
 					//trace("parametri: ".print_r($parameter,true));
 					
 					$fileVisureAci = 'visureACI.html';
-					$content = file_get_contents(TEMPLATE_PATH.'/'.$fileVisureAci);
+					$content = file_get_contents(TEMPLATE_PATH.'/visureACI.html');
+					
+					if ($content == "") {
+					  fail("Errore nella lettura del file $content");
+					  Throw new Exception("Errore nella lettura del file $content");
+					  //trace("Errore nella lettura del file $content",false);
+					}
+					
 					$visura = replaceVariables($content,$parameter);
-					//trace("file output: ".$visura);
+					trace("file output: ".$visura);
 					$fileName =	"VisuraACI".$datiRichiesta['Targa'].".pdf";
 	                $newFile  = $localDir."/".$fileName;
 					$result = creaPdfDaHtmlACI($visura,$newFile);
 					
 					if(!result){
+						fail("Errore nella scrittura del file $newFile");
 						Throw new Exception("Errore nella scrittura del file $newFile");
-						trace("Errore nella scrittura del file $newFile",false);
-						return  false;
+						//trace("Errore nella scrittura del file $newFile",false);
 					}
 					//ciclo per inserire in allegato il pdf creato
 					for ($i=0;$i<count($pratica);$i++) {
@@ -226,7 +233,7 @@ function allegaDocumentoPDF($pratica,$idtipo,$titolo,$riservato,$fileName,$pathF
 			if (!mkdir($localDir,0777,true)) { // true --> crea le directory ricorsivamente
 				setLastError("Impossibile creare la cartella $localDir");
 				trace("Impossibile creare la cartella $localDir");
-				return FALSE;
+				fail("Impossibile creare la cartella $localDir");
 			}		
 		}
 		//trace("allegaDocumento 3",false);
@@ -318,7 +325,7 @@ function creaPdfDaHtmlACI($html,$filePath) {
 		$pdf->AddPage();
 		
 		$pdf->SetAutoPageBreak(false, 0);
-		$img_file = '../images/visuraACI2.png';
+		$img_file = '../images/visuraAci.png';
         $pdf->Image($img_file, 0, 2, 210, 295, '', '', '', false, 300, '', false, false, 0);
         $pdf->SetAutoPageBreak(true, 0);
 		$pdf->setPageMark();

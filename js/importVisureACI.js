@@ -130,6 +130,7 @@ DCS.ImportVisureACI = function() {
 									  }
                                 },
                                 failure: function(frm, action) {
+                                	DCS.hideMask();
                                     Ext.MessageBox.alert('Errore', action.result.error);
                                 }
                             }); //fine submit formImport
