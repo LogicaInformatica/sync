@@ -197,6 +197,7 @@ echo "\n<script>",
 <script type="text/javascript" src="js/grid_GestioneParametriSistema.js"></script>
 <script type="text/javascript" src="js/tabs_Experian.js"></script>
 <script type="text/javascript" src="js/tabs_Charts.js"></script>
+<script type="text/javascript" src="js/tabs_Charts_MR.js"></script>
 <script type="text/javascript" src="js/tabs_Comunicazioni.js"></script>
 <script type="text/javascript" src="js/tabs_Distinte.js"></script>
 <script type="text/javascript" src="js/tabs_ErrMsgImportedFiles.js"></script>

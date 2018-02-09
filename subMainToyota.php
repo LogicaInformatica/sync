@@ -110,6 +110,8 @@
 			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Grafici',			panel: DCS.Charts.Tabs.create_TFSI});
 		if (CONTEXT.MENU_GP_GRAF_STRLEG)
 			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Grafici STR',		panel: DCS.Charts.Tabs.create_TFSI_STR});
+		if (CONTEXT.MENU_GP_GRAF_MAXRAT)
+			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Grafici Maxirate',	panel: DCS.ChartsMr.TabsMRRL.create_TFSI_MR});	
 		if (CONTEXT.MENU_AZI_SPEC_I)
 			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Azioni con convalida',panel: DCS.PraticheAzioniSpeciali});
 		if (CONTEXT.MENU_GP_EXPERIAN)
