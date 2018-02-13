@@ -1137,7 +1137,6 @@ DCS.ChartsMr.TabsMRRL = function(){
 					
 			var targetGrid = new DCS.ChartsMr.Statistiche({
 				titlePanel: 'Sintesi del periodo',
-				stateId: 'TargetTable1',
 				stateful: true, gruppo: 1
 				});
 			
