@@ -37,5 +37,3 @@ left join reparto r on r.idreparto=c.idagenzia
 left join tipospeciale t on c.IdTipoSpeciale=t.IdTipoSpeciale
 left join area ar on ar.idarea=cli.idarea
 left join regolaripartizione rp ON rp.IdRegolaProvvigione=c.IdRegolaProvvigione;
-
-select * from 

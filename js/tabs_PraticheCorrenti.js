@@ -84,7 +84,8 @@ DCS.GridPraticheCorrenti = Ext.extend(DCS.GridPratiche, {
 					{name: 'MesiDilazione', type: 'int'},
 					{name: 'FormDettaglio'}, // serve per avere il nome del dettaglio (xtype)
 					{name: 'StatoInDBT'},
-					{name: 'CategoriaMaxirata'}];
+					{name: 'CategoriaMaxirata'},
+					{name: 'FlagVisuraAci'}];
 
 		var columns;
 		if (this.task=="inScadenza") {
@@ -95,7 +96,7 @@ DCS.GridPraticheCorrenti = Ext.extend(DCS.GridPratiche, {
 	    	    {dataIndex:'nota',	width:140,	header:'Nota',filterable:false},
 	        	{dataIndex:'DataCambioStato',width:40,xtype:'datecolumn', format:'d/m/y',	header:'Data stato',align:'left', filterable: true, groupable:true, sortable:true},
 	        	{dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false},
-	        	{dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+	        	{dataIndex:'cliente',	width:90,	header:'Cliente',renderer:DCS.render.flagVisuraAci,filterable:false,sortable:true},
 {dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
 	        	{dataIndex:'prodotto',	width:120,	header:'Prodotto',filterable:true,sortable:true,groupable:true},
 //	        	{dataIndex:'rata',		width:30,	header:'N.rata',align:'right',filterable:false,sortable:true},
@@ -158,7 +159,7 @@ DCS.GridPraticheCorrenti = Ext.extend(DCS.GridPratiche, {
 			columns = [
 	        	{dataIndex:'DataCambioStato',width:40,xtype:'datecolumn', format:'d/m/y',	header:'Data stato',align:'left', filterable: true, groupable:true, sortable:true},
 	        	{dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false},
-	        	{dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+	        	{dataIndex:'cliente',	width:90,	header:'Cliente',renderer:DCS.render.flagVisuraAci,filterable:false,sortable:true},
 {dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
 	        	{dataIndex:'prodotto',	width:120,	header:'Prodotto',filterable:true,sortable:true,groupable:true},
 	        	{dataIndex:'insoluti',	width:30,	header:'N.ins.',align:'right',filterable:false,sortable:true,groupable:true},
@@ -219,7 +220,7 @@ DCS.GridPraticheCorrenti = Ext.extend(DCS.GridPratiche, {
 			columns = [
 				{dataIndex:'DataCambioStato',width:90,xtype:'datecolumn', format:'d/m/y',	header:'Data stato',align:'left', filterable: true, groupable:true, sortable:true},
 		        	{dataIndex:'numPratica',width:110,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false},
-		        	{dataIndex:'cliente',	width:240,	header:'Cliente',filterable:false,sortable:true},
+		        	{dataIndex:'cliente',	width:240,	header:'Cliente',renderer:DCS.render.flagVisuraAci,filterable:false,sortable:true},
 		        	{dataIndex:'prodotto',	width:240,	header:'Prodotto',filterable:true,sortable:true,groupable:true},
 		        	{dataIndex:'rata',		width:30,	header:'N.rata',align:'right',filterable:false,sortable:true},
 		        	{dataIndex:'insoluti',	width:30,	header:'N.ins.',hidden:true,align:'right',filterable:false,sortable:true,groupable:true},
@@ -285,7 +286,7 @@ DCS.GridPraticheCorrenti = Ext.extend(DCS.GridPratiche, {
 			columns = [
 			        {dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false,exportable:false},
 			        {dataIndex:'Pratica',width:45,	header:'N.Pratica',align:'left', hidden:true,hideable:true,exportable:true,stateful:false},
-			        {dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+			        {dataIndex:'cliente',	width:90,	header:'Cliente',renderer:DCS.render.flagVisuraAci,filterable:false,sortable:true},
 			        {dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
 		        	{dataIndex:'DataLiquidazione',width:30,xtype:'datecolumn', format:'d/m/y',	header:'Data liquidazione',align:'left',hidden:true,exportable:true,hideable:false,stateful:false},
 		        	{dataIndex:'AbbrStatoRecupero',		width:40,	header:'Stato',hidden:this.hideStato,filterable:true,sortable:true,groupable:true},		        	
@@ -371,7 +372,7 @@ DCS.GridPraticheCorrenti = Ext.extend(DCS.GridPratiche, {
 			columns = [
 	        	{dataIndex:'DataCambioStato',width:40,xtype:'datecolumn', format:'d/m/y',	header:'Data stato',align:'left', filterable: true, groupable:true, sortable:true},
 	        	{dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false},
-	        	{dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+	        	{dataIndex:'cliente',	width:90,	header:'Cliente',renderer:DCS.render.flagVisuraAci,filterable:false,sortable:true},
 {dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
 	        	{dataIndex:'prodotto',	width:120,	header:'Prodotto',filterable:true,sortable:true,groupable:true},
 	        	{dataIndex:'rata',		width:30,	header:'N.rata',align:'right',filterable:false,sortable:true},

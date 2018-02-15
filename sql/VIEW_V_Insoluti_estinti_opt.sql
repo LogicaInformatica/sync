@@ -18,7 +18,7 @@ IF (DataUltimaScadenza<=CURDATE(),0,
 Numrate - (period_diff(EXTRACT(YEAR_MONTH FROM curdate()),EXTRACT(YEAR_MONTH FROM dataprimascadenza))
 + if (day(curdate())>=day(dataultimascadenza),1,0))) AS RateFuture,
 co.IdStatoRinegoziazione AS FlagRinegoziazione,v.StatoRinegoziazione,
-DescrBene,CodBene,v.FormDettaglio,sx.AbbrStatoContratto,co.DataChiusura, co.IdStatoStragiudiziale
+DescrBene,CodBene,v.FormDettaglio,sx.AbbrStatoContratto,co.DataChiusura, co.IdStatoStragiudiziale,co.FlagVisuraAci
 from contratto co
 join _opt_insoluti v ON v.IdContratto=co.IdContratto
 left join statocontratto sx on sx.IdStatoContratto = co.IdStatoContratto

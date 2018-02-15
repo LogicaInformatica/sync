@@ -849,17 +849,16 @@ DCS.ChartsMr.Statistiche = Ext.extend(Ext.grid.GridPanel, {
 	titlePanel: '',
 		
 	initComponent : function() {
-		fields = [{name: 'IdCategoriaMaxirata'},
-	              {name: 'TotaleImportoInsoluto',type:'float'},
-	              {name: 'NumCategoriaMaxirata',type:'int'},
-	              {name: 'CategoriaMaxirata'}
-//		              {name: 'Sting'},{name: 'StingNum',type:'int'}
-	              ];
+		var fields = [{name: 'IdCategoriaMaxirata'},
+	                  {name: 'TotaleImportoInsoluto',type:'float'},
+	                  {name: 'NumCategoriaMaxirata',type:'int'},
+	                  {name: 'CategoriaMaxirata'}
+	                 ];
 
-	 	columns = [{dataIndex:'CategoriaMaxirata',width:100, header:'Categoria maxirata',sortable:false},
-	   	           {dataIndex:'TotaleImportoInsoluto',width:100, header:'TOTALE Importo Insoluto',sortable:true,align:'right',css:'background-color:aquamarine;font-weight:bold;',xtype:'numbercolumn',format:'0.000,00/i'},
-	   	           {dataIndex:'NumCategoriaMaxirata',width:50, header:'TOTALE N.',sortable:true,align:'right'},
-	   	           ];
+	 	var columns = [{dataIndex:'CategoriaMaxirata',width:100, header:'Categoria maxirata',sortable:true,align:'right'},
+	   	               {dataIndex:'TotaleImportoInsoluto',width:100, header:'TOTALE Importo Insoluto',sortable:true,align:'right',css:'background-color:aquamarine;font-weight:bold;',xtype:'numbercolumn',format:'0.000,00/i'},
+	   	               {dataIndex:'NumCategoriaMaxirata',width:50, header:'TOTALE N.',sortable:true,align:'right'},
+	   	              ];
 		
 		this.gstore = new Ext.data.GroupingStore({
 			autoDestroy: true,
@@ -896,7 +895,7 @@ DCS.ChartsMr.Statistiche = Ext.extend(Ext.grid.GridPanel, {
 							{xtype:'tbtext', text:this.titlePanel, cls:'panel-title'},
 							'->', {type: 'button', text: 'Stampa elenco',  icon: 'images/stampa.gif', handler: function(){Ext.ux.Printer.print(this);}, scope:this},
 			                '-', {type: 'button', hidden:!CONTEXT.EXPORT, text: 'Esporta elenco', icon:'images/export.png',  handler: function(){Ext.ux.Printer.exportXLS(this);}, scope:this},
-			                '-', helpButton("Grafici"),' '
+			                '-', helpButton("GraficiMaxirate"),' '
 						];
 	
 		Ext.apply(this, {
@@ -997,7 +996,7 @@ DCS.ChartsMr.StatMaxirate = Ext.extend(Ext.Panel, {
 				select: function(combo, record, index) {
 					Ext.getCmp(this.task+'_title').update('<h1>' + record.data.FY + ' - ' + record.data.mese  + ' </h1>');
 					// Aggiorna la griglia dei target
-					this.grid.titlePanel = "Target "+record.data.mese;
+					this.grid.titlePanel = "Maxirate "+record.data.mese;
 					var gstore = this.grid.getStore();
 					gstore.baseParams = {task:'store', mese:record.data.num};
 					gstore.reload();
@@ -1019,10 +1018,10 @@ DCS.ChartsMr.StatMaxirate = Ext.extend(Ext.Panel, {
 			listeners: {
 				select: function(combo, record, index) {
 					// Aggiorna la griglia dei target
-					this.grid.titlePanel = "Target Fiscal Year "+record.data.num;
+					/*this.grid.titlePanel = "Target Fiscal Year "+record.data.num;
 					var gstore = this.grid.getStore();
 					gstore.baseParams = {task:'store', anno:record.data.num, gruppo:this.gruppo};
-					gstore.reload();
+					gstore.reload();*/
 				},
 				scope: this
 			}
@@ -1043,17 +1042,17 @@ DCS.ChartsMr.StatMaxirate = Ext.extend(Ext.Panel, {
 			},{
 				xtype:'panel',
 				layout: 'column',
-				id:this.task+'_page',
+				id:this.task+'_pageM',
 				items: [{
 					xtype:'panel',
 					columnWidth: .6,
 					layout: 'column',
-					id:this.task+'_pnl'
+					id:this.task+'_pnlM'
 					//html: '<canvas id="'+this.id+'_canvasTFSI"></canvas>'
 				},{
 					xtype:'panel',
 					columnWidth: .4,
-					id:this.task+'_table',
+					id:this.task+'_tableM',
                     height:450,
 					layout:'fit',
 					items: [this.grid]
@@ -1153,23 +1152,7 @@ DCS.ChartsMr.TabsMRRL = function(){
 				flex: 1,
 				items: items
 			});
-		},
-		create_TFSI_RL: function(){
-			items = Array();
-			//if (CONTEXT.CAN_GRAPH_ALL)
-				items.push(new DCS.ChartsMr.RiscattiScaduti({
-					titlePanel: 'Riscatti scaduti',
-					title: 'Riscatti scaduti',
-					task: 'riscattiscaduti',id: 'graphRiscattiScaduti'
-					}));
-			
-			return new Ext.TabPanel({
-    			activeTab: 0,
-				enableTabScroll: true,
-				flex: 1,
-				items: items
-			});
-		}		
+		}	
 	};
 	
 }();

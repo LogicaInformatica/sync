@@ -179,9 +179,12 @@ function importFile(){
 					  	$numAllegati += 1; 
 					  	//cancellazione dell'allegato precedentemente inserito
 					  	if ($IdAllegato!=='' && $IdAllegato!==null) {
-						  	$sqlDelete = ("DELETE FROM allegato WHERE IdAllegato=$IdAllegato");
-						  	execute($sqlDelete);
-						}	
+						  	$sqlDeleteAllegato = ("DELETE FROM allegato WHERE IdAllegato=$IdAllegato");
+						  	execute($sqlDeleteAllegato);
+						}
+						//imposto il FlagVisuraAci della tabella contratto a Y
+						$sqlUpdateFlagVisuraAci = "UPDATE contratto SET FlagVisuraAci = 'Y' WHERE IdContratto=".$pratica[$i]['IdContratto'];
+						execute($sqlUpdateFlagVisuraAci);	
 					  }	
 					}
 					unlink($newFile);	

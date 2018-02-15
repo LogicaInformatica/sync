@@ -69,12 +69,13 @@ DCS.GridPraticheWrkf = Ext.extend(DCS.GridPratiche, {
 				{name: 'InteressiDilazione', type: 'float'},
 				{name: 'MesiDilazione', type: 'int'},
 				{name: 'FormDettaglio'}, // serve per avere il nome del dettaglio (xtype)
-				{name: 'StatoInDBT'}];
+				{name: 'StatoInDBT'},
+				{name: 'FlagVisuraAci'}];
 
 	var columns = [
     	{dataIndex:'DataCambioStato',width:40,xtype:'datecolumn', format:'d/m/y',	header:'Data stato',align:'left', filterable: true, groupable:true, sortable:true},
     	{dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false},
-    	{dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+    	{dataIndex:'cliente',	width:90,	header:'Cliente',renderer:DCS.render.flagVisuraAci,filterable:false,sortable:true},
 {dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
     	{dataIndex:'prodotto',	width:120,	header:'Prodotto',filterable:true,sortable:true,groupable:true},
     	{dataIndex:'rata',		width:30,	header:'N.rata',align:'right',filterable:false,sortable:true},

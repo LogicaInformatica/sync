@@ -10,7 +10,7 @@ v.classif,v.AbbrClasse,v.agenzia,v.StatoLegale,v.StatoStragiudiziale,
 co.IdCliente,v.tipoPag,v.IdFamiglia,v.OrdineStato,v.stato AS CodStatoRecupero,co.IdAgenzia,
 v.FlagNoAffido,co.DataCambioStato,co.DataCambioClasse,NULL AS DataScadenzaAzione,co.DataInizioAffido,co.DataFineAffido,
 v.IdReparto, v.Telefono,  'N' as CiSonoAzioniOggi,DataUltimoPagamento,co.IdStatoRecupero,co.idClasse,v.CodiceFiscale
-,co.ImpCapitale,
+,co.ImpCapitale,co.FlagVisuraAci,
       CASE WHEN FasciaRecupero LIKE 'DBT%' OR FasciaRecupero LIKE '%REPO%' THEN 2
              WHEN FasciaRecupero = 'LEGALE' then 3
              WHEN FasciaRecupero = 'RINE' then 4

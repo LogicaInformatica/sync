@@ -97,11 +97,12 @@ DCS.pnlSearch = Ext.extend(DCS.GridPratiche, {
  						 {name: 'IdAgenzia', type: 'int'},
  						 {name: 'IdAgenziaCorrente', type: 'int'},
 					     {name: 'FormDettaglio'}, // serve per avere il nome del dettaglio (xtype)
- 					     {name: 'IdProvvigione'}
+ 					     {name: 'IdProvvigione'},
+					     {name: 'FlagVisuraAci'}
 						];		
 			columns = [
 			        	{dataIndex:'CodContratto',width:55,	header:'N.Pratica',align:'left', filterable: true, sortable:true},
-			        	{dataIndex:'cliente',	width:95,	header:'Cliente',filterable:false,sortable:true},
+			        	{dataIndex:'cliente',	width:95,	header:'Cliente',renderer:DCS.render.flagVisuraAci,filterable:false,sortable:true},
 			        	{dataIndex:'Operatore',	width:45,	header:'Operatore',filterable:true,sortable:true, hidden:false, hideable:true},
 					    {dataIndex:'DataInizioAffidoContratto',width:50,xtype:'datecolumn', format:'d/m/y',	header:'Inizio affido',align:'left', sizable:false, groupable:true, sortable:true},
 					    {dataIndex:'DataFineAffidoContratto',width:50, xtype:'datecolumn', format:'d/m/y',	header:'Fine affido',align:'left', sizable:false, groupable:true, sortable:true},
@@ -157,11 +158,12 @@ DCS.pnlSearch = Ext.extend(DCS.GridPratiche, {
 					     {name: 'FormDettaglio'}, // serve per avere il nome del dettaglio (xtype)
  						 {name: 'IdAgenzia', type: 'int'},
  						 {name: 'IdAgenziaCorrente', type: 'int'},
-					     {name: 'IdProvvigione'}
+					     {name: 'IdProvvigione'},
+					     {name: 'FlagVisuraAci'}
 						];		
 			columns = [
 			        	{dataIndex:'CodContratto',width:55,	header:'N.Pratica',align:'left', filterable: true, sortable:true},
-			        	{dataIndex:'cliente',	width:95,	header:'Cliente',filterable:false,sortable:true},
+			        	{dataIndex:'cliente',	width:95,	header:'Cliente',renderer:DCS.render.flagVisuraAci,filterable:false,sortable:true},
 			        	{dataIndex:'Operatore',	width:45,	header:'Operatore',filterable:true,sortable:true, hidden:false, hideable:true},
 					    {dataIndex:'DataInizioAffidoContratto',width:50,xtype:'datecolumn', format:'d/m/y',	header:'Inizio affido',align:'left', sizable:false, groupable:true, sortable:true},
 					    {dataIndex:'DataFineAffidoContratto',width:50, xtype:'datecolumn', format:'d/m/y',	header:'Fine affido',align:'left', sizable:false, groupable:true, sortable:true},
@@ -229,7 +231,8 @@ DCS.pnlSearch = Ext.extend(DCS.GridPratiche, {
 				{name: 'CiSonoAzioniOggi'},
 				{name: 'NumNote', type: 'int'},
 				{name: 'FormDettaglio'}, // serve per avere il nome del dettaglio (xtype)
-				{name: 'NumAllegati', type: 'int'}
+				{name: 'NumAllegati', type: 'int'},
+			    {name: 'FlagVisuraAci'}
 			];
 			
 			columns = [
@@ -241,7 +244,7 @@ DCS.pnlSearch = Ext.extend(DCS.GridPratiche, {
 				{dataIndex:'CiSonoAzioniOggi',width:16, exportable:false, renderer:DCS.render.spunta, header:' ',align:'center', sizable:false, menuDisabled:true, hideable:false, groupable:false, sortable:false},
 				{dataIndex:'DataScadenzaAzione',width:60, renderer:DCS.render.prossimaData, header:'Pross.azione',align:'left', groupable:true, sortable:true},			    
 	        	{dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true},
-	        	{dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+	        	{dataIndex:'cliente',	width:90,	header:'Cliente',renderer:DCS.render.flagVisuraAci,filterable:false,sortable:true},
 {dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
 	        	{dataIndex:'Telefono',	width:60,	header:'Telefono',filterable:false,sortable:false},
 	        	{dataIndex:'CodiceFiscale', width:70, header:'Codice Fiscale',hidden:true,hideable:true,exportable:true},
@@ -330,13 +333,14 @@ DCS.pnlSearch = Ext.extend(DCS.GridPratiche, {
 							{name: 'InteressiDilazione', type: 'float'},
 							{name: 'FormDettaglio'}, // serve per avere il nome del dettaglio (xtype)
 							{name: 'MesiDilazione', type: 'int'},
-							{name: 'LastUpd', type:'date', dateFormat:'Y-m-d H:i:s'}
+							{name: 'LastUpd', type:'date', dateFormat:'Y-m-d H:i:s'},
+					        {name: 'FlagVisuraAci'}
 							];
 					
 						columns = [
 						        	{dataIndex:'LastUpd',width:60,xtype:'datecolumn', format:'d/m/y',	header:'Ultima variaz.',align:'left', filterable: true, groupable:true, sortable:true},
 						        	{dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: true, sortable:true,groupable:false},
-						        	{dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+						        	{dataIndex:'cliente',	width:90,	header:'Cliente',renderer:DCS.render.flagVisuraAci,filterable:false,sortable:true},
 {dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
 						        	{dataIndex:'prodotto',	width:120,	header:'Prodotto',filterable:true,sortable:true,groupable:true},
 						        	{dataIndex:'AbbrStatoContratto', width:40,	header:'Stato Prat.',hidden:this.hideStato,filterable:true,sortable:true,groupable:true},
@@ -393,13 +397,14 @@ DCS.pnlSearch = Ext.extend(DCS.GridPratiche, {
 				{name: 'NumAllegati', type: 'int'},
 				{name: 'DataInizioAffido', type:'date'},
 				{name: 'FormDettaglio'}, // serve per avere il nome del dettaglio (xtype)
-				{name: 'DataFineAffido', type:'date'}
+				{name: 'DataFineAffido', type:'date'},
+			    {name: 'FlagVisuraAci'}
 			];
 		
 			columns = [
 				{dataIndex:'numPratica',width:45,	header:'N.Pratica',align:'left', filterable: false, sortable:true},
 				{dataIndex:'ruolo',width:65,		header:'Ruolo',align:'left', sortable:true, hidden:(this.IdC!='PraticheSoggetto')},
-				{dataIndex:'cliente',	width:90,	header:'Cliente',filterable:false,sortable:true},
+				{dataIndex:'cliente',	width:90,	header:'Cliente',renderer:DCS.render.flagVisuraAci,filterable:false,sortable:true},
 {dataIndex:'CodCliente',width:70,	header:'Cod.Cliente',hidden:true,hideable:true},
 				{dataIndex:'prodotto',	width:120,	header:'Prodotto',filterable:true,sortable:true,groupable:true},
 				{dataIndex:'rata',		width:35,	header:'N.rata',align:'right',filterable:false,sortable:true},

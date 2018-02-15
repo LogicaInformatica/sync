@@ -1,6 +1,6 @@
 Ext.namespace('DCS');
 Ext.namespace('DCS.render');
-// Ext.namespace('DCS','DCS.render'); questo formato in GoogleChrome dà poi DCS undefined
+// Ext.namespace('DCS','DCS.render'); questo formato in GoogleChrome dï¿½ poi DCS undefined
 
 DCS.Table = function(){
 	var name;
@@ -12,7 +12,7 @@ DCS.Table = function(){
 	var colModel;
 
 	var newRecord;
-}
+};
 
 //-------------------------------------------------------------
 // DCS.render
@@ -22,13 +22,13 @@ DCS.render.combo = function(combo){
     return function(value){
         var record = combo.findRecord(combo.valueField, value);
         return record ? record.get(combo.displayField) : combo.valueNotFoundText;
-    }
-}
+    };
+};
 
 // Renderer per la data in giorno/mese/anno
 DCS.render.date = function (value){
 	return value ? value.dateFormat('d/m/Y') : '';
-}
+};
 
 //Renderer per scrivere una data in formato Nomemese Anno
 DCS.render.meseAnno = function (value){
@@ -38,18 +38,18 @@ DCS.render.meseAnno = function (value){
 	} else {
 		return '';
 	}
-}
+};
 
 
-//Renderer per un float che può essere nullo e rappresenta una percentuale
+//Renderer per un float che puï¿½ essere nullo e rappresenta una percentuale
 DCS.render.floatV = function (value){
 	return value>0 ?  (Ext.util.Format.number(value,'000,00/i')+' %') : '';
-}
+};
 
-//Renderer per un int che può essere nullo
+//Renderer per un int che puï¿½ essere nullo
 DCS.render.intV = function (value){
 	return value!=0 ?  value : '';
-}
+};
 
 // Renderer per uno sfondo con una striscia colorata da verde a rosso 
 // per una data relativa ad oggi sulla base di 30 giorni
@@ -84,7 +84,7 @@ DCS.render.spunta = function(value, me, rec, r){
 DCS.render.word_wrap = function(value, cell) {
 	var str = "<span style='white-space:normal'>" + value + "</span>";
 	return str;
-}
+};
 
 // Renderer per la data di prossima azione (o per una qualsiasi data/ora di scadenza futura)
 DCS.render.prossimaData = function(value, metaData, record, rowIndex, colIndex, store) {
@@ -97,12 +97,12 @@ DCS.render.prossimaData = function(value, metaData, record, rowIndex, colIndex, 
 			return '<b>Oggi</b>';
 		else
 			return 'Ore <b>'+ora+'</b>';
-	else // non è oggi
+	else // non ï¿½ oggi
 		if (ora=='00:00') // nessuna ora specificata
 			return value.dateFormat('d/m');
 		else
 			return value.dateFormat('d/m H:i');
-}
+};
 
 //-------------------------------------------------------------
 //Renderer da usare per le celle con editor: combobox (deve essere usata con renderer: DCS.comboRenderer(combo)
@@ -110,8 +110,14 @@ DCS.comboRenderer = function(combo){
     return function(value){
         var record = combo.findRecord(combo.valueField, value);
         return record ? record.get(combo.displayField) : combo.valueNotFoundText;
-    }
-}
+    };
+};
+
+// Renderer per marcare le pratiche arricchite dalla visura ACI
+DCS.render.flagVisuraAci = function (value, meta, rec){
+	var flagVisuraAci = rec.get('FlagVisuraAci');
+	return (flagVisuraAci=='Y') ? value+' (visura)': value;
+};
 
 // Converter per valuta in italiano
 function numdec_it(v, record){
@@ -129,7 +135,7 @@ function date_it(v, record){
 }
 
 // Restituisce il contenuto del componente dato come float eliminando la formattazione italiana
-// Att.ne se il campo è un numberfield definito con il giusto decimalSeparator la getvalue restituisce un vero numero
+// Att.ne se il campo ï¿½ un numberfield definito con il giusto decimalSeparator la getvalue restituisce un vero numero
 function getFloatValue(name) {
 	var fld = Ext.getCmp(name);
 	var v   = fld.getValue();
@@ -140,7 +146,7 @@ function getFloatValue(name) {
 		else
 			return v;
 	}
-	// non è un number field
+	// non ï¿½ un number field
 	if (!raw>'')
 		return 0;
 	else
@@ -148,7 +154,7 @@ function getFloatValue(name) {
 }
 		
 // Imposta il contenuto del componente dato con un valore float con formattazione italiana
-// (se il campo è un numberfield, mette il valore numerico così com'è, visto che lo formatta il sistema)
+// (se il campo ï¿½ un numberfield, mette il valore numerico cosï¿½ com'ï¿½, visto che lo formatta il sistema)
 function setFloatValue(name,value) {
 	var fld = Ext.getCmp(name);
 	if (fld.xtype=='numberfield')
