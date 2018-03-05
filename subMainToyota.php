@@ -199,6 +199,8 @@
 			menu_controllo.add({xtype: 'btnsubmenu',text: 'Giornale di bordo',			panel: DCS.LogList.create});
 		if (CONTEXT.MENU_CONT_VIS)
 			menu_controllo.add({xtype: 'btnsubmenu',text: 'Visibilit&agrave; affidi',	panel: DCS.Parametro,param:'DATA_ULT_VIS,DATA_ULT_VIS_STR'});
+		if (CONTEXT.MENU_MOD_DATA_AFF)
+			menu_controllo.add({xtype: 'btnsubmenu',text: 'Modifica data affidi',	    panel: DCS.ModificaDataAffido.create});	
 		if (CONTEXT.MENU_AVVISI_AGE)
 			menu_controllo.add({xtype: 'btnsubmenu',text: 'Avviso agenzia',				panel: DCS.avvisoAge.create});
 		if (CONTEXT.MENU_PROC_AUTO)

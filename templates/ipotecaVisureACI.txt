@@ -1,0 +1,14 @@
+<tr><td width="700px"><font size="11"><b>IPOTECA</b></font></td></tr>
+<tr><td width="295px">R.P.</td><td>%datiIntRp%</td></tr>
+<tr><td width="295px">del</td><td>%del%</td></tr>
+<tr><td width="295px">Atto</td><td>%atto%</td></tr>
+<tr><td width="295px">Data Atto</td><td>%dataAtto%</td></tr>
+<tr><td width="295px">Termine Esigibilita' del Credito</td><td>%termineEsCred%</td></tr>
+<tr><td width="295px">Tipo Credito</td><td>%tipoCredito%</td></tr>
+<tr><td width="295px">Causale Credito</td><td>%causaleCredito%</td></tr>
+<tr><td width="295px">Importo Credito</td><td>*******%importoCredito% * Euro</td></tr>
+<tr><td width="295px">Importo Capitale</td><td>*******%importoCapitale% * Euro</td></tr>
+%statoIpotecaCumulativo%
+<tr><td></td></tr>
+%creditori%
+<tr><td></td></tr>

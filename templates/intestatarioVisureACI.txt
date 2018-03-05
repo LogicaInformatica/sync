@@ -1,0 +1,12 @@
+<tr><td width="295px"><font size="11"><b>Proprietario</b></font></td><td><font size="11"><b>%proprietario%</b></font></td></tr>
+<tr><td width="295px">Sesso / Tipo Societa'</td><td>%sessoTS%</td></tr>
+<tr><td width="295px">Codice Fiscale</td><td>%CF%</td></tr>
+<tr><td width="295px">Data di nascita</td><td>%dataNascita%</td></tr>
+<tr><td width="295px">Comune di nascita</td><td>%comuneNasc%</td></tr>
+<tr><td width="295px">Codice Comune Nascita Ministero Finanze</td><td>%codiceComuneNasc%</td></tr>
+<tr><td width="295px">Codice Comune Nascita ISTAT</td><td>%codiceComuneNascISTAT%</td></tr>
+<tr><td width="295px">Comune di residenza</td><td>%comuneResidenza%</td></tr>
+<tr><td width="295px">Indirizzo</td><td>%indirizzo%</td></tr>
+<tr><td width="295px">Codice Comune Residenza Ministero Finanze</td><td>%codiceComuneRes%</td></tr>
+<tr><td width="295px">Codice Comune Residenza ISTAT</td><td>%codiceComuneResISTAT%</td></tr>
+<tr><td></td></tr>

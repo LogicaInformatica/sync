@@ -7,12 +7,47 @@
  *    precedentemente inserito
  * 4) restituzione del messaggio con il numero degli allegati inseriti
  */
+require_once('tcpdf/tcpdf.php');
 require_once("workflowFunc.php");
 require_once("userFunc.php");
+
+//require_once("tcpdf/examples/example_051.php");
 /*
  * chiude la sessione per evitare di bloccare le richieste ajax concorrenti
  */
 session_write_close();
+
+// Extend the TCPDF class to create custom Header and Footer
+class MYPDF extends TCPDF {
+    public $footer;
+     
+    public function setData($footer){
+    $this->footer = $footer;
+    }
+	 
+    //Page header
+    public function Header() {
+        $this->SetAutoPageBreak(false, 0);
+		$img_file = '../images/visuraAci.png';
+        $this->Image($img_file, 0, 12, 210, 285, '', '', '', false, 300, '', false, false, 0);
+        $this->SetAutoPageBreak(true, 12);
+		$this->setPageMark();
+    }
+	
+	 // Page footer
+    public function Footer() {
+    	// Position at 15 mm from bottom
+        $this->SetY(-13);
+        // set font		
+		$this->AddFont('Helvetica', '',__DIR__."/tcpdf/fonts/helvetica.php" );
+		$this->SetFont('Helvetica', '', 10);
+        // Page number
+        $this->Cell(0, 11, $this->footer, 0, false, 'L', 0, '', 0, false, 'T', 'M');
+        $this->Cell(17, 11, 'Pagina '.$this->getAliasNumPage().' di '.$this->getAliasNbPages(), 0, false, 'R', 0, '', 0, false, 'T', 'M');
+    }
+}		
+
+
 doMain();
 
 function doMain()
@@ -76,7 +111,7 @@ function importFile(){
         $simpleXml = simplexml_load_string($fileContents);
         $json = json_encode($simpleXml);
 		$array = json_decode($json,true);
-		
+				
 		foreach($array as $arr) {
 			foreach($arr as $key=>$value) {
 				//gestione dei dati contenuti nel file xml
@@ -87,6 +122,11 @@ function importFile(){
 				$datiDettaglio = $datiRecuperati['DatiDtt'];
 				$datiTecnici = $datiRecuperati['DatiTecnici'];
 				$datiIntestazione = $datiRecuperati['DatiIntestazione'];
+				$datiLocazione = $datiRecuperati['DatiLocazione'];
+				$datiVincoli = $datiRecuperati['DatiVincolo'];
+				$datiPrd = $datiRecuperati['DatiPrd'];
+				$datiUsufrutto = $datiRecuperati['DatiUsufrutto'];
+				$datiIpoteche = $datiRecuperati['DatiIpoteca'];
 				$datiAnnotazione = $datiRecuperati['Annotazioni'];
 				
 				//controllo se esiste il contratto con quella targa
@@ -94,12 +134,16 @@ function importFile(){
 				if (count($pratica)>0) {
 				    //Dati veicolo
 					$parameter["targa"] = $datiRichiesta['Targa'];
-					$parameter["dataRichiesta"]= date("d/m/Y",strtotime($datiRichiesta['DataRichiesta']));
+					if ($datiRichiesta['DataRichiesta']!=="") {
+					  $parameter["dataRichiesta"]= date("d/m/Y",strtotime($datiRichiesta['DataRichiesta']));	
+					}
 					$parameter["telaio"] = $datiTecnici['Telaio'];
 					$parameter["fabbricaTipo"] = $datiTecnici['TipoOmologato'];
 					$modelloCommerciale = $datiTecnici['ModelloCommerciale'];
 					$parameter["modelloCommerciale"] = $modelloCommerciale['Fabbrica']." ".$modelloCommerciale['Tipo'];
-					$parameter["dataImmatricolazione"] = date("d/m/Y",strtotime($datiTecnici['DataPrimaImmatricolazione']));
+					if ($datiTecnici['DataPrimaImmatricolazione']!=="") {
+					   $parameter["dataImmatricolazione"] = date("d/m/Y",strtotime($datiTecnici['DataPrimaImmatricolazione']));	
+					}
 					$parameter["kw"] = $datiTecnici['Kilowatt'];
 					$classeUso = $datiTecnici['Classe']['Descrizione']." / ".$datiTecnici['Uso'][Descrizione];
 					$parameter["classeUso"] = $classeUso;
@@ -108,50 +152,403 @@ function importFile(){
 					$parameter["alimentazione"] = $datiTecnici['Alimentazione']['Descrizione'];;
 					$parameter["tara"] = $datiTecnici['Tara'];
 					$parameter["portata"] = $datiTecnici['Portata'];
-					$parameter["peso"] = $datiTecnici['PesoComplessivo'];
+					$parameter["pesoComplessivo"] = $datiTecnici['PesoComplessivo'];
 					$parameter["dispAntinquinamento"] = $datiTecnici['NormativaAntinquinamento'];
 					$parameter["posti"] = $datiTecnici['Posti'];
 					$parameter["assi"] = $datiTecnici['Assi'];
 					$parameter["ultimaFormalita"] = $datiVeicolo['UltimaFormalita']['Descrizione'];
-					$parameter["dataUltimaFormalita"] = date("d/m/Y",strtotime($datiVeicolo['UltimaFormalita']['Data']));
+					if ($datiVeicolo['UltimaFormalita']['Data']!=="") {
+					   $parameter["dataUltimaFormalita"] = date("d/m/Y",strtotime($datiVeicolo['UltimaFormalita']['Data']));
+					}
+					$datiRpSettore = $datiVeicolo['UltimaFormalita']['Rp']['Settore'];
+					$datiRpProgressivo = $datiVeicolo['UltimaFormalita']['Rp']['Progressivo'];
+					$datiRpControllo = $datiVeicolo['UltimaFormalita']['Rp']['Controllo'];
+					$parameter["rp"] = "$datiRpSettore$datiRpProgressivo$datiRpControllo";
+					
+					//Dati intestazione
 					$datiIntRpSettore = $datiIntestazione['Formalita']['Rp']['Settore'];
 					$datiIntRpProgressivo = $datiIntestazione['Formalita']['Rp']['Progressivo'];
 					$datiIntRpControllo = $datiIntestazione['Formalita']['Rp']['Controllo'];
-					$parameter["rp"] = "$datiIntRpSettore$datiIntRpProgressivo$datiIntRpControllo";
-					
-					//Dati intestazione
 					$parameter["datiIntRp"] = "$datiIntRpSettore$datiIntRpProgressivo$datiIntRpControllo";
-					$parameter["del"] = date('d/m/Y',strtotime($datiIntestazione['Formalita']['Data']));
+					if ($datiIntestazione['Formalita']['Data']!=="") {
+					   $parameter["del"] = date('d/m/Y',strtotime($datiIntestazione['Formalita']['Data']));	
+					}
 					$parameter["atto"] = $datiIntestazione['Formalita']['Atto']['Descrizione'];
-					$parameter["dataAtto"] = date('d/m/Y',strtotime($datiIntestazione['Formalita']['Atto'][Data]));
+					if ($datiIntestazione['Formalita']['Atto'][Data]!=="") {
+					   $parameter["dataAtto"] = date('d/m/Y',strtotime($datiIntestazione['Formalita']['Atto'][Data]));
+					}
 					$parameter["prezzo"] = number_format($datiIntestazione['ImportoVeicolo'], 2, ',', '.');
 					
 					//Dati proprietario
+					$numIntestatari = $datiIntestazione['NumeroIntestatari'];
 					$datiIntestatario = $datiIntestazione['Intestatario'];
-					$proprietario = $datiIntestatario['Denominazione']['Cognome']." ".$datiIntestatario['Denominazione']['Nome'];
-					$parameter["proprietario"] = $proprietario;
-					$parameter["sessoTS"] = $datiIntestatario['Denominazione']['Sesso'];
-					$parameter["CF"] = $datiIntestatario['Denominazione']['CodiceFiscale'];
-					$parameter["dataNascita"] = date('d/m/Y',strtotime($datiIntestatario['Nascita']['Data']));
-					$parameter["comuneNasc"] = $datiIntestatario['Nascita']['Comune']." (".$datiIntestatario['Nascita']['Provincia'].")";
-					$parameter["codiceComuneNasc"] = $datiIntestatario['Nascita']['ComuneNascitaFinanze'];
-					$parameter["codiceComuneNascISTAT"] = $datiIntestatario['Nascita']['ComuneNascitaIstat'];
-					$parameter["comuneResidenza"] = $datiIntestatario['Residenza']['Comune']." (".$datiIntestatario['Residenza']['Provincia'].")";
-					$via = $datiIntestatario['Residenza']['Dug']." ".$datiIntestatario['Residenza']['Toponimo'];
-					$civico = $datiIntestatario['Residenza']['NumeroCivico'];
-					$cap = $datiIntestatario['Residenza']['Cap'];
-					$parameter["indirizzo"] = $via." ".$civico." - ".$cap;
-					$parameter["codiceComuneRes"] = $datiIntestatario['Residenza']['ComuneResidenzaFinanze'];
-					$parameter["codiceComuneResISTAT"] = $datiIntestatario['Residenza']['ComuneResidenzaIstat'];
+					$contentIntestatario = file_get_contents(TEMPLATE_PATH.'/intestatarioVisureACI.txt');
+					$intestatario="";
+					//controllo se esistono più proprietari
+					if ($numIntestatari>1) {
+					  //ciclo i propretari per visualizzarli	
+					  for ($i=0;$i<$numIntestatari;$i++) {
+				   	     $proprietario = $datiIntestatario[$i]['Denominazione']['Cognome']." ".$datiIntestatario[$i]['Denominazione']['Nome'];
+						 $parameterInt["proprietario"] = $proprietario;
+						 $parameterInt["sessoTS"] = $datiIntestatario[$i]['Denominazione']['Sesso'];
+						 $parameterInt["CF"] = $datiIntestatario[$i]['Denominazione']['CodiceFiscale'];
+						 if ($datiIntestatario[$i]['Nascita']['Data']!=="") {
+							$parameterInt["dataNascita"] = date('d/m/Y',strtotime($datiIntestatario[$i]['Nascita']['Data']));
+						 }
+						 $parameterInt["comuneNasc"] = $datiIntestatario[$i]['Nascita']['Comune']." (".$datiIntestatario[$i]['Nascita']['Provincia'].")";
+						 $parameterInt["codiceComuneNasc"] = $datiIntestatario[$i]['Nascita']['ComuneNascitaFinanze'];
+						 $parameterInt["codiceComuneNascISTAT"] = $datiIntestatario[$i]['Nascita']['ComuneNascitaIstat'];
+						 $parameterInt["comuneResidenza"] = $datiIntestatario[$i]['Residenza']['Comune']." (".$datiIntestatario[$i]['Residenza']['Provincia'].")";
+						 $via = $datiIntestatario[$i]['Residenza']['Dug']." ".$datiIntestatario[$i]['Residenza']['Toponimo'];
+						 $civico = $datiIntestatario[$i]['Residenza']['NumeroCivico'];
+						 $cap = $datiIntestatario[$i]['Residenza']['Cap'];
+						 $parameterInt["indirizzo"] = $via." ".$civico." - ".$cap;
+						 $parameterInt["codiceComuneRes"] = $datiIntestatario[$i]['Residenza']['ComuneResidenzaFinanze'];
+						 $parameterInt["codiceComuneResISTAT"] = $datiIntestatario[$i]['Residenza']['ComuneResidenzaIstat'];
+						 $intestatario .= replaceVariables($contentIntestatario,$parameterInt);
+				      }	 	
+					} else {
+						 $proprietario = $datiIntestatario['Denominazione']['Cognome']." ".$datiIntestatario['Denominazione']['Nome'];
+						 $parameterInt["proprietario"] = $proprietario;
+						 $parameterInt["sessoTS"] = $datiIntestatario['Denominazione']['Sesso'];
+						 $parameterInt["CF"] = $datiIntestatario['Denominazione']['CodiceFiscale'];
+						 if ($datiIntestatario['Nascita']['Data']!=="") {
+							$parameterInt["dataNascita"] = date('d/m/Y',strtotime($datiIntestatario['Nascita']['Data']));
+						 }
+						 $parameterInt["comuneNasc"] = $datiIntestatario['Nascita']['Comune']." (".$datiIntestatario['Nascita']['Provincia'].")";
+						 $parameterInt["codiceComuneNasc"] = $datiIntestatario['Nascita']['ComuneNascitaFinanze'];
+						 $parameterInt["codiceComuneNascISTAT"] = $datiIntestatario['Nascita']['ComuneNascitaIstat'];
+						 $parameterInt["comuneResidenza"] = $datiIntestatario['Residenza']['Comune']." (".$datiIntestatario['Residenza']['Provincia'].")";
+						 $via = $datiIntestatario['Residenza']['Dug']." ".$datiIntestatario['Residenza']['Toponimo'];
+						 $civico = $datiIntestatario['Residenza']['NumeroCivico'];
+						 $cap = $datiIntestatario['Residenza']['Cap'];
+						 $parameterInt["indirizzo"] = $via." ".$civico." - ".$cap;
+						 $parameterInt["codiceComuneRes"] = $datiIntestatario['Residenza']['ComuneResidenzaFinanze'];
+						 $parameterInt["codiceComuneResISTAT"] = $datiIntestatario['Residenza']['ComuneResidenzaIstat'];
+						 $intestatario .= replaceVariables($contentIntestatario,$parameterInt);
+					  }
+					$parameter["intestatario"] = $intestatario;
 					
+					//Dati vincolo
+					$numVincoli = $datiVincoli['QuantitaVincoli'];
+					$datiVincolo = array();
+					$datiVincolo = $datiVincoli['Vincolo'];
+					$contentVincolo = file_get_contents(TEMPLATE_PATH.'/vincoloVisureACI.txt');
+					$vincolo="";
+					//controllo la presenza di un vincolo
+					if (count($datiVincolo)>0) {
+					  //controllo la presenza di più vincoli	
+					  if ($numVincoli>1) {
+						  //ciclo tutti i vincoli per visualizzarli	
+						  for ($i=0;$i<$numVincoli;$i++) {
+							 if ($datiVincolo[$i]["Formalita"]["Data"]!=="") {
+								$parameterVincolo["del"]= date("d/m/Y",strtotime($datiVincolo[$i]["Formalita"]["Data"]));
+							 }
+						  	 $settore = $datiVincolo[$i]["Formalita"]["Rp"]["Settore"]; 
+	                         $progressivo = $datiVincolo[$i]["Formalita"]["Rp"]["Progressivo"];
+	                         $controllo = $datiVincolo[$i]["Formalita"]["Rp"]["Controllo"];
+							 $parameterVincolo["datiIntRp"]= $settore.$progressivo.$controllo;
+							 $parameterVincolo["atto"]= $datiVincolo[$i]["Formalita"]["Atto"]["Descrizione"];
+							 if ($datiVincolo[$i]["Formalita"]["Atto"]["Data"]!=="") {
+								$parameterVincolo["dataAtto"]= date("d/m/Y",strtotime($datiVincolo[$i]["Formalita"]["Atto"]["Data"]));
+							 }
+							 $parameterVincolo["causale"]= $datiVincolo[$i]["TipoProvvedimento"];
+							 $parameterVincolo["importoConcorrenza"]= number_format($datiVincolo[$i]["ImportoConcorrenza"], 2, ',', '.'); 
+							 $numAttori = $datiVincolo[$i][NumeroAttori];
+							 $datiAttore = $datiVincolo[$i]['Attore'];
+							 $attori = '';
+							 //controllo la presenza di più attori del vincolo
+							 if ($numAttori>1) {
+							    //ciclo tutti gli attori per visualizzarli	
+							    for ($j=0;$j<$numAttori;$j++) {
+							      $attore = $datiAttore[$j]['Denominazione']['Cognome']; //." ".$datiIntestatario['Denominazione']['Nome'];
+								  //$parameterVincolo["attore"] = $attore;
+								  $sessoTS = $datiAttore[$j]['Denominazione']['TipoSocieta'];//['Sesso'];
+								  $CF = $datiAttore[$j]['Denominazione']['PartitaIva'];//['CodiceFiscale'];
+								  $comuneResidenza = $datiAttore[$j]['Residenza']['Comune']." (".$datiAttore[$j]['Residenza']['Provincia'].")";
+								  $via = $datiAttore[$j]['Residenza']['Dug']." ".$datiAttore[$j]['Residenza']['Toponimo'];
+								  $civico = $datiAttore[$j]['Residenza']['NumeroCivico'];
+								  $cap = $datiAttore[$j]['Residenza']['Cap'];
+								  $indirizzo = $via." ".$civico." - ".$cap;
+								  $codiceComuneRes = $datiAttore[$j]['Residenza']['ComuneResidenzaFinanze'];
+								  $codiceComuneResISTAT = $datiAttore[$j]['Residenza']['ComuneResidenzaIstat'];
+								  $attori .= '<tr><td width="295px"><font size="11"><b>Attore</b></font></td><td><font size="11"><b>'.$attore.'</b></font></td></tr>'.
+								 			'<tr><td width="295px">Sesso / Tipo Societa\'</td><td>'.$sessoTS.'</td></tr>'.
+								 			'<tr><td width="295px">Codice Fiscale</td><td>'.$CF.'</td></tr>'.
+								 			'<tr><td width="295px">Comune di residenza</td><td>'.$comuneResidenza.'</td></tr>'.
+								 			'<tr><td width="295px">Codice Comune Residenza Ministero Finanze</td><td>'.$codiceComuneRes.'</td></tr>'.
+											'<tr><td width="295px">Codice Comune Residenza ISTAT</td><td>'.$codiceComuneResISTAT.'</td></tr>'.
+											'<tr><td width="295px">Indirizzo</td><td>'.$indirizzo.'</td></tr>';	
+							    }
+                             } else {
+							 	 $attore = $datiAttore['Denominazione']['Cognome']; //." ".$datiIntestatario['Denominazione']['Nome'];
+								 //$parameterVincolo["attore"] = $attore;
+								 $sessoTS = $datiAttore['Denominazione']['TipoSocieta'];//['Sesso'];
+								 $CF = $datiAttore['Denominazione']['PartitaIva'];//['CodiceFiscale'];
+								 $comuneResidenza = $datiAttore['Residenza']['Comune']." (".$datiAttore['Residenza']['Provincia'].")";
+								 $via = $datiAttore['Residenza']['Dug']." ".$datiAttore['Residenza']['Toponimo'];
+								 $civico = $datiAttore['Residenza']['NumeroCivico'];
+								 $cap = $datiAttore['Residenza']['Cap'];
+								 $indirizzo = $via." ".$civico." - ".$cap;
+								 $codiceComuneRes = $datiAttore['Residenza']['ComuneResidenzaFinanze'];
+								 $codiceComuneResISTAT = $datiAttore['Residenza']['ComuneResidenzaIstat'];
+								 $attori .= '<tr><td width="295px"><font size="11"><b>Attore</b></font></td><td><font size="11"><b>'.$attore.'</b></font></td></tr>'.
+								 			'<tr><td width="295px">Sesso / Tipo Societa\'</td><td>'.$sessoTS.'</td></tr>'.
+								 			'<tr><td width="295px">Codice Fiscale</td><td>'.$CF.'</td></tr>'.
+								 			'<tr><td width="295px">Comune di residenza</td><td>'.$comuneResidenza.'</td></tr>'.
+								 			'<tr><td width="295px">Codice Comune Residenza Ministero Finanze</td><td>'.$codiceComuneRes.'</td></tr>'.
+											'<tr><td width="295px">Codice Comune Residenza ISTAT</td><td>'.$codiceComuneResISTAT.'</td></tr>'.
+											'<tr><td width="295px">Indirizzo</td><td>'.$indirizzo.'</td></tr>';
+							 }
+							 $parameterVincolo["attori"] = $attori;
+							 $parameterVincolo["importoConcorrenza"] = number_format($datiVincolo[$i]['ImportoConcorrenza'], 2, ',', '.');
+							 $vincolo .= replaceVariables($contentVincolo,$parameterVincolo);
+					      }	 	
+					  } else {
+							 if ($datiVincolo["Formalita"]["Data"]!=="") {
+								$parameterVincolo["del"]= date("d/m/Y",strtotime($datiVincolo["Formalita"]["Data"]));
+							 }
+							 $settore = $datiVincolo["Formalita"]["Rp"]["Settore"]; 
+	                         $progressivo = $datiVincolo["Formalita"]["Rp"]["Progressivo"];
+	                         $controllo = $datiVincolo["Formalita"]["Rp"]["Controllo"];
+							 $parameterVincolo["datiIntRp"]= $settore.$progressivo.$controllo;
+							 $parameterVincolo["atto"]= $datiVincolo["Formalita"]["Atto"]["Descrizione"];
+							 if ($datiVincolo["Formalita"]["Atto"]["Data"]!=="") {
+								$parameterVincolo["dataAtto"]= date("d/m/Y",strtotime($datiVincolo["Formalita"]["Atto"]["Data"]));
+							 }
+							 $parameterVincolo["causale"]= $datiVincolo["TipoProvvedimento"];
+							 $parameterVincolo["importoConcorrenza"]= number_format($datiVincolo["ImportoConcorrenza"], 2, ',', '.');
+							 $numAttori = $datiVincolo[NumeroAttori];
+							 $datiAttore = $datiVincolo['Attore'];
+							 $attori = '';
+							 //controllo la presenza di più attori del vincolo
+							 if ($numAttori>1) {
+							    //ciclo tutti gli attori del vincolo per visualizzarli	
+							    for ($j=0;$j<$numVincoli;$j++) {
+							      $attore = $datiAttore[$j]['Denominazione']['Cognome']; //." ".$datiIntestatario['Denominazione']['Nome'];
+								  //$parameterVincolo["attore"] = $attore;
+								  $sessoTS = $datiAttore[$j]['Denominazione']['TipoSocieta'];//['Sesso'];
+								  $CF = $datiAttore[$j]['Denominazione']['PartitaIva'];//['CodiceFiscale'];
+								  $comuneResidenza = $datiAttore[$j]['Residenza']['Comune']." (".$datiAttore[$j]['Residenza']['Provincia'].")";
+								  $via = $datiAttore[$j]['Residenza']['Dug']." ".$datiAttore[$j]['Residenza']['Toponimo'];
+								  $civico = $datiAttore[$j]['Residenza']['NumeroCivico'];
+								  $cap = $datiAttore[$j]['Residenza']['Cap'];
+								  $indirizzo = $via." ".$civico." - ".$cap;
+								  $codiceComuneRes = $datiAttore[$j]['Residenza']['ComuneResidenzaFinanze'];
+								  $codiceComuneResISTAT = $datiAttore[$j]['Residenza']['ComuneResidenzaIstat'];
+								  $attori .= '<tr><td width="295px"><font size="11"><b>Attore</b></font></td><td><font size="11"><b>'.$attore.'</b></font></td></tr>'.
+								 			'<tr><td width="295px">Sesso / Tipo Societa\'</td><td>'.$sessoTS.'</td></tr>'.
+								 			'<tr><td width="295px">Codice Fiscale</td><td>'.$CF.'</td></tr>'.
+								 			'<tr><td width="295px">Comune di residenza</td><td>'.$comuneResidenza.'</td></tr>'.
+								 			'<tr><td width="295px">Codice Comune Residenza Ministero Finanze</td><td>'.$codiceComuneRes.'</td></tr>'.
+											'<tr><td width="295px">Codice Comune Residenza ISTAT</td><td>'.$codiceComuneResISTAT.'</td></tr>'.
+											'<tr><td width="295px">Indirizzo</td><td>'.$indirizzo.'</td></tr>';	
+							    }
+                             } else {
+							 	 $attore = $datiAttore['Denominazione']['Cognome']; //." ".$datiIntestatario['Denominazione']['Nome'];
+								 //$parameterVincolo["attore"] = $attore;
+								 $sessoTS = $datiAttore['Denominazione']['TipoSocieta'];//['Sesso'];
+								 $CF = $datiAttore['Denominazione']['PartitaIva'];//['CodiceFiscale'];
+								 $comuneResidenza = $datiAttore['Residenza']['Comune']." (".$datiAttore['Residenza']['Provincia'].")";
+								 $via = $datiAttore['Residenza']['Dug']." ".$datiAttore['Residenza']['Toponimo'];
+								 $civico = $datiAttore['Residenza']['NumeroCivico'];
+								 $cap = $datiAttore['Residenza']['Cap'];
+								 $indirizzo = $via." ".$civico." - ".$cap;
+								 $codiceComuneRes = $datiAttore['Residenza']['ComuneResidenzaFinanze'];
+								 $codiceComuneResISTAT = $datiAttore['Residenza']['ComuneResidenzaIstat'];
+								 $attori .= '<tr><td width="295px"><font size="11"><b>Attore</b></font></td><td><font size="11"><b>'.$attore.'</b></font></td></tr>'.
+								 			'<tr><td width="295px">Sesso / Tipo Societa\'</td><td>'.$sessoTS.'</td></tr>'.
+								 			'<tr><td width="295px">Codice Fiscale</td><td>'.$CF.'</td></tr>'.
+								 			'<tr><td width="295px">Comune di residenza</td><td>'.$comuneResidenza.'</td></tr>'.
+								 			'<tr><td width="295px">Codice Comune Residenza Ministero Finanze</td><td>'.$codiceComuneRes.'</td></tr>'.
+											'<tr><td width="295px">Codice Comune Residenza ISTAT</td><td>'.$codiceComuneResISTAT.'</td></tr>'.
+											'<tr><td width="295px">Indirizzo</td><td>'.$indirizzo.'</td></tr>';
+							 }
+							 $parameterVincolo["attori"] = $attori;
+							 $parameterVincolo["importoConcorrenza"] = number_format($datiVincolo['ImportoConcorrenza'], 2, ',', '.');
+							 $vincolo .= replaceVariables($contentVincolo,$parameterVincolo);
+						  }
+	                }
+                    $parameter["vincolo"] = $vincolo;
+									
+					//Dati ipoteca
+					$numIpoteche = $datiIpoteche['QuantitaIpoteche'];
+					$datiIpoteca = array();
+					$datiIpoteca = $datiIpoteche['Ipoteca'];
+					$contentIpoteca = file_get_contents(TEMPLATE_PATH.'/ipotecaVisureACI.txt');
+					$ipoteca="";
+					//controllo se presenti ipoteche
+					if (count($datiIpoteca)>0) {
+						//controllo se ci sono più ipoteche	
+						if ($numIpoteche>1) {
+						  //ciclo tutte le ipoteche per visualizzarle	
+						  for ($i=0;$i<$numIpoteche;$i++) {
+							if ($datiIpoteca[$i]["Formalita"]["Data"]!=="") {
+							   $parameterIpoteca["del"]= date("d/m/Y",strtotime($datiIpoteca[$i]["Formalita"]["Data"]));	
+							}
+						  	$settore = $datiIpoteca[$i]["Formalita"]["Rp"]["Settore"]; 
+	                        $progressivo = $datiIpoteca[$i]["Formalita"]["Rp"]["Progressivo"];
+	                        $controllo = $datiIpoteca[$i]["Formalita"]["Rp"]["Controllo"];
+							$parameterIpoteca["datiIntRp"]= $settore.$progressivo.$controllo;
+							$parameterIpoteca["atto"]= $datiIpoteca[$i]["Formalita"]["Atto"]["Descrizione"];
+							if ($datiIpoteca[$i]["Formalita"]["Atto"]["Data"]!=="") {
+							   $parameterIpoteca["dataAtto"]= date("d/m/Y",strtotime($datiIpoteca[$i]["Formalita"]["Atto"]["Data"]));	
+							}
+							if ($datiIpoteca[$i]["DataScadenzaCredito"]!=="") {
+							   $parameterIpoteca["termineEsCred"]= date("d/m/Y",strtotime($datiIpoteca[$i]["DataScadenzaCredito"]));
+							}
+	                        $parameterIpoteca["tipoCredito"]= $datiIpoteca[$i]["TipoCredito"];
+							if (isset($datiIpoteca[$i]["StatoIpotecaCumulativo"])) {
+							   $statoIpoteca = '<tr><td width="295px">'.$datiIpoteca[$i]["StatoIpotecaCumulativo"].'</td></tr>';
+							   $parameterIpoteca["statoIpotecaCumulativo"]= $statoIpoteca;		
+							} else {
+								$parameterIpoteca["statoIpotecaCumulativo"]='';
+							}
+							$parameterIpoteca["causaleCredito"]= $datiIpoteca[$i]["CausaleCredito"];
+							$parameterIpoteca["importoCredito"] = number_format($datiIpoteca[$i]['ImportoCredito'], 2, ',', '.');
+							$parameterIpoteca["importoCapitale"] = number_format($datiIpoteca[$i]['ImportoCapitale'], 2, ',', '.');
+							$numCreditori = $datiIpoteca[$i]['NumeroCreditori'];
+							$datiCreditore = $datiIpoteca[$i]['Creditore'];
+							$creditori="";
+							//controllo la presenza di più creditori
+							if ($numCreditori>1) {
+								//ciclo tutti i creditori per visualizzarli
+								for ($j=0;$j<$numCreditori;$j++) {
+									$creditore = $datiCreditore[$j]['Denominazione']['Cognome']; //." ".$datiIntestatario['Denominazione']['Nome'];
+									$sessoTS = $datiCreditore[$j]['Denominazione']['TipoSocieta'];//['Sesso'];
+									$CF = $datiCreditore[$j]['Denominazione']['PartitaIva'];//['CodiceFiscale'];
+									$comuneResidenza = $datiCreditore[$j]['Residenza']['Comune']." (".$datiCreditore[$j]['Residenza']['Provincia'].")";
+									$via = $datiCreditore[$j]['Residenza']['Dug']." ".$datiCreditore[$j]['Residenza']['Toponimo'];
+									$civico = $datiCreditore[$j]['Residenza']['NumeroCivico'];
+									$cap = $datiCreditore[$j]['Residenza']['Cap'];
+									$indirizzo = $via." ".$civico." - ".$cap;
+									$codiceComuneRes = $datiCreditore[$j]['Residenza']['ComuneResidenzaFinanze'];
+									$codiceComuneResISTAT = $datiCreditore[$j]['Residenza']['ComuneResidenzaIstat'];
+									$creditori .= '<tr><td width="295px"><font size="11"><b>Creditore</b></font></td><td><font size="11"><b>'.$creditore.'</b></font></td></tr>'.
+									 			'<tr><td width="295px">Sesso / Tipo Societa\'</td><td>'.$sessoTS.'</td></tr>'.
+									 			'<tr><td width="295px">Codice Fiscale</td><td>'.$CF.'</td></tr>'.
+									 			'<tr><td width="295px">Comune di residenza</td><td>'.$comuneResidenza.'</td></tr>'.
+									 			'<tr><td width="295px">Codice Comune Residenza Ministero Finanze</td><td>'.$codiceComuneRes.'</td></tr>'.
+												'<tr><td width="295px">Codice Comune Residenza ISTAT</td><td>'.$codiceComuneResISTAT.'</td></tr>'.
+												'<tr><td width="295px">Indirizzo</td><td>'.$indirizzo.'</td></tr>'.
+												'<tr><td></td></tr>';
+								}
+							} else {
+								//caso in cui c'è un solo creditore per l'ipoteca
+								$creditore = $datiCreditore['Denominazione']['Cognome']; //." ".$datiIntestatario['Denominazione']['Nome'];
+								$sessoTS = $datiCreditore['Denominazione']['TipoSocieta'];//['Sesso'];
+								$CF = $datiCreditore['Denominazione']['PartitaIva'];//['CodiceFiscale'];
+								$comuneResidenza = $datiCreditore['Residenza']['Comune']." (".$datiCreditore['Residenza']['Provincia'].")";
+								$via = $datiCreditore['Residenza']['Dug']." ".$datiCreditore['Residenza']['Toponimo'];
+								$civico = $datiCreditore['Residenza']['NumeroCivico'];
+								$cap = $datiCreditore['Residenza']['Cap'];
+								$indirizzo = $via." ".$civico." - ".$cap;
+								$codiceComuneRes = $datiCreditore['Residenza']['ComuneResidenzaFinanze'];
+								$codiceComuneResISTAT = $datiCreditore['Residenza']['ComuneResidenzaIstat'];
+								$creditori .= '<tr><td width="295px"><font size="11"><b>Creditore</b></font></td><td><font size="11"><b>'.$creditore.'</b></font></td></tr>'.
+									 			'<tr><td width="295px">Sesso / Tipo Societa\'</td><td>'.$sessoTS.'</td></tr>'.
+									 			'<tr><td width="295px">Codice Fiscale</td><td>'.$CF.'</td></tr>'.
+									 			'<tr><td width="295px">Comune di residenza</td><td>'.$comuneResidenza.'</td></tr>'.
+									 			'<tr><td width="295px">Codice Comune Residenza Ministero Finanze</td><td>'.$codiceComuneRes.'</td></tr>'.
+												'<tr><td width="295px">Codice Comune Residenza ISTAT</td><td>'.$codiceComuneResISTAT.'</td></tr>'.
+												'<tr><td width="295px">Indirizzo</td><td>'.$indirizzo.'</td></tr>'.
+												'<tr><td></td></tr>';
+							  }
+                            $parameterIpoteca["creditori"] = $creditori;
+                            $ipoteca .= replaceVariables($contentIpoteca,$parameterIpoteca); 
+                          }
+                        } else {
+							//il caso in cui c'è solo un'ipoteca	
+							if ($datiIpoteca["Formalita"]["Data"]!=="") {
+							   $parameterIpoteca["del"]= date("d/m/Y",strtotime($datiIpoteca["Formalita"]["Data"]));	
+							}
+							$settore = $datiIpoteca["Formalita"]["Rp"]["Settore"]; 
+	                        $progressivo = $datiIpoteca["Formalita"]["Rp"]["Progressivo"];
+	                        $controllo = $datiIpoteca["Formalita"]["Rp"]["Controllo"];
+							$parameterIpoteca["datiIntRp"]= $settore.$progressivo.$controllo;
+							$parameterIpoteca["atto"]= $datiIpoteca["Formalita"]["Atto"]["Descrizione"];
+							if ($datiIpoteca["Formalita"]["Atto"]["Data"]!="") {
+							   $parameterIpoteca["dataAtto"]= date("d/m/Y",strtotime($datiIpoteca["Formalita"]["Atto"]["Data"]));	
+							}
+							if ($datiIpoteca["DataScadenzaCredito"]!==""){
+							   $parameterIpoteca["termineEsCred"]= date("d/m/Y",strtotime($datiIpoteca["DataScadenzaCredito"]));	
+							}
+							$parameterIpoteca["tipoCredito"]= $datiIpoteca["TipoCredito"];
+							if (isset($datiIpoteca["StatoIpotecaCumulativo"])) {
+							   $statoIpoteca = '<tr><td width="295px">'.$datiIpoteca["StatoIpotecaCumulativo"].'</td></tr>';
+							   $parameterIpoteca["statoIpotecaCumulativo"]= $statoIpoteca;		
+							} else {
+								 $parameterIpoteca["statoIpotecaCumulativo"]='';
+							}
+							$parameterIpoteca["causaleCredito"]= $datiIpoteca["CausaleCredito"];
+							$parameterIpoteca["importoCredito"] = number_format($datiIpoteca['ImportoCredito'], 2, ',', '.');
+							$parameterIpoteca["importoCapitale"] = number_format($datiIpoteca['ImportoCapitale'], 2, ',', '.');
+							//controllo quanti sono i creditori di questa ipoteca 
+							$numCreditori = $datiIpoteca[NumeroCreditori];
+							$datiCreditore = $datiIpoteca['Creditore'];
+							$creditori = "";
+							//controllo della presenza di più creditori
+							if ($numCreditori>1) {
+								//ciclo tutti i creditori per visualizzarli
+								for ($j=0;$j<$numCreditori;$j++) {
+									$creditore = $datiCreditore[$j]['Denominazione']['Cognome']; //." ".$datiIntestatario['Denominazione']['Nome'];
+									$sessoTS = $datiCreditore[$j]['Denominazione']['TipoSocieta'];//['Sesso'];
+									$CF = $datiCreditore[$j]['Denominazione']['PartitaIva'];//['CodiceFiscale'];
+									$comuneResidenza = $datiCreditore[$j]['Residenza']['Comune']." (".$datiCreditore[$j]['Residenza']['Provincia'].")";
+									$via = $datiCreditore[$j]['Residenza']['Dug']." ".$datiCreditore[$j]['Residenza']['Toponimo'];
+									$civico = $datiCreditore[$j]['Residenza']['NumeroCivico'];
+									$cap = $datiCreditore[$j]['Residenza']['Cap'];
+									$indirizzo = $via." ".$civico." - ".$cap;
+									$codiceComuneRes = $datiCreditore[$j]['Residenza']['ComuneResidenzaFinanze'];
+									$codiceComuneResISTAT = $datiCreditore[$j]['Residenza']['ComuneResidenzaIstat'];
+									$creditori .= '<tr><td width="295px"><font size="11"><b>Creditore</b></font></td><td><font size="11"><b>'.$creditore.'</b></font></td></tr>'.
+									 			'<tr><td width="295px">Sesso / Tipo Societa\'</td><td>'.$sessoTS.'</td></tr>'.
+									 			'<tr><td width="295px">Codice Fiscale</td><td>'.$CF.'</td></tr>'.
+									 			'<tr><td width="295px">Comune di residenza</td><td>'.$comuneResidenza.'</td></tr>'.
+									 			'<tr><td width="295px">Codice Comune Residenza Ministero Finanze</td><td>'.$codiceComuneRes.'</td></tr>'.
+												'<tr><td width="295px">Codice Comune Residenza ISTAT</td><td>'.$codiceComuneResISTAT.'</td></tr>'.
+												'<tr><td width="295px">Indirizzo</td><td>'.$indirizzo.'</td></tr>'.
+												'<tr><td></td></tr>';
+								}
+							} else {
+								//caso in cui c'è un solo creditore per l'ipoteca	
+								$creditore = $datiCreditore['Denominazione']['Cognome']; //." ".$datiIntestatario['Denominazione']['Nome'];
+								$sessoTS = $datiCreditore['Denominazione']['TipoSocieta'];//['Sesso'];
+								$CF = $datiCreditore['Denominazione']['PartitaIva'];//['CodiceFiscale'];
+								$comuneResidenza = $datiCreditore['Residenza']['Comune']." (".$datiCreditore['Residenza']['Provincia'].")";
+								$via = $datiCreditore['Residenza']['Dug']." ".$datiCreditore['Residenza']['Toponimo'];
+								$civico = $datiCreditore['Residenza']['NumeroCivico'];
+								$cap = $datiCreditore['Residenza']['Cap'];
+								$indirizzo = $via." ".$civico." - ".$cap;
+								$codiceComuneRes = $datiCreditore['Residenza']['ComuneResidenzaFinanze'];
+								$codiceComuneResISTAT = $datiCreditore['Residenza']['ComuneResidenzaIstat'];
+								$creditori .= '<tr><td width="295px"><font size="11"><b>Creditore</b></font></td><td><font size="11"><b>'.$creditore.'</b></font></td></tr>'.
+									 			'<tr><td width="295px">Sesso / Tipo Societa\'</td><td>'.$sessoTS.'</td></tr>'.
+									 			'<tr><td width="295px">Codice Fiscale</td><td>'.$CF.'</td></tr>'.
+									 			'<tr><td width="295px">Comune di residenza</td><td>'.$comuneResidenza.'</td></tr>'.
+									 			'<tr><td width="295px">Codice Comune Residenza Ministero Finanze</td><td>'.$codiceComuneRes.'</td></tr>'.
+												'<tr><td width="295px">Codice Comune Residenza ISTAT</td><td>'.$codiceComuneResISTAT.'</td></tr>'.
+												'<tr><td width="295px">Indirizzo</td><td>'.$indirizzo.'</td></tr>'.
+												'<tr><td></td></tr>';
+							  }
+                              $parameterIpoteca["creditori"] = $creditori;
+                              $ipoteca .= replaceVariables($contentIpoteca,$parameterIpoteca);	 
+						  }
+                    }	
+					$parameter["ipoteca"] = $ipoteca;
+																		
 					//annotazioni
-					$parameter["annotazioni"] = $datiAnnotazione['Annotazione']['0'];
-					$parameter["annotazioni2"] = $datiAnnotazione['Annotazione']['1'];
-					$parameter["annotazioni3"] = $datiAnnotazione['Annotazione']['2'];
-					$parameter["annotazioni4"] = $datiAnnotazione['Annotazione']['3'];
+					$annotazione= array();
+					$annotazione = $datiAnnotazione['Annotazione'];
+					$stringaAnnotazioni="";
+					for($i=0;$i<count($annotazione);$i++) {
+						$stringaAnnotazioni .= '<tr><td width="700px">'.$annotazione[$i].'</td></tr>';
+					}
+					$parameter["annotazioni"] = $stringaAnnotazioni;
 					$parameter["dataSistema"] = $value['DatiRisposta']['DataDiSistema'];
 					//trace("parametri: ".print_r($parameter,true));
 					
+					$footer = "Prodotto il ".$value['DatiRisposta']['DataDiSistema'];
 					$fileVisureAci = 'visureACI.html';
 					$content = file_get_contents(TEMPLATE_PATH.'/visureACI.html');
 					
@@ -162,10 +559,10 @@ function importFile(){
 					}
 					
 					$visura = replaceVariables($content,$parameter);
-					trace("file output: ".$visura);
+					//trace("file output: ".$visura);
 					$fileName =	"VisuraACI".$datiRichiesta['Targa'].".pdf";
 	                $newFile  = $localDir."/".$fileName;
-					$result = creaPdfDaHtmlACI($visura,$newFile);
+					$result = creaPdfDaHtmlACI($visura,$footer,$newFile);
 					
 					if(!result){
 						fail("Errore nella scrittura del file $newFile");
@@ -196,6 +593,7 @@ function importFile(){
 	}
 	success($info);
 }
+
 
 //----------------------------------------------------------------------------------------------
 // allegaDocumentoPDF
@@ -295,17 +693,24 @@ function allegaDocumentoPDF($pratica,$idtipo,$titolo,$riservato,$fileName,$pathF
  * @param {String} $html testo HTML
  * @param {String} $filePath path del file di output (completo di nome file)
  */
-function creaPdfDaHtmlACI($html,$filePath) {
+function creaPdfDaHtmlACI($html,$footer,$filePath) {
 	try {
+				
 		trace("Creazione PDF da HTML su $filePath",false);
 		//create a new PDF document
-		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+		$pdf = new MYPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+		$pdf->setData($footer);
+		// set header and footer fonts
+		$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+		//$pdf->setPrintFooter(false);
 		
-		$pdf->SetMargins(15,51); // millimetri
+		// set default monospaced font
+		$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
 		
-		// remove default header/footer
-        $pdf->setPrintHeader(false);
-        $pdf->setPrintFooter(false);
+		// set margins
+		$pdf->SetMargins(15,60); // millimetri
+		$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+		$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 		
 		//set auto page breaks
 		$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
@@ -321,17 +726,19 @@ function creaPdfDaHtmlACI($html,$filePath) {
 		// ---------------------------------------------------------
 		
 		// set font		
-		$pdf->AddFont('PdfaHelvetica', '',__DIR__."/tcpdf/fonts/pdfahelvetica.php" );
-		$pdf->SetFont('PdfaHelvetica', '', 10);
+		$pdf->AddFont('Helvetica', '',__DIR__."/tcpdf/fonts/helvetica.php" );
+		$pdf->SetFont('Helvetica', '', 10);
+		
+		$pdf->setCellHeightRatio(1.10);
 		
 		//add a page
 		$pdf->AddPage();
 		
-		$pdf->SetAutoPageBreak(false, 0);
+		/*$pdf->SetAutoPageBreak(false, 0);
 		$img_file = '../images/visuraAci.png';
         $pdf->Image($img_file, 0, 2, 210, 295, '', '', '', false, 300, '', false, false, 0);
         $pdf->SetAutoPageBreak(true, 0);
-		$pdf->setPageMark();
+		$pdf->setPageMark();*/
 		
 		//print text
 		$pdf->writeHTML($html,true, 0, true,0);
@@ -347,3 +754,4 @@ function creaPdfDaHtmlACI($html,$filePath) {
 		return false;
 	}		
 }
+?>

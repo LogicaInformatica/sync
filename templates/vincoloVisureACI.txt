@@ -1,0 +1,10 @@
+<tr><td width="700px"><font size="11"><b>GRAVAME</b></font></td></tr>
+<tr><td width="295px">R.P.</td><td>%datiIntRp%</td></tr>
+<tr><td width="295px">del</td><td>%del%</td></tr>
+<tr><td width="295px">Atto</td><td>%atto%</td></tr>
+<tr><td width="295px">Data Atto</td><td>%dataAtto%</td></tr>
+<tr><td width="295px">Causale</td><td>%causale%</td></tr>
+<tr><td></td></tr>
+%attori%
+<tr><td width="295px">Importo a Concorrenza</td><td>*******%importoConcorrenza% * Euro</td></tr>
+<tr><td></td></tr>

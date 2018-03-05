@@ -308,6 +308,7 @@ echo "\n<script>",
 <script type="text/javascript" src="js/grid_DettaglioRateProvvigione.js"></script>
 <script type="text/javascript" src="js/grid_dettaglioProcesso.js"></script>
 <script type="text/javascript" src="js/grid_PianoRateazione.js"></script>
+<script type="text/javascript" src="js/modificaDataAffido.js"></script>
 
 <script type="text/javascript" src="ux/menu/EditableItem.js"></script>
 <script type="text/javascript" src="ux/menu/RangeMenu.js"></script>

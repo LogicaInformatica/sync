@@ -566,20 +566,48 @@ function delegate($IdContratto)
 			$dataInizioReale = $dataInizioAffido;						
 			if ($regola["GiorniFissiInizio"]>"") // affido possibile solo in giorni prefissati (cioe' "per lotti")
 			{
-				// Se sono stabiliti dei giorni fissi, puo' affidare la pratica se oggi e' il giorno fisso,
-				// ma anche se la pratica e' in attesa da prima del precedente giorni fisso
-				// (perche' significa che quel giorno il motore non ha girato o non l'ha individuata)
-				$bool = getScalar("SELECT DAY(NOW()+INTERVAL ".(24-$oraFineGiorno)." HOUR) IN (".$regola["GiorniFissiInizio"].")");
-				if ($bool!="1") // oggi non e' uno dei giorni stabiliti
+				// Se sono stabiliti dei giorni fissi, puo' affidare la pratica se oggi e' un giorno fisso modificato,
+				// se oggi è il giorno fisso e non è tra quelli modificati, 
+			    // ma anche se la pratica e' in attesa da prima del precedente giorni fisso o giorno fisso modificato
+				// (perche' significa che quel giorno il motore non ha girato o non l'ha individuata oppure era un 
+				// giorno fisso ma modificato)	
+				$boolVariazione = getScalar("SELECT COUNT(*) FROM dataaffido WHERE DATE_FORMAT(NOW()+INTERVAL ".(24-$oraFineGiorno)." HOUR,'%Y-%m-%d') = DataAffidoVariata");	
+				if ($boolVariazione!="1") //oggi non è uno dei giorni variati 
 				{
-					//if (!inAttesaDaPrima($IdContratto,$regola["GiorniFissiInizio"],$dataInizioAffido))
-					if (!giornoFissoRinviato($regola["GiorniFissiInizio"],$dataInizioAffido,$dataInizioReale))
+				    $bool = getScalar("SELECT DAY(NOW()+INTERVAL ".(24-$oraFineGiorno)." HOUR) IN (".$regola["GiorniFissiInizio"].")");
+					if ($bool!="1") // oggi non e' uno dei giorni stabiliti
 					{
-						trace("Non affidata ad agenzia n. $IdReparto perche' non e' uno dei giorni fissi ".$regola["GiorniFissiInizio"],FALSE);
-						continue;
-					}
-					else
-						trace("Pratica ".$pratica["IdContratto"]." affidabile all\'agenzia $IdReparto dal giorno fisso precedente ".ISODate($dataInizioAffido),FALSE);
+						//if (!inAttesaDaPrima($IdContratto,$regola["GiorniFissiInizio"],$dataInizioAffido))
+						if (!giornoFissoRinviato($regola["GiorniFissiInizio"],$dataInizioAffido,$dataInizioReale))
+						{
+							trace("Non affidata ad agenzia n. $IdReparto perche' non e' uno dei giorni fissi ".$regola["GiorniFissiInizio"],FALSE);
+							continue;
+						}
+						else
+							trace("Pratica ".$pratica["IdContratto"]." affidabile all\'agenzia $IdReparto dal giorno fisso precedente ".ISODate($dataInizioAffido),FALSE);
+					} else {
+						//controllo se è uno dei giorni stabiliti variati 
+						$boolFissoVariato = getScalar("SELECT COUNT(*) FROM dataaffido WHERE DATE_FORMAT(NOW()+INTERVAL ".(24-$oraFineGiorno)." HOUR,'%Y-%m-%d') = DataAffidoStandard");
+						if ($boolFissoVariato==1) //oggi è uno dei giorni stabiliti e variati
+						{
+							//sostituisco il giorno stabilito con il giorno variato e controllo il rinvio	
+							$arrGiorni = getRow("SELECT DAY(DataAffidoVariata) as giornoVariato, DAY(DataAffidoStandard) as giornoFisso FROM dataaffido WHERE DATE_FORMAT(NOW()+INTERVAL ".(24-$oraFineGiorno)." HOUR,'%Y-%m-%d') = DataAffidoStandard");
+							extract($arrGiorni);
+							$giorniFissi = $regola["GiorniFissiInizio"];
+							$array = split(",",$giorniFissi);
+							/* modifico il giorno fisso 
+							  col il giorno variato usando array_search */
+							$array[array_search($giornoFisso,$array)]=$giornoVariato; 
+							$giorniFissiVariati = implode(",", $array);
+						  	if (!giornoFissoRinviato($giorniFissiVariati,$dataInizioAffido,$dataInizioReale))
+							{
+								trace("Non affidata ad agenzia n. $IdReparto perche' non e' uno dei giorni fissi ".$regola["GiorniFissiInizio"],FALSE);
+								continue;
+							}
+							else
+								trace("Pratica ".$pratica["IdContratto"]." affidabile all\'agenzia $IdReparto dal giorno fisso precedente ".ISODate($dataInizioAffido),FALSE);	
+						}
+					  }	
 				}
 			}
 					
