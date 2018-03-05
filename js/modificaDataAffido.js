@@ -80,24 +80,52 @@ DCS.ModificaDataAffido = function(){
 				        dsModDataAffido.load({
 							callback : function(r,options,success) {
 								    if (success) {
+								       var intestazione = new Ext.Container({
+												//autoEl: 'div',  // This is the default
+												layout:'hbox',
+												defaults: {layout: 'form', border: false, width: 250,labelWidth:1},
+												//  The two items below will be Ext.Containers, each encapsulated by a <DIV> element.
+												items: [
+												   {labelWidth:50,
+													items: [
+	        											{
+															xtype: 'displayfield',
+															fieldLabel: '',
+														    width: 100,
+														    value:'Data affido </br> standard',
+															style: 'text-align:center'
+														}
+													]},
+													{items: [
+	                                                    {
+															xtype: 'displayfield',
+															fieldLabel: '',
+														    width: 100,
+															value:'Data affido </br> modificata',
+															style: 'text-align:center'
+														}
+													]}
+												]
+										  });
+									   component.insert(0,intestazione);	   	
 								       for (i=0;i<r.length;i++) {
 								       	  var tabGestioneDateAffido = new Ext.Container({
 												//autoEl: 'div',  // This is the default
 												layout:'hbox',
 												id: 'tabGestioneDateAffido' + i,
-												defaults: {layout: 'form', border: false, width: 350},
+												defaults: {layout: 'form', border: false, width: 250, labelWidth:1},
 												//  The two items below will be Ext.Containers, each encapsulated by a <DIV> element.
 												items: [
-												   {items: [
+												   {labelWidth:50,
+												   	items: [
 	        											{
 															xtype: 'datefield',
 															format: 'd/m/Y',
-														    fieldLabel: 'Data affido standard',
+														    fieldLabel: '',
 														    width: 100,
-															id: 'DateStandard' + i,
+														    id: 'DateStandard' + i,
 															name: 'DateStandard' + i,
-															readOnly: true,
-															labelStyle: 'white-space: nowrap; width:130;'
+															readOnly: true
 														}
 													]},
 													{items: [
@@ -105,19 +133,18 @@ DCS.ModificaDataAffido = function(){
 															xtype: 'datefield',
 															format: 'd/m/Y',
 															width: 100,
-															fieldLabel: 'Data affido modificata',
+															fieldLabel: '',
 															id: 'DateVariate' + i,
 															name: 'DateVariate' + i,
 															//disabledDays:  [0, 6],
 															vtype: 'daterange',
-															editable: false,
-															labelStyle: 'white-space: nowrap; width:130;'
+															editable: false
 														}
 													]}
 												]
 										  });  
 								       	  
-								       	  component.insert(i,tabGestioneDateAffido);
+								       	  component.insert(i+1,tabGestioneDateAffido);
 								       	  Ext.getCmp('DateStandard' + i).setValue(Date.parseDate(r[i].data.DateStandard, "Y-m-d"));
 								       	  Ext.getCmp('DateVariate' + i).setValue(Date.parseDate(r[i].data.DateVariate, "Y-m-d"));
 								       	  Ext.getCmp('DateVariate' + i).originalValue = new Date(Ext.getCmp('DateStandard' + i).getValue());

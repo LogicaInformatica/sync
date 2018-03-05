@@ -38,7 +38,7 @@ function read() {
 	    foreach ($giorni as $row) {
 		   $dataAffido = mktime(0,0,0,date(m)+$i,$row,date(y));
 		   //controlla se la possibile data di affido sia antecedente ad oggi + 3 giorni, in questo caso viene scartata
-		   if ($dataAffido > strtotime("+3 days")) {
+		   if ($dataAffido > strtotime("-3 days")) {
 		 	 $giorniDataAffido[$num]['DateStandard']=date('Y-m-d', $dataAffido);
 			 //controlla se la data di affido standard ha già subito una variazione
 			 //se si viene salvata nell'array la data modificata altrimenti la dat vuota   
