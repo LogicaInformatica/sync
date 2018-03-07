@@ -786,7 +786,19 @@ function giornoFissoRinviato($giorniFissi,&$dataFissa,&$dataInizioReale)
 	}
 	if ($i<0) // non trovato (oggi � un giorno che precede il primo della lista), quindi va all'ultimo del mese precedente
 		$data  = mktime(0,0,0,date("n")-1,$giorni[count($giorni)-1],date("Y")); // sposta all'ultimo giorno fisso del mese precedente
-
+    
+    //controllo se quel giorno fisso sia una data variata
+    $dataModificata = getScalar("SELECT DataAffidoVariata FROM dataaffido WHERE DataAffidoStandard = '".ISODate($data)."'");
+	
+	//se fosse un giorno fisso modifcato la sostituisco con la data modificata
+	if ($dataModificata!=='' & $dataModificata!==null) {
+	   //controllo se la data modificata sia maggiore di oggi
+	   //continuo perchè non affidabile
+	   if ($dataModificata > date('Y-m-d')) 
+	     return FALSE;	
+	   $data = strtotime($dataModificata);	
+	}
+	   
 	//---------------------------------------------------------------------------------------------
 	// Controlla se a partire da quel giorno fino ad oggi sono avvenuti affidi automatici
 	// Se s�, significa che non c'� motivo di affidare fuori dal giorno fisso, altrimenti

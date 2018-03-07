@@ -45,7 +45,7 @@ CodTipoPagamento AS TipoPag,p.IdFamiglia,sc.Ordine AS OrdineStato,cl.FlagNoAffid
 DataScadenzaAzione,u.IdReparto, c.Telefono,IFNULL(cat.TitoloCategoria,'Nessuna') AS Categoria,FlagCambioAgente,
 IFNULL(cl.FlagRecupero,'N') AS InRecupero,TitoloStatoRinegoziazione AS StatoRinegoziazione,NOW() AS LastUpd,
 IF(EXISTS(SELECT 1 FROM storiarecupero sr WHERE sr.idContratto=co.IdContratto),'Y','N') AS FlagStoria,
-leg.TitoloStatoLegale, stg.TitoloStatoStragiudiziale, c.CodCliente, mr.CategoriaMaxirata, rs.CategoriaRiscattoLeasing, co.FlagVisuraAci
+leg.TitoloStatoLegale, stg.TitoloStatoStragiudiziale, c.CodCliente, mr.CategoriaMaxirata, rs.CategoriaRiscattoLeasing
 from contratto co
 join prodotto p on co.IdProdotto = p.IdProdotto
 join cliente c on c.IdCliente = co.IdCliente
