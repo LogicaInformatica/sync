@@ -41,7 +41,7 @@ function read() {
 		   if ($dataAffido > strtotime("-3 days")) {
 		 	 $giorniDataAffido[$num]['DateStandard']=date('Y-m-d', $dataAffido);
 			 //controlla se la data di affido standard ha già subito una variazione
-			 //se si viene salvata nell'array la data modificata altrimenti la dat vuota   
+			 //se si viene salvata nell'array la data modificata altrimenti la data vuota   
 			 $dataVariata = getScalar("SELECT DataAffidoVariata FROM dataaffido WHERE DataAffidoStandard = '".date('Y-m-d', $dataAffido)."'");  
 			 if ($dataVariata!=='') {
 			   $giorniDataAffido[$num]['DateVariate']=$dataVariata;	
@@ -78,18 +78,32 @@ function saveDateModificate(){
 		$dateModificate= array();
 		if ($totale>0) {
 		  for ($i=0;$i<$totale;$i++) {
-		  	if ($_REQUEST['DateVariate'.$i]!='' && $_REQUEST['DateStandard'.$i]!=$_REQUEST['DateVariate'.$i]) {
-		  	  	
-		  	  if (rowExistsInTable("dataaffido","DataAffidoStandard = '".date('Y-m-d', strtotime(str_replace('/', '-',$_REQUEST['DateStandard'.$i])))."'")) {
-			  	$setClause = "";	
-			  	addSetClause($setClause,"DataAffidoVariata",$_REQUEST['DateVariate'.$i],"D");
-				addSetClause($setClause,"LastUser",$context['Userid'],"S");
-				addSetClause($setClause,"LastUpd","NOW()","G");
-				
-				if (!execute("UPDATE dataaffido $setClause WHERE DataAffidoStandard = '".date('Y-m-d', strtotime(str_replace('/', '-',$_REQUEST['DateStandard'.$i])))."'")) {
-					return false;
+		  	//controllo se la data di affido standard è stata modificata e che sia diversa dalla standard
+		  	if ($_REQUEST['DateVariate'.$i]!=='' && $_REQUEST['DateStandard'.$i]!==$_REQUEST['DateVariate'.$i]) {
+		  	  $dataStandard = date('Y-m-d', strtotime(str_replace('/', '-',$_REQUEST['DateStandard'.$i])));	
+		  	  $dataVariata = date('Y-m-d', strtotime(str_replace('/', '-',$_REQUEST['DateVariate'.$i])));	
+		  	  //controllo che la data di affido standard sia già stata modificata
+		  	  if (rowExistsInTable("dataaffido","DataAffidoStandard = '$dataStandard'")) {
+			  	$dataModificaOld = getScalar("SELECT DataAffidoVariata FROM dataaffido WHERE DataAffidoStandard = '$dataStandard'");	
+				//Se effettivamente variata effettuo l'update della data di affido
+				//e cambio la data di fine affido precedente alla stessa
+				if ($dataModificaOld!=$dataVariata) {
+				    //aggiorno la data di fine affido del lotto precedente	
+				    aggiornamentoDataFineAffido($dataModificaOld, $dataVariata);	
+				  	$setClause = "";	
+				  	addSetClause($setClause,"DataAffidoVariata",$_REQUEST['DateVariate'.$i],"D");
+					addSetClause($setClause,"LastUser",$context['Userid'],"S");
+					addSetClause($setClause,"LastUpd","NOW()","G");
+					
+					if (!execute("UPDATE dataaffido $setClause WHERE DataAffidoStandard = '$dataStandard'")) {
+						return false;
+					}	
 				}
 			  } else {
+			  	  //Inserisco la nuova data di affido inizio affido
+				  //e cambio la data di fine affido precedente alla stessa	
+			  	  aggiornamentoDataFineAffido($dataStandard, $dataVariata);	
+			  	  
 			  	  $valList = "";
 		          $colList = "";	
 				  addInsClause($colList,$valList,"DataAffidoStandard",$_REQUEST['DateStandard'.$i],"D");
@@ -105,8 +119,23 @@ function saveDateModificate(){
 					$esito = getLastError();
 				  }		
 			  }
-			  
-		  	}
+			} else {
+				//Nel caso che la data variata sia uguale alla data standard
+				//elimino la riga corrispondente 
+				if ($_REQUEST['DateStandard'.$i]==$_REQUEST['DateVariate'.$i]) {
+					$dataStandard = date('Y-m-d', strtotime(str_replace('/', '-',$_REQUEST['DateStandard'.$i])));	
+		  	        $dataVariata = date('Y-m-d', strtotime(str_replace('/', '-',$_REQUEST['DateVariate'.$i])));	
+				    $dataModificaOld = getScalar("SELECT DataAffidoVariata FROM dataaffido WHERE DataAffidoStandard = '$dataStandard'");	
+					//Se effettivamente variata cambio la data di fine affido precedente alla stessa
+					if ($dataModificaOld!=$dataVariata) {
+					    //aggiorno la data di fine affido del lotto precedente	
+					    aggiornamentoDataFineAffido($dataModificaOld, $dataVariata);	
+					  	if (!execute("DELETE FROM dataaffido WHERE DataAffidoStandard = '$dataStandard'")) {
+							return false;
+						}	
+					}	
+				}
+			}
 		  }	
 		}
 		
@@ -114,9 +143,43 @@ function saveDateModificate(){
 	 {
 //			trace("Errore durante la scrittura del file avvisi agenzia".$e->getMessage());
 			setLastSerror($e->getMessage());
-			writeLog('APP',"Gestione modifca date affido","Errore nella modifica delle date di affido.",$codMex);
+			writeLog('APP',"Gestione modifica date affido","Errore nella modifica delle date di affido.",$codMex);
 			echo('{success:false,error:"Errore nella modifica delle date di affido"}');
 	 }
+}
+
+//-----------------------------------------------------------------------
+// aggiornamentoDataFineAffido
+// date la data di inizio affido vecchia e la data di inizio affido modifica
+// fa l'aggiornamento sulla tabella contratto della nuova Data di Fine affido 
+// del lotto precedente
+//-----------------------------------------------------------------------
+function aggiornamentoDataFineAffido($dataInizioAffido, $dataInizioAffidoVariata) {
+	try
+	{
+		global $context;
+		
+		//Data fine affido attuale		
+		$dataFineAffido= date('Y-m-d',strtotime($dataInizioAffido . " -1 day"));
+		//Nuova Data di fine affido
+		$dataFineAffidoVariata = date('Y-m-d',strtotime($dataInizioAffidoVariata . " -1 day"));
+				
+		$setClause = "";	
+	  	addSetClause($setClause,"DataFineAffido",$dataFineAffidoVariata,"D");
+		addSetClause($setClause,"LastUser",$context['Userid'],"S");
+		addSetClause($setClause,"lastupd","NOW()","G");
+		
+		if (!execute("UPDATE contratto $setClause WHERE DataFineAffido = '$dataFineAffido'")) {
+			return false;
+		}	  
+	
+	} catch (Exception $e)
+	  {
+//			trace("Errore durante la scrittura del file avvisi agenzia".$e->getMessage());
+			setLastSerror($e->getMessage());
+			writeLog('APP',"Gestione modifica date affido","Errore nella modifica della data di fine affido.",$codMex);
+			echo('{success:false,error:"Errore nella modifica della data di fine affido."}');
+	  }
 }
 
 ?>

@@ -5768,4 +5768,25 @@ function creaPdfDaHtml($html,$filePath) {
 		return false;
 	}		
 }
+
+//-----------------------------------------------------------------------------
+// controlloDataFineAffido
+// Data la data di affido controllo se la DataInizioAffido del lotto successivo
+// sia stata variata così da modificare la DataFineAffido al giorno precedente
+// della DataInizioAffido modificata
+//-----------------------------------------------------------------------------
+function controlloDataFineAffido(&$dataFineAffido) {
+		
+	try {
+	  $dataStandard = date('Y-m-d', strtotime("+1 day", $dataFineAffido));
+	  $dataFineAffidoVariata = getScalar("SELECT DATE_SUB(DataAffidoVariata, INTERVAL 1 DAY) as dataFineAffidoVariata FROM dataaffido WHERE DataAffidoStandard = '$dataStandard'");
+	  if ($dataFineAffidoVariata!='') {
+	  	$dataFineAffido = dateFromString($dataFineAffidoVariata);
+	  }
+	  return true;
+	} catch (Exception $e) {
+		trace($e->getMessage(),true);
+		return false;
+	}	
+}
 ?>

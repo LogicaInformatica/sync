@@ -578,13 +578,15 @@ function delegate($IdContratto)
 					if ($bool!="1") // oggi non e' uno dei giorni stabiliti
 					{
 						//if (!inAttesaDaPrima($IdContratto,$regola["GiorniFissiInizio"],$dataInizioAffido))
-						if (!giornoFissoRinviato($regola["GiorniFissiInizio"],$dataInizioAffido,$dataInizioReale))
+						if (!giornoFissoRinviato($regola["GiorniFissiInizio"],$dataInizioAffido,$dataInizioReale,$dataInizioAffidoStandard))
 						{
 							trace("Non affidata ad agenzia n. $IdReparto perche' non e' uno dei giorni fissi ".$regola["GiorniFissiInizio"],FALSE);
 							continue;
 						}
-						else
-							trace("Pratica ".$pratica["IdContratto"]." affidabile all\'agenzia $IdReparto dal giorno fisso precedente ".ISODate($dataInizioAffido),FALSE);
+						else {
+							trace("Pratica ".$pratica["IdContratto"]." affidabile all\'agenzia $IdReparto dal giorno fisso precedente ".ISODate($dataInizioAffidoStandard),FALSE);
+							$dataInizioAffido = $dataInizioAffidoStandard;
+						}	
 					} else {
 						//controllo se è uno dei giorni stabiliti variati 
 						$boolFissoVariato = getScalar("SELECT COUNT(*) FROM dataaffido WHERE DATE_FORMAT(NOW()+INTERVAL ".(24-$oraFineGiorno)." HOUR,'%Y-%m-%d') = DataAffidoStandard");
@@ -599,13 +601,15 @@ function delegate($IdContratto)
 							  col il giorno variato usando array_search */
 							$array[array_search($giornoFisso,$array)]=$giornoVariato; 
 							$giorniFissiVariati = implode(",", $array);
-						  	if (!giornoFissoRinviato($giorniFissiVariati,$dataInizioAffido,$dataInizioReale))
+						  	if (!giornoFissoRinviato($giorniFissiVariati,$dataInizioAffido,$dataInizioReale,$dataInizioAffidoStandard))
 							{
 								trace("Non affidata ad agenzia n. $IdReparto perche' non e' uno dei giorni fissi ".$regola["GiorniFissiInizio"],FALSE);
 								continue;
 							}
-							else
-								trace("Pratica ".$pratica["IdContratto"]." affidabile all\'agenzia $IdReparto dal giorno fisso precedente ".ISODate($dataInizioAffido),FALSE);	
+							else {
+								trace("Pratica ".$pratica["IdContratto"]." affidabile all\'agenzia $IdReparto dal giorno fisso precedente ".ISODate($dataInizioAffido),FALSE);
+								$dataInizioAffido = $dataInizioAffidoStandard;
+							}		
 						}
 					  }	
 				}
@@ -742,6 +746,10 @@ function delegate($IdContratto)
 			// Adesso $IdReparto contiene il valore cercato, a meno che qualcosa manchi (da regolaProvvigione)
 			if ($IdReparto>0)
 			{
+				//Modifica del 09/02/2018: Controllo spostamento in avanti o indietro della DataFineAffido
+				//in base ad una eventuale modifica della DataInizioAffido del Lotto successivo	
+				if (!controlloDataFineAffido($dataFineAffido))
+				    return FALSE;	
 				if (!affidaAgenzia($IdContratto,$IdReparto,$dataFineAffido,true,$dataInizioReale,$IdRegolaProvvigione))
 					return FALSE;
 				if ($msgForHistory>"")
@@ -768,7 +776,7 @@ function delegate($IdContratto)
 // Determina se il giorno fisso precedente � passato senza affido (di solito perch� festivo) e se oggi
 // � un giorno vaildo per effettuare l'affido non fatto in quel giorno.
 //----------------------------------------------------------------------------------------------------------
-function giornoFissoRinviato($giorniFissi,&$dataFissa,&$dataInizioReale)
+function giornoFissoRinviato($giorniFissi,&$dataFissa,&$dataInizioReale,&$dataFissaStandard)
 {
 	//----------------------------------------------------------------
 	// Trova quale giorno fisso precede oggi
@@ -787,15 +795,18 @@ function giornoFissoRinviato($giorniFissi,&$dataFissa,&$dataInizioReale)
 	if ($i<0) // non trovato (oggi � un giorno che precede il primo della lista), quindi va all'ultimo del mese precedente
 		$data  = mktime(0,0,0,date("n")-1,$giorni[count($giorni)-1],date("Y")); // sposta all'ultimo giorno fisso del mese precedente
     
+    //salvo la data di inizio affido precedente standard per poterla
+    //utilizzare in seguito per il calcolo del fine affido precedente  
+    $dataFissaStandard = $data;
     //controllo se quel giorno fisso sia una data variata
     $dataModificata = getScalar("SELECT DataAffidoVariata FROM dataaffido WHERE DataAffidoStandard = '".ISODate($data)."'");
 	
-	//se fosse un giorno fisso modifcato la sostituisco con la data modificata
-	if ($dataModificata!=='' & $dataModificata!==null) {
+	//se fosse un giorno fisso modificato la sostituisco con la data modificata
+	if ($dataModificata!='') {
 	   //controllo se la data modificata sia maggiore di oggi
 	   //continuo perchè non affidabile
 	   if ($dataModificata > date('Y-m-d')) 
-	     return FALSE;	
+	     return FALSE;
 	   $data = strtotime($dataModificata);	
 	}
 	   
