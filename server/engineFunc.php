@@ -472,7 +472,7 @@ function delegate($IdContratto)
 
 		// Usa MySQL per sapere che giorno di inizio considerare, tra OGGI e DOMANI
 		// dipende dal fatto se � superata o meno l'ORA_FINE_GIORNO
-		$oraFineGiorno = getSysParm("ORA_FINE_GIORNO","20");
+		$oraFineGiorno = getSysParm("ORA_FINE_GIORNO","24");
 		$dataInizioAffido = getScalar("SELECT DATE(NOW()+INTERVAL ".(24-$oraFineGiorno)." HOUR)");
 		$dataInizioAffido = dateFromString($dataInizioAffido);
 		
@@ -612,6 +612,11 @@ function delegate($IdContratto)
 							}		
 						}
 					  }	
+				} else {
+					//oggi è uno dei giorni inizio affido variati assegno alla data che mi serve
+					//per calcolare il fine affido la DataInizioAffido standard
+					$dataInizioAffidoStandard = getScalar("SELECT DataAffidoStandard FROM dataaffido WHERE DATE_FORMAT(NOW()+INTERVAL ".(24-$oraFineGiorno)." HOUR,'%Y-%m-%d') = DataAffidoVariata"); 
+					$dataInizioAffido = dateFromString($dataInizioAffidoStandard);
 				}
 			}
 					
