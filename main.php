@@ -198,6 +198,7 @@ echo "\n<script>",
 <script type="text/javascript" src="js/tabs_Experian.js"></script>
 <script type="text/javascript" src="js/tabs_Charts.js"></script>
 <script type="text/javascript" src="js/tabs_Charts_MR.js"></script>
+<script type="text/javascript" src="js/tabs_Charts_RL.js"></script>
 <script type="text/javascript" src="js/tabs_Comunicazioni.js"></script>
 <script type="text/javascript" src="js/tabs_Distinte.js"></script>
 <script type="text/javascript" src="js/tabs_ErrMsgImportedFiles.js"></script>
@@ -309,6 +310,7 @@ echo "\n<script>",
 <script type="text/javascript" src="js/grid_dettaglioProcesso.js"></script>
 <script type="text/javascript" src="js/grid_PianoRateazione.js"></script>
 <script type="text/javascript" src="js/modificaDataAffido.js"></script>
+<script type="text/javascript" src="js/allegatiMassivi.js"></script>
 
 <script type="text/javascript" src="ux/menu/EditableItem.js"></script>
 <script type="text/javascript" src="ux/menu/RangeMenu.js"></script>

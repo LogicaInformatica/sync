@@ -219,3 +219,7 @@
 .invisible { /* usato per la getClass in tabs_Pratiche.js */
 	display: none;
 }
+
+#navigatore .x-box-inner { /* usato per rendere scrollabile il sottomenù nel caso sia troppo lungo */
+    overflow-y: auto;
+} 

@@ -258,6 +258,7 @@ function aggiornaTipo()
 			$tab = 'tipoallegato';
 			$idField = 'IdTipoAllegato';
 			$codField = 'CodTipoAllegato';
+			$pattField = 'Pattern';
 			$titleName = 'allegato';
 			$codMexName = 'TIPO_ALLEGATO';
 			$neww = Array();
@@ -394,6 +395,8 @@ function aggiornaTipo()
 				addInsClause($colList,$valList,"Ordine",$ordine,"N");
 			if($toOrderAuto)
 				addInsClause($colList,$valList,"Ordine",$orderAuto,"N");
+			if($pattField)
+				addInsClause($colList,$valList,"Pattern",$_POST['Pattern'],"S");	
 			if($isAlfaOmega)
 			{
 				addInsClause($colList,$valList,"DataIni",'2001-01-01',"S");
@@ -431,6 +434,8 @@ function aggiornaTipo()
 					addSetClause($setClause,"Ordine",$ordine,"N");
 				//if($toOrderAuto)//da testare e torgliere in modifica
 				//	addSetClause($setClause,"Ordine",$orderAuto,"N");
+				if($pattField)
+					addSetClause($setClause,"Pattern",$_POST['Pattern'],"S");
 				if($toCheck)
 					addSetClause($setClause,$flagField,$flagTab,"S");
 				addSetClause($setClause,"LastUser",$context['Userid'],"S");

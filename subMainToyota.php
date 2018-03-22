@@ -111,13 +111,17 @@
 		if (CONTEXT.MENU_GP_GRAF_STRLEG)
 			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Grafici STR',		panel: DCS.Charts.Tabs.create_TFSI_STR});
 		if (CONTEXT.MENU_GP_GRAF_MAXRAT)
-			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Grafici Maxirate',	panel: DCS.ChartsMr.TabsMRRL.create_TFSI_MR});	
+			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Grafici Maxirate',	panel: DCS.ChartsMr.TabsMRRL.create_TFSI_MR});
+		if (CONTEXT.MENU_GP_GRAF_RISLEAS)
+			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Grafici Riscatti scaduti',	panel: DCS.ChartsRl.TabsMRRL.create_TFSI_RL});		
 		if (CONTEXT.MENU_AZI_SPEC_I)
 			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Azioni con convalida',panel: DCS.PraticheAzioniSpeciali});
 		if (CONTEXT.MENU_GP_EXPERIAN)
 			menu_insoluti.add({xtype: 'btnsubmenu',text: 'Experian',panel: DCS.Experian.create});
 		if(CONTEXT.MENU_GP_VA)
-    		menu_insoluti.add({xtype:'btnsubmenu', text: 'Importa visure ACI',  panel: DCS.ImportVisureACI.create});	
+    		menu_insoluti.add({xtype:'btnsubmenu', text: 'Importa visure ACI',  panel: DCS.ImportVisureACI.create});
+    	if(CONTEXT.MENU_GP_ALLMAS)
+    		menu_insoluti.add({xtype:'btnsubmenu', text: 'Allegati massivi',  panel: DCS.AllegatiMassivi.create});			
 		
     	//----------------SOTTOMENU AFFIDAMENTI------------------
     	var menu_affidamenti = new DCS.Menu ({title: 'Affidamenti',items: []});

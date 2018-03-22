@@ -8,7 +8,7 @@ INSERT INTO `db_cnc`.`profilofunzione` (`IdProfilo`, `IdFunzione`, `DataIni`, `D
 
 INSERT INTO `db_cnc`.`tipoallegato` (`IdTipoAllegato`, `CodTipoAllegato`, `TitoloTipoAllegato`, `DataIni`, `DataFin`, `LastUser`) VALUES ('13', 'VISACI', 'Visura ACI', '2001-01-01', '9999-12-31', 'system');
 
-/*Gestione visualizzazione delle visure ACI
+/*Gestione visualizzazione delle visure ACI*/
 ALTER TABLE `db_cnc`.`contratto` 
 ADD COLUMN `FlagVisuraAci` CHAR(1) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NULL DEFAULT NULL AFTER `IdCategoriaRiscattoLeasing`;
 

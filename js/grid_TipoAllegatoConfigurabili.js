@@ -69,7 +69,7 @@ DCS.GridTalleTab = Ext.extend(Ext.grid.GridPanel, {
 		    	    }
 		    	});
 	    	}else{
-	    		Ext.MessageBox.alert('Conferma', "Non si è selezionata alcuna voce.");
+	    		Ext.MessageBox.alert('Conferma', "Non si ï¿½ selezionata alcuna voce.");
 	    	}
 	    };
 	    
@@ -85,13 +85,15 @@ DCS.GridTalleTab = Ext.extend(Ext.grid.GridPanel, {
 		var fields = [{name: 'IdTipoAllegato', type: 'int'},
 							{name: 'TitoloTipoAllegato'},
 							{name: 'CodTipoAllegato', type: 'string'},
+							{name: 'Pattern', type: 'string'},
 							{name: 'LastUser'},
 							{name: 'LastUpd', type:'date', dateFormat: 'Y-m-d H:i:s'}];
 
     	var columns = [selM,
     	               	{dataIndex:'IdTipoAllegato',width:10, header:'IdTA',hidden: true, hideable: false,filterable:true,groupable:false,sortable:false},
     		        	{dataIndex:'TitoloTipoAllegato',	width:130,	header:'Tipo allegato', hideable: false,filterable:true,groupable:false,sortable:true},
-    		        	{dataIndex:'CodTipoAllegato',width:50, header:'Codice',align:'center',hidden: false, hideable: false, filterable:true,groupable:false,sortable:true},    		        	
+    		        	{dataIndex:'CodTipoAllegato',width:50, header:'Codice',align:'center',hidden: false, hideable: false, filterable:true,groupable:false,sortable:true},
+    		        	{dataIndex:'Pattern',width:70, header:'Pattern',align:'center',hidden: false, hideable: false, filterable:true,groupable:false,sortable:true},
     		        	{dataIndex:'LastUpd',	width:70,xtype:'datecolumn',header:'Last update',hidden:true, filterable:true,sortable:true,groupable:false},
     		        	{dataIndex:'LastUser',	width:70,header:'Last user',hidden:true, filterable:true,sortable:true,groupable:false}
     		          ];
@@ -347,8 +349,27 @@ DCS.dTallegPanel = Ext.extend(Ext.Panel, {
 											}
 										}
 									}
+								},{	
+									style: 'nowrap',
+							//									width: 100,
+									style: 'text-align:left',
+									id:idDin+'pattern',
+									fieldLabel: 'Pattern',
+									name: 'Pattern',
+									enableKeyEvents: true,
+									listeners:{
+										change : function(field, newValue,oldValue ){
+											if(newValue!='' && Ext.getCmp(idDin+'nome').getValue()!='' && Ext.getCmp(idDin+'codice').getValue()!='')
+											{
+												Ext.getCmp(idDin+'bSave').setDisabled(false);
+											}else{
+												Ext.getCmp(idDin+'bSave').setDisabled(true);
+											}
+										}
+									}
 								}]
-							},{
+							},
+							{
 								xtype: 'panel',
 								layout: 'form',
 								labelWidth: 90,
@@ -419,6 +440,7 @@ DCS.dTallegPanel = Ext.extend(Ext.Panel, {
 			Ext.getCmp(idDin+'id').setValue(this.recordMod.get('IdTipoAllegato'));
 			Ext.getCmp(idDin+'nome').setValue(replace_Tospecial_chars(this.recordMod.get('TitoloTipoAllegato')));
 			Ext.getCmp(idDin+'codice').setValue(this.recordMod.get('CodTipoAllegato'));
+			Ext.getCmp(idDin+'pattern').setValue(this.recordMod.get('Pattern'));
 			Ext.getCmp(idDin+'nome').fireEvent('change',Ext.getCmp(idDin+'nome'),this.recordMod.get('TitoloTipoAllegato'),'');
 		}
 	}	// fine initcomponent
@@ -432,7 +454,7 @@ DCS.showDetailTALLE= function()
 			wind = new Ext.Window({
 				layout: 'fit',
 				width: 500,
-			    height: 165,
+			    height: 190,
 				modal: true,
 				title: titolo,
 				tools: [helpTool("TipoAllegato")],

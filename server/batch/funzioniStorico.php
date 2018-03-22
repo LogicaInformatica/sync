@@ -44,17 +44,17 @@ global $client_tables_simple, $contr_tables_in, $contr_tables_simple, $schema_st
 	);
 
 //==============================================================================================
-// Effettua il recupero dal db storico di uno o più clienti e di tutte le tabelle collegate.
+// Effettua il recupero dal db storico di uno o piï¿½ clienti e di tutte le tabelle collegate.
 //
 // Argomenti in query string (uno solo dei seguenti, in ordine):
 //   1) cliente		idcliente 
 //   2) contratti	lista di idcontratto separati da virgola
 //   3) file		path del file in formato import del tipo xxx_yyy_contratti
-//	 4) dir			path della directory contenente uno o più file di import del tipo xxx_yyy_contratti
+//	 4) dir			path della directory contenente uno o piï¿½ file di import del tipo xxx_yyy_contratti
 //
 //	 default: dir=TMP_PATH."/import
 //
-// Nota: la funzione esegue anche degli echo perché richiamata come pagina a se stante, sia
+// Nota: la funzione esegue anche degli echo perchï¿½ richiamata come pagina a se stante, sia
 // dall'azione "Ripristina da storico", sia da amministratore di sistema per motivi estemporanei
 // Quando viene chiamata da cronProcess gli echo non si vedono.
 //==============================================================================================
@@ -195,7 +195,7 @@ function recuperoStorico($cliente,$listacontratti,$nomefile,$nomedir) {
 	if (count($clienti)>0) {
 		$sql = "SELECT IdCliente FROM $schema_storico.cliente WHERE CodCliente IN (".implode(",",$clienti). ")";
 		$idclienti = fetchValuesArray($sql);
-		trace("Clienti da aggiungere, se non già inclusi: $sql",false);
+		trace("Clienti da aggiungere, se non giï¿½ inclusi: $sql",false);
 		foreach ($idclienti as $idcliente) {
 			if (!execute("INSERT IGNORE INTO $schema_storico.tmp_clienti_restore VALUES($idcliente)")) include "die_batch.php";;
 		}
@@ -263,7 +263,7 @@ function recuperoStorico($cliente,$listacontratti,$nomefile,$nomedir) {
 		restoreClient($cliente);
 	}
 	*/
-	// Crea una traccia sulla storia dei contratti recuperati, solo se già dotati di righe di storia
+	// Crea una traccia sulla storia dei contratti recuperati, solo se giï¿½ dotati di righe di storia
 	getUserName($IdUser);
 	if (!execute("INSERT INTO storiarecupero (IdContratto,IdAzione,DataEvento,IdUtente,DescrEvento,NotaEvento)"
 	." SELECT IdContratto,530,NOW(),$IdUser,'Dati ripristinati dallo storico',''"
@@ -288,7 +288,7 @@ function recuperoStorico($cliente,$listacontratti,$nomefile,$nomedir) {
 
 //==============================================================================================
 // restoreClient
-// Effettua il restore di un cliente e di tutte le entità collegate
+// Effettua il restore di un cliente e di tutte le entitï¿½ collegate
 // Argomenti:
 //   1) $cliente			idCliente da trattare
 //
@@ -337,7 +337,7 @@ function restoreClient($cliente) {
 
 //==============================================================================================
 // restoreSimple
-// Execute per il trasferimento dei record di una entità direttamente figlia di Cliente o Contratto
+// Execute per il trasferimento dei record di una entitï¿½ direttamente figlia di Cliente o Contratto
 // Argomenti:
 //   1) $table			tabella da trattare
 //   2) $where			clausola where da applicare alla query
@@ -353,7 +353,7 @@ function restoreSimple($table, $where) {
 
 //==============================================================================================
 // restoreIn
-// Execute per il trasferimento dei record di una entità di secondo livello rispetto al Cliente
+// Execute per il trasferimento dei record di una entitï¿½ di secondo livello rispetto al Cliente
 // o al Contratto. 
 // Argomenti:
 //   1) $row			oggetto della tabella con info per la preparazione della query principale 
@@ -396,7 +396,7 @@ function restoreDirectory($path, &$contratti, &$clienti) {
 		foreach (scandir($path) as $item) { // legge in ordine alfabetico
 			$filename = "$path/$item";
 			if (is_file($filename)) {
-				// Separa tipo e id del file da processare (il nome file è Company_idfile_tipofile)
+				// Separa tipo e id del file da processare (il nome file ï¿½ Company_idfile_tipofile)
 				$parti = explode("_",$item);
 				$type  = $parti[2];
 
@@ -457,7 +457,7 @@ function restoreFile($path, &$contratti, &$clienti) {
 				throw new Exception("la riga n. " . ($nrows+1) . " del file ha un formato invalido");
 			}
 			else 
-				if (property_exists($json,"rows")) { // si tratta dell'ultima riga di controllo (già controllata nella import.php)
+				if (property_exists($json,"rows")) { // si tratta dell'ultima riga di controllo (giï¿½ controllata nella import.php)
 					break;
 				}
 			if ($json->CodContratto)
@@ -498,7 +498,7 @@ function restoreFile($path, &$contratti, &$clienti) {
 
 //==============================================================================================
 // Effettua lo svecchiamento del db spostando clienti e tutte le tabelle collegate secondo 
-// criteri di non negatività dei contratti, non affido e cambiamento di stato precedente un 
+// criteri di non negativitï¿½ dei contratti, non affido e cambiamento di stato precedente un 
 // dato intervallo di tempo.
 //
 // Argomenti in query string:
@@ -597,7 +597,7 @@ function svecchiamento($mesi) {
 	//flush();
 		$cont |= ($n>0);
 
-		// contratti non storicizzabili perché cliente referenziato su Experian (non storicizzo Experian)
+		// contratti non storicizzabili perchï¿½ cliente referenziato su Experian (non storicizzo Experian)
 		trace("Riempimento tabella con i contratti non storicizzabili perche' inviati ad Experian",false);
 		echo "Riempimento tabella con i contratti non storicizzabili perche' inviati ad Experian<br>\n";
 		flush();
@@ -618,6 +618,14 @@ function svecchiamento($mesi) {
 	//echo "e) $n<br>\n";
 	//flush();
 
+	    // contratti in cessione e writeoff che rientrano nei non started 
+		trace("Riempimento tabella con i contratti in cessione e writeoff che rientrano nei non started",false);
+		echo "Riempimento tabella con i contratti in cessione e writeoff che rientrano nei non started<br>\n";
+		flush();
+		execute("$sql_insert_tmp WHERE c.idcontratto IN (SELECT c1.IdContratto FROM contratto c1 where c1.DataDBT < c1.DataDecorrenza + INTERVAL 12 MONTH AND c1.IdStatoRecupero in (79,84))") or die(getLastError());
+		$n = getAffectedRows();
+	//echo "d) $n<br>\n";
+	//flush();
 	} while ($cont);
 	
 	// drop table tmp_clienti_stor;
@@ -691,7 +699,7 @@ function svecchiamento($mesi) {
 		// Fine transazione
 		commit();
 		
-	// Crea una traccia sulla storia dei contratti svecchiati, solo se già dotati di righe di storia
+	// Crea una traccia sulla storia dei contratti svecchiati, solo se giï¿½ dotati di righe di storia
 	getUserName($IdUser);
 	execute("INSERT INTO $schema_storico.storiarecupero (IdContratto,IdAzione,DataEvento,IdUtente,DescrEvento,NotaEvento)"
 	." SELECT IdContratto,530,NOW(),$IdUser,'Effettuata archiviazione nel DB storico della pratica e di tutti i dati collegati',''"
