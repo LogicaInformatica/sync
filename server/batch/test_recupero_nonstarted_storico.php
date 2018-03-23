@@ -9,6 +9,7 @@ set_time_limit(0);	// aumenta il tempo max di cpu
 
 	beginTrans();
 	
+	execute("SET group_concat_max_len = 1000000");
 	$idContratti = getScalar("SELECT group_concat(IdContratto) FROM db_cnc_storico.contratto WHERE DataDBT < DataDecorrenza + INTERVAL 12 MONTH AND IdStatoRecupero in (79,84)"); 
 	
 	if (!recuperoStorico("",$idContratti,"","")) {
