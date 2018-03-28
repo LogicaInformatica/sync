@@ -50,11 +50,18 @@ DCS.ModificaDataAffido = function(){
 			    	 			//numero di date che posso modificare 
 			    	 			var numDate = formModDataAffido.items.length;
 			    	 			frm.submit({
+			    	 				timeout : 10000,
 									url: 'server/editModificaDataAffido.php',
 									method: 'POST',
 									params: {task: 'saveDateModificate', numDate: numDate},
-									success: function(){
-										Ext.Msg.alert('Salvataggio', 'Correttamente effettuato');
+									success: function(frm, action){
+										if(action.result.success){
+											//Ext.MessageBox.alert('Esito', action.result.data);
+											Ext.MessageBox.alert('Salvataggio', 'Correttamente effettuato');
+								        } else {
+											Ext.MessageBox.alert('Errore', action.result.error);
+										  }
+										//Ext.Msg.alert('Salvataggio', 'Correttamente effettuato');
 									},
 									failure: function(frm, action){
 										Ext.Msg.alert('Errore', action.result.error);

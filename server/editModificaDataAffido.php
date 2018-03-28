@@ -77,6 +77,7 @@ function saveDateModificate(){
 	    $totale = $_REQUEST['numDate'];
 		$dateModificate= array();
 		if ($totale>0) {
+		  beginTrans();	
 		  for ($i=0;$i<$totale;$i++) {
 		  	//controllo se la data di affido standard è stata modificata e che sia diversa dalla standard
 		  	if ($_REQUEST['DateVariate'.$i]!=='' && $_REQUEST['DateStandard'.$i]!==$_REQUEST['DateVariate'.$i]) {
@@ -87,22 +88,27 @@ function saveDateModificate(){
 			  	$dataModificaOld = getScalar("SELECT DataAffidoVariata FROM dataaffido WHERE DataAffidoStandard = '$dataStandard'");	
 				//Se effettivamente variata effettuo l'update della data di affido
 				//e cambio la data di fine affido precedente alla stessa
-				if ($dataModificaOld!=$dataVariata) {
-				    //aggiorno la data di fine affido del lotto precedente	
-				    aggiornamentoDataFineAffido($dataModificaOld, $dataVariata);	
-				  	$setClause = "";	
+				if ($dataModificaOld!='' && $dataModificaOld!=$dataVariata) {
+					//aggiorno la data di fine affido del lotto precedente	
+				    if (!aggiornamentoDataFineAffido($dataModificaOld, $dataVariata)) {
+				      fail("Errore durante la modifica della data di fine affido");	
+				    }
+					
+					$setClause = "";	
 				  	addSetClause($setClause,"DataAffidoVariata",$_REQUEST['DateVariate'.$i],"D");
 					addSetClause($setClause,"LastUser",$context['Userid'],"S");
 					addSetClause($setClause,"LastUpd","NOW()","G");
 					
 					if (!execute("UPDATE dataaffido $setClause WHERE DataAffidoStandard = '$dataStandard'")) {
-						return false;
-					}	
+						fail("Errore durante l'update della data di inizio affido variata");
+					}
 				}
 			  } else {
 			  	  //Inserisco la nuova data di affido inizio affido
 				  //e cambio la data di fine affido precedente alla stessa	
-			  	  aggiornamentoDataFineAffido($dataStandard, $dataVariata);	
+			  	  if (!aggiornamentoDataFineAffido($dataStandard, $dataVariata)) {
+				      fail("Errore durante la modifica della data di fine affido");	
+				  }	
 			  	  
 			  	  $valList = "";
 		          $colList = "";	
@@ -116,7 +122,7 @@ function saveDateModificate(){
 				  // Controllo successo dell'operazione (non usare il numero di righe modificate che potrebbe essere 0
 				  // nel caso in cui non ci fosse nessuna modifica di valore)
 				  if (!execute($sql)) {
-					$esito = getLastError();
+					fail("Errore durante l'insert della data di inizio affido variata");  
 				  }		
 			  }
 			} else {
@@ -127,23 +133,26 @@ function saveDateModificate(){
 		  	        $dataVariata = date('Y-m-d', strtotime(str_replace('/', '-',$_REQUEST['DateVariate'.$i])));	
 				    $dataModificaOld = getScalar("SELECT DataAffidoVariata FROM dataaffido WHERE DataAffidoStandard = '$dataStandard'");	
 					//Se effettivamente variata cambio la data di fine affido precedente alla stessa
-					if ($dataModificaOld!=$dataVariata) {
-					    //aggiorno la data di fine affido del lotto precedente	
-					    aggiornamentoDataFineAffido($dataModificaOld, $dataVariata);	
+					if ($dataModificaOld!='' && $dataModificaOld!=$dataVariata) {
+						//aggiorno la data di fine affido del lotto precedente	
+					    if (!aggiornamentoDataFineAffido($dataModificaOld, $dataVariata)) {
+					      fail("Errore durante la modifica della data di fine affido");		
+					    }
+							
 					  	if (!execute("DELETE FROM dataaffido WHERE DataAffidoStandard = '$dataStandard'")) {
-							return false;
-						}	
+							fail("Errore nella cancellazione delle date di affido variata");
+						}
 					}	
 				}
 			}
 		  }	
 		}
-		
+		success();
 	}catch (Exception $e)
 	 {
 //			trace("Errore durante la scrittura del file avvisi agenzia".$e->getMessage());
 			setLastSerror($e->getMessage());
-			writeLog('APP',"Gestione modifica date affido","Errore nella modifica delle date di affido.",$codMex);
+			writeLog('saveDateModificate',"Gestione modifica date affido","Errore nella modifica delle date di affido.",$codMex);
 			echo('{success:false,error:"Errore nella modifica delle date di affido"}');
 	 }
 }
@@ -153,6 +162,10 @@ function saveDateModificate(){
 // date la data di inizio affido vecchia e la data di inizio affido modifica
 // fa l'aggiornamento sulla tabella contratto della nuova Data di Fine affido 
 // del lotto precedente
+// fa l'aggiornamento sulla tabella assegnazione della nuova DataFin e DataFineAffidoContratto 
+// fa l'aggiornamento sulla tabella storiainsoluto della nuova DataFineAffido 
+// fa l'aggiornamento sulla tabella dettaglioprovvigione della nuova DataFineAffido e DataFineAffidoContratto
+// fa l'aggiornamento sulla tabella provvigione della nuova DataFin 
 //-----------------------------------------------------------------------
 function aggiornamentoDataFineAffido($dataInizioAffido, $dataInizioAffidoVariata) {
 	try
@@ -169,15 +182,49 @@ function aggiornamentoDataFineAffido($dataInizioAffido, $dataInizioAffidoVariata
 		addSetClause($setClause,"LastUser",$context['Userid'],"S");
 		addSetClause($setClause,"lastupd","NOW()","G");
 		
-		if (!execute("UPDATE contratto $setClause WHERE DataFineAffido = '$dataFineAffido'")) {
+		$rowsContratto = getRows("SELECT IdContratto FROM contratto WHERE DataFineAffido = '$dataFineAffido'");
+		foreach ($rowsContratto as $row) {
+			if (!execute("UPDATE contratto $setClause WHERE IdContratto = ".$row['IdContratto'])) {
+				return false;
+			} else {
+				writeHistory("NULL","Variata Data fine affido al $dataFineAffidoVariata a fronte della modifica della data inizio affido lotto seguente",$row["IdContratto"],"");
+			}
+		}   
+		
+		//Aggiornameno DataFin e DataFineAffidoContratto della tabella assegnazione
+		if (!execute("UPDATE assegnazione SET DataFin='$dataFineAffidoVariata' WHERE DataFin='$dataFineAffido'")) {
 			return false;
-		}	  
-	
+		} 
+		
+        if (!execute("UPDATE assegnazione SET DataFineAffidoContratto='$dataFineAffidoVariata' WHERE DataFineAffidoContratto='$dataFineAffido'")) {
+			return false;
+		} 
+		
+		//Aggiornameno DataFineAffido della tabella storiainsoluto
+		if (!execute("UPDATE storiainsoluto SET DataFineAffido='$dataFineAffidoVariata' WHERE DataFineAffido='$dataFineAffido'")) {
+			return false;
+		} 
+		
+		//Aggiornameno DataFineAffido e DataFineAffidoContratto della tabella dettaglioprovvigione
+		if (!execute("UPDATE dettaglioprovvigione SET DataFineAffido='$dataFineAffidoVariata' WHERE DataFineAffido='$dataFineAffido'")) {
+			return false;
+		} 
+		
+        if (!execute("UPDATE dettaglioprovvigione SET DataFineAffidoContratto='$dataFineAffidoVariata' WHERE DataFineAffidoContratto='$dataFineAffido'")) {
+			return false;
+		} 
+		
+		//Aggiornameno DataFin e DataFin della tabella provvigione
+		if (!execute("UPDATE provvigione SET DataFin='$dataFineAffidoVariata' WHERE DataFin='$dataFineAffido'")) {
+			return false;
+		} 
+	    
+	    return true;
 	} catch (Exception $e)
 	  {
 //			trace("Errore durante la scrittura del file avvisi agenzia".$e->getMessage());
 			setLastSerror($e->getMessage());
-			writeLog('APP',"Gestione modifica date affido","Errore nella modifica della data di fine affido.",$codMex);
+			writeLog('AggiornamentoDataFineAffido',"Gestione modifica date affido","Errore nella modifica della data di fine affido.",$codMex);
 			echo('{success:false,error:"Errore nella modifica della data di fine affido."}');
 	  }
 }

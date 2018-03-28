@@ -15,4 +15,10 @@ CREATE TABLE `db_cnc`.`dataaffido` (
 ALTER TABLE `db_cnc`.`dataaffido` 
 ADD COLUMN `LastUpd` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER `DataAffidoVariata`,
 ADD COLUMN `LastUser` VARCHAR(20) NULL DEFAULT NULL AFTER `LastUpd`;
-  
+
+ALTER TABLE `db_cnc`.`storiainsoluto` 
+ADD INDEX `DataFineAffido` (`DataFineAffido` ASC);
+
+ALTER TABLE `db_cnc`.`assegnazione` 
+ADD INDEX `DataFin` (`DataFin` ASC),
+ADD INDEX `DataFineAffidoContratto` (`DataFineAffidoContratto` ASC);
