@@ -615,17 +615,25 @@ function svecchiamento($mesi) {
 				"contratto) a JOIN (SELECT DISTINCT SUBSTRING_INDEX(codcontratto, '-', 1) AS cod FROM ".
 				"tmp_contratti_negativi WHERE codcontratto LIKE 'LE%-%') b ON a.cod = b.cod") or die(getLastError());
 		$n = getAffectedRows();
-	//echo "e) $n<br>\n";
-	//flush();
+
+		$cont |= ($n>0);
 
 	    // contratti in cessione e writeoff che rientrano nei non started 
 		trace("Riempimento tabella con i contratti in cessione e writeoff che rientrano nei non started",false);
 		echo "Riempimento tabella con i contratti in cessione e writeoff che rientrano nei non started<br>\n";
 		flush();
-		execute("$sql_insert_tmp WHERE c.idcontratto IN (SELECT c1.IdContratto FROM contratto c1 where c1.DataDBT < c1.DataDecorrenza + INTERVAL 12 MONTH AND c1.IdStatoRecupero in (79,84))") or die(getLastError());
+		execute("$sql_insert_tmp WHERE c.idcontratto IN (SELECT IdContratto FROM v_nonstarted)") or die(getLastError());
 		$n = getAffectedRows();
-	//echo "d) $n<br>\n";
-	//flush();
+		$cont |= ($n>0);
+
+	    // contratti in gestione maxirate o riscatti leasing scaduti
+		trace("Riempimento tabella con in gestione maxirate o riscatti leasing scaduti",false);
+		echo "Riempimento tabella con in gestione maxirate o riscatti leasing scaduti<br>\n";
+		flush();
+		execute("$sql_insert_tmp WHERE c.idcontratto IN "
+            . "(SELECT IdContratto FROM contratto WHERE IdCategoria=1006 OR IdAttributo=86)") or die(getLastError());
+		$n = getAffectedRows();
+		$cont |= ($n>0);
 	} while ($cont);
 	
 	// drop table tmp_clienti_stor;
