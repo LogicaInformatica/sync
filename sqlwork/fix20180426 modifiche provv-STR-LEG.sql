@@ -56,3 +56,4 @@ AbbrRegolaProvvigione='10% (f1), 5% (f2)', FlagPerPratica='Y',
 Condizione='IdStatoRecupero IN (7,25)'
 where datafin>now() and fasciarecupero='LEGALE'
 ;
+UPDATE `regolaprovvigione` SET `Formula`=NULL WHERE `IdRegolaProvvigione`='4114';
