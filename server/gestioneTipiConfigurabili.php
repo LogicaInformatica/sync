@@ -178,6 +178,7 @@ function aggiornaTipo()
 			$indexTab=$_POST['IdTipo'];
 			$codTab=$_POST['CodTipo'];
 			$abbrTab=$_POST['AbbrTipo'];
+  			$percTab=$_POST['PercProvvigione'];
 			$ordine=$_POST['Ordine'];
 			$flagTab=$_POST['FlagT'];
 			break;
@@ -214,6 +215,7 @@ function aggiornaTipo()
 			$neww[]='salvato';	
 			//campi tab
 			$titField = 'TitoloStatoLegale';
+            $percField = "PercProvvigione";
 			$isAlfaOmega=false;
 			if($indexTab==0)
 				$_POST['isNew']=true;
@@ -395,6 +397,8 @@ function aggiornaTipo()
 				addInsClause($colList,$valList,"Ordine",$ordine,"N");
 			if($toOrderAuto)
 				addInsClause($colList,$valList,"Ordine",$orderAuto,"N");
+            if ($percField>'') 
+   				addInsClause($colList,$valList,$percField,$percTab,"I");
 			if($pattField)
 				addInsClause($colList,$valList,"Pattern",$_POST['Pattern'],"S");	
 			if($isAlfaOmega)
@@ -432,6 +436,8 @@ function aggiornaTipo()
 					addSetClause($setClause,$abbrField,$abbrTab,"S");
 				if($toOrder)
 					addSetClause($setClause,"Ordine",$ordine,"N");
+                if ($percField>'') 
+                    addSetClause($setClause,$percField,$percTab,"I");
 				//if($toOrderAuto)//da testare e torgliere in modifica
 				//	addSetClause($setClause,"Ordine",$orderAuto,"N");
 				if($pattField)
@@ -684,4 +690,3 @@ function delete()
 	writeLog("APP",$mex,$mexFinale,$codMex);
 	echo $stringaRitorno;	
 }
-?>

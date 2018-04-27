@@ -1887,7 +1887,50 @@ DCS.Charts.Tabs = function(){
 				flex: 1,
 				items: items
 			});
-		}		
-	};
+		},		
+		create_TFSI_LEG: function(){
+			items = Array();
+			if (CONTEXT.CAN_GRAPH_ALL)
+				items.push(new DCS.Charts.Sintesi({
+					titlePanel: 'Legale',
+					title: 'LEGALE',
+					task: 'LEGALE',id: 'graphLEGALE'
+					}));
+			var targetGrid = new DCS.Charts.TargetTable({
+				titlePanel: 'Target del periodo',
+				stateId: 'TargetTable3',
+				stateful: true, gruppo: 2,
+				hidden: false
+				});
+			
+			if (CONTEXT.CAN_GRAPH_ALL)
+			{
+				items.push(new DCS.Charts.Pyramid({
+				titlePanel: 'Cruscotto TFSI',
+				title: 'Cruscotto TFSI',
+				task: 'PYRAMIDLEG', id:'graphTFSILEG',
+				grid: targetGrid, gruppo: 2
+				}));
+				
+				var geoGrid = new DCS.Charts.GeoTable({
+					stateId: 'GeoTable3',
+					stateful: true,task: 'GEO3',
+					titlePanel: 'Risultati recupero legale per regione'
+					});
+
+				items.push(new DCS.Charts.Geography({
+				titlePanel: 'Aree geografiche',
+				title: 'Aree geografiche',
+				task: 'GEO3', grid:geoGrid
+				}));
+			}
+			return new Ext.TabPanel({
+    			activeTab: 0,
+				enableTabScroll: true,
+				flex: 1,
+				items: items
+			});
+		}	
+            };
 	
 }();

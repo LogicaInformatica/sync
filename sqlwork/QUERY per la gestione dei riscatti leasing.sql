@@ -68,7 +68,7 @@ INSERT INTO `db_cnc`.`profilofunzione` (`IdProfilo`, `IdFunzione`, `DataIni`, `D
 INSERT INTO `db_cnc`.`profilofunzione` (`IdProfilo`, `IdFunzione`, `DataIni`, `DataFin`, `LastUser`) VALUES ('3', '2068', '2001-01-01', '9999-12-31', 'system');
 INSERT INTO `db_cnc`.`profilofunzione` (`IdProfilo`, `IdFunzione`, `DataIni`, `DataFin`, `LastUser`) VALUES ('10', '2068', '2001-01-01', '9999-12-31', 'system');
 
-INSERT INTO `db_cnc`.`azione` (`IdAzione`, `IdFunzione`, `CodAzione`, `TitoloAzione`, `DataIni`, `DataFin`, `LastUser`, `TipoFormAzione`, `FlagMultipla`) VALUES ('2068', '2068', 'CDRS', 'Cambio data riscatto scaduto', '2001-01-01', '9999-12-31', 'system', 'CambioDataRiscScaduto', 'Y');
+INSERT INTO `db_cnc`.`azione` (`IdAzione`, `IdFunzione`, `CodAzione`, `TitoloAzione`, `DataIni`, `DataFin`, `LastUser`, `TipoFormAzione`, `FlagMultipla`) VALUES ('2068', '2068', 'CDRS', 'Cambio data riscatto scaduto', '2001-01-01', '9999-12-31', 'system', 'CambioDataRiscScad', 'Y');
 
 INSERT INTO `db_cnc`.`azionetipoazione` (`IdAzione`, `IdTipoAzione`, `DataIni`, `DataFin`, `LastUser`) VALUES ('2068', '10', '2001-01-01', '9999-12-31', 'system');
 

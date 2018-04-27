@@ -1880,17 +1880,10 @@ function aggiornaProvvigioni($changeStatus=TRUE,$condizione="TRUE")
 					addInsClause($colList,$valList,"TipoCalcolo",$tipoCalcolo,"S");
 					addInsClause($colList,$valList,"LastUpd","NOW()","G");
 					addInsClause($colList,$valList,"LastUser",getUserName(),"S");
+                    // 2018-04-29 Spostata a dopo la INSERT, in modo da poter utilizzare quanto scritto 
+                     // sulla riga di dettaglio provvigione
 					if ($regola["FlagPerPratica"]=='Y') // calcolo provvigioni per pratica singola (Nicol Rinegoziazione)
-					{
-						$ImpProvvigioni = calcolaProvvigionePerPratica($regola,$IdContratto,$DataLotto);
-						if ($ImpProvvigioni===NULL || $ImpProvvigioni===FALSE)
-						{
-							rollback();
-							return FALSE;
-						}
-						if ($ImpProvvigioni>0) 
-							$numRiconosciuti++; // conta come contratto accreditato
-						addInsClause($colList,$valList,"ImpProvvigione",$ImpProvvigioni,"N");
+					{   
 					}
 					else // provvigioni non calcolate a livello di contratto singolo, ma a livello di risultato globale
 					{
@@ -1903,6 +1896,18 @@ function aggiornaProvvigioni($changeStatus=TRUE,$condizione="TRUE")
 						return FALSE;
 					}
 					
+					if ($regola["FlagPerPratica"]=='Y') // calcolo provvigioni per pratica singola (Nicol Rinegoziazione)
+  						$ImpProvvigioni = calcolaProvvigionePerPratica($regola,$IdProvvigione,$DataLotto);
+						if ($ImpProvvigioni===NULL || $ImpProvvigioni===FALSE)
+						{
+							rollback();
+							return FALSE;
+						}
+						if ($ImpProvvigioni>0) 
+							$numRiconosciuti++; // conta come contratto accreditato
+						addInsClause($colList,$valList,"ImpProvvigione",$ImpProvvigioni,"N");
+                    }
+                    
 					//-------------------------------------------------------------------------------------
 					// Ricollega le modifiche provvigioni che erano state definite per il lotto
 					//-------------------------------------------------------------------------------------
@@ -2153,22 +2158,22 @@ function cancellaProvvigioni($IdsProvvigioni)
 // Nel caso di regola provvigionale da calcolare pratica per pratica applica la formula semplice o
 // a fasce e restituisce l'importo calcolato
 //----------------------------------------------------------------------------------------------------
-function calcolaProvvigionePerPratica($regola,$IdContratto,$DataLotto)
+function calcolaProvvigionePerPratica($regola,$IdProvvigione,$DataLotto)
 {
 	//-------------------------------------------------------------------------------------
-	// Primo caso: � indicata una formula diretta 
+	// Primo caso: indicata una formula diretta 
 	//-------------------------------------------------------------------------------------
 	// Legge provvigione + campi calcolati
-	if (!($regola["FormulaFascia"]>"")) // non c'� calcolo per fasce
+	if (!($regola["FormulaFascia"]>"")) // non c'e' calcolo per fasce
 	{
 		if (!($regola["Formula"]>""))
 		{
-			trace("La regola provvigione con id=$IdProvvigione non ha n� formula n� fascia",FALSE,TRUE);
+			trace("La regola provvigione con id=$IdProvvigione non ha ne' formula ne' fascia",FALSE,TRUE);
 			$provv = 0;
 		}
 		else
 		{	
-			$provv = getScalar("SELECT ".$regola["Formula"]." FROM v_contratto_per_provvigione WHERE IdContratto=$IdContratto");
+			$provv = getScalar("SELECT ".$regola["Formula"]." FROM v_contratto_per_provvigione WHERE IdProvvigione=$IdProvvigione");
 			trace("Applica formula diretta ".$regola["Formula"]." = $provv, contratto = $IdContratto",FALSE);
 		}
 	}
@@ -2177,12 +2182,12 @@ function calcolaProvvigionePerPratica($regola,$IdContratto,$DataLotto)
 	//-------------------------------------------------------------------------------------
 	else
 	{
-		$sql = "SELECT ".$regola["FormulaFascia"]." FROM v_contratto_per_provvigione WHERE IdContratto=$IdContratto";
+		$sql = "SELECT ".$regola["FormulaFascia"]." FROM v_contratto_per_provvigione WHERE IdProvvigione=$IdProvvigione";
 		$valore = getScalar($sql);
 		if ($valore===FALSE)
 			return FALSE;
 			
-		if ($valore==NULL) // non c'� (ad es. nuovoTasso non determinabile, perch� la rinegoziazione non � chiusa)
+		if ($valore==NULL) // non c'e' (ad es. nuovoTasso non determinabile, perche' la rinegoziazione non e' chiusa)
 		{
 			$provv = 0;		
 		}
@@ -2197,7 +2202,7 @@ function calcolaProvvigionePerPratica($regola,$IdContratto,$DataLotto)
 				return FALSE;
 			}
 			// Calcola l'importo con una SELECT della formula dalla view
-			$provv  = getScalar("SELECT ".$fascia["Formula"]." FROM v_contratto_per_provvigione WHERE IdContratto=$IdContratto");
+			$provv  = getScalar("SELECT ".$fascia["Formula"]." FROM v_contratto_per_provvigione WHERE IdProvvigione=$IdProvvigione");
 		}
 	}
 	return $provv;

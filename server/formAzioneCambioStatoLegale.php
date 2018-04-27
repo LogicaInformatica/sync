@@ -26,7 +26,7 @@ else
 
 // Genera la combobox per la scelta della cagegoria a cui assegnare
 $comboStati = generaCombo("Nuovo stato","IdStatoLegale","TitoloStatoLegale",
-			"FROM statolegale WHERE IdStatoLegale != $esclude ORDER BY IdStatoLegale","","true");
+			"FROM statolegale WHERE IdStatoLegale != $esclude ORDER BY TitoloStatoLegale","","true");
 
 ?>
 var formPanel = new Ext.form.FormPanel({

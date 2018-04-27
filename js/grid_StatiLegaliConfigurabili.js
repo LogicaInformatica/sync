@@ -84,6 +84,7 @@ DCS.GridStatoLegaleTab = Ext.extend(Ext.grid.GridPanel, {
 		var fields = [{name: 'IdStatoLegale', type: 'int'},
 							{name: 'TitoloStatoLegale'},
 							{name: 'CodStatoLegale', type: 'string'},
+							{name: 'PercProvvigione', type: 'int'},
 							{name: 'LastUser'},
 							{name: 'LastUpd', type:'date', dateFormat: 'Y-m-d H:i:s'}];
 
@@ -91,6 +92,7 @@ DCS.GridStatoLegaleTab = Ext.extend(Ext.grid.GridPanel, {
     	               	{dataIndex:'IdStatoLegale',width:10, header:'IdSLeg',hidden: true, hideable: false,filterable:true,groupable:false,sortable:false},
     		        	{dataIndex:'TitoloStatoLegale',	width:130,	header:'Stato Legale', hideable: true,filterable:true,groupable:false,sortable:true},
     		        	{dataIndex:'CodStatoLegale',width:50, header:'Codice',align:'center',hidden: false, hideable: false, filterable:true,groupable:false,sortable:true},    		        	
+    		        	{dataIndex:'PercProvvigione',width:50, header:'Provvigione %',align:'center',hidden: false, hideable: false, filterable:true,groupable:false,sortable:true},    		        	
     		        	{dataIndex:'LastUpd',	width:70,xtype:'datecolumn',header:'Last update',hidden:true, filterable:true,sortable:true,groupable:false},
     		        	{dataIndex:'LastUser',	width:70,header:'Last user',hidden:true, filterable:true,sortable:true,groupable:false}
     		          ];
@@ -264,13 +266,13 @@ DCS.dStatoLegalePanel = Ext.extend(Ext.Panel, {
 		var formAggregato = new Ext.form.FormPanel({
 			xtype: 'form',
 			frame: true, 
-		    width: 500,
+		    width: 640,
 		    autoHeight: true,
 		    labelWidth:100,
 			items: [{
 					xtype: 'fieldset',
 					autoHeight: true,
-					width: 470,
+					width: 620,
 					items: [{
 						xtype: 'panel',
 						layout: 'form',
@@ -292,8 +294,8 @@ DCS.dStatoLegalePanel = Ext.extend(Ext.Panel, {
 							items: [{
 								xtype: 'panel',
 								layout: 'form',
-								labelWidth: 55,
-								columnWidth: 0.67,
+								labelWidth: 50,
+								columnWidth: 0.5,
 								defaults: {xtype: 'textfield', anchor: '97%'},
 								items: [{	
 									style: 'nowrap',
@@ -317,8 +319,8 @@ DCS.dStatoLegalePanel = Ext.extend(Ext.Panel, {
 							},{
 								xtype: 'panel',
 								layout: 'form',
-								labelWidth: 90,
-								columnWidth: 0.33,
+								labelWidth: 60,
+								columnWidth: 0.22,
 								defaults: {xtype: 'textfield', anchor: '99%'},
 								items: [{	
 									style: 'nowrap',
@@ -337,6 +339,24 @@ DCS.dStatoLegalePanel = Ext.extend(Ext.Panel, {
 											}
 										}
 									}
+								}]
+							},{
+								xtype: 'panel',
+								layout: 'form',
+								labelWidth: 58,
+								columnWidth: 0.28,
+								defaults: {xtype: 'textfield', anchor: '99%'},
+								items: [{xtype:'numberfield', 
+                                                                        id:idDin+'perc',
+                                                                        fieldLabel: 'Provv. %',
+									allowNegative: false,
+									allowBlank: true,
+									style: 'text-align:right',
+									decimalPrecision: 2,
+									width: 50,
+									decimalSeparator: ',',
+									name: 'PercProvvigione',
+                                                                        value: 0
 								}]
 							}]
 						}]
@@ -384,6 +404,7 @@ DCS.dStatoLegalePanel = Ext.extend(Ext.Panel, {
 		if(this.recordMod!=null){
 			Ext.getCmp(idDin+'id').setValue(this.recordMod.get('IdStatoLegale'));
 			Ext.getCmp(idDin+'nome').setValue(replace_Tospecial_chars(this.recordMod.get('TitoloStatoLegale')));
+			Ext.getCmp(idDin+'perc').setValue(this.recordMod.get('PercProvvigione'));
 			Ext.getCmp(idDin+'codice').setValue(this.recordMod.get('CodStatoLegale'));
 			Ext.getCmp(idDin+'nome').fireEvent('change',Ext.getCmp(idDin+'nome'),this.recordMod.get('TitoloStatoLegale'),'');
 		}
@@ -395,11 +416,10 @@ DCS.showDetailSLEG= function(titolo,rec,store)
 {
 	return {
 		create: function(titolo,rec,store){
-			var h=160;
 			wind = new Ext.Window({
 				layout: 'fit',
-				width: 520,
-			    height: h,
+				width: 660,
+                                height: 164,
 				modal: true,
 				title: titolo,
 				tools: [helpTool("StatoLegale")],
