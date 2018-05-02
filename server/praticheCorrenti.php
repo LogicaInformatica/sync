@@ -2,8 +2,11 @@
 //
 // Esegue la lettura dei dati per tutte le liste di pratiche
 //
+
 require_once("userFunc.php");
+echo("1");
 require_once("customFunc.php");
+die("2");
 
 $attiva = isset($_POST['attiva']) ? $_POST['attiva']!='N' : true;
 
