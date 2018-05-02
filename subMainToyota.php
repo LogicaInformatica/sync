@@ -241,8 +241,9 @@
 				if(userCanDo('MMENU_STORICO')) { echo $v.'menu_storico'; $v=',';}
 				if(userCanDo('MMENU_CONF')) { echo $v.'menu_configurazioni_modulari'; $v=',';}
 				if(userCanDo('MMENU_CONT')) { echo $v.'menu_controllo'; $v=',';}
-                if(userCanDo('MMENU_LK'))   { echo $v.'menu_links';}?>
+				if(userCanDo('MMENU_LK'))     echo $v.'menu_links';?>
 			],
+				
 			renderTo: Ext.getBody()
 		});
 		cmp1.initMenu();
