@@ -16,12 +16,12 @@ create or replace view v_lotti_provvigioni
 AS
 -- TIPI N (normale) e C (STR/LEG chiusura mensile)
 select distinct 1 as ordine,a.IdAgenzia,r.idregolaprovvigione as IdRegola,
-IF (FasciaRecupero LIKE 'DBT%' OR FasciaRecupero LIKE '%REPO%',
+IF (FasciaRecupero LIKE 'DBT%' OR FasciaRecupero LIKE '%REPO%' OR FasciaRecupero LIKE 'LEGAL%',
 	DATE_FORMAT( LEAST(a.DataFin,curdate()) ,"%M %Y"),
 	CONCAT('Fino al ',DATE_FORMAT(a.DataFin,'%d/%m/%y'))) AS Lotto,
 IF (FasciaRecupero LIKE 'DBT%' OR FasciaRecupero LIKE '%REPO%',
 	LAST_DAY(LEAST(a.DataFin,curdate())),a.DataFin) as DataFineAffido,
-IF (FasciaRecupero LIKE 'DBT%' OR FasciaRecupero LIKE '%REPO%' ,'C','N') AS TipoCalcolo
+IF (FasciaRecupero LIKE 'DBT%' OR FasciaRecupero LIKE '%REPO%' OR FasciaRecupero LIKE 'LEGAL%','C','N') AS TipoCalcolo
 ,r.CodRegolaProvvigione
 FROM regolaprovvigione r
 JOIN assegnazione a ON a.idregolaprovvigione=r.idregolaprovvigione
@@ -38,7 +38,7 @@ select distinct 2 as ordine,a.IdAgenzia,r.idregolaprovvigione as IdRegola,
 FROM regolaprovvigione r
 JOIN assegnazione a ON a.idregolaprovvigione=r.idregolaprovvigione
                        OR a.idAgenzia=r.idReparto AND a.dataini<=r.datafin AND a.datafin>=r.dataini
-where a.IdAgenzia>0 AND (FasciaRecupero LIKE 'DBT%' OR FasciaRecupero LIKE '%REPO%')
+where a.IdAgenzia>0 AND (FasciaRecupero LIKE 'DBT%' OR FasciaRecupero LIKE '%REPO%' OR FasciaRecupero LIKE 'LEGAL%')
 
 -- TIPO M - provvigioni STR per lotto arrotondato al mese
 UNION ALL

@@ -951,7 +951,7 @@ DCS.Charts.GeoTable = Ext.extend(Ext.grid.GridPanel, {
 		   	        //{dataIndex:'StingNum',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
 		   	           {dataIndex:'dummy',width:2}];
 		}
-		else // tabella per stragiudiziale
+		else if (this.task=="GEO2") // tabella per stragiudiziale
 		{
 			fields = [{name: 'Area'},
 		              {name: 'Totale',type:'float'},
@@ -985,6 +985,27 @@ DCS.Charts.GeoTable = Ext.extend(Ext.grid.GridPanel, {
 		   	           {dataIndex:'IrcNum',width:51, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},		   	         
 		   	           {dataIndex:'Luzzi',width:100, header:'Studio Luzzi<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
 		   	           {dataIndex:'LuzziNum',width:51, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},		   	         
+					   {dataIndex:'dummy',width:2}];
+		}
+                else if (this.task=="GEO3") // tabella per legale
+		{
+			fields = [{name: 'Area'},
+		              {name: 'Totale',type:'float'},
+		              {name: 'TotaleNum',type:'int'},
+		              {name: 'Luzzi'},{name: 'LuzziNum',type:'int'},
+		              {name: 'LSCube'},{name: 'LSCube',type:'int'},
+		              {name: 'Fides'},{name: 'FidesNum',type:'int'}
+		              ];
+
+		 	columns = [{dataIndex:'Area',width:87, header:'Regione',sortable:false},
+		   	           {dataIndex:'Totale',width:100, header:'TOTALE<br>IPR %',sortable:true,align:'right',css:'background-color:aquamarine;font-weight:bold;',xtype:'numbercolumn',format:'000,00 %/i'},
+		   	           {dataIndex:'TotaleNum',width:50, header:'TOTALE<br>N.',sortable:true,align:'right'},
+		   	           {dataIndex:'Luzzi',width:100, header:'Luzzi<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'LuzziNum',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           {dataIndex:'LSCube',width:100, header:'LS Cube<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'LSCubeNum',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
+		   	           {dataIndex:'Fides',width:100, header:'FIDES<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'FidesNum',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
 					   {dataIndex:'dummy',width:2}];
 		}
 		this.gstore = new Ext.data.GroupingStore({

@@ -51,9 +51,12 @@ REPLACE INTO statolegale VALUES (
 '46', 'PPP2', 'Prossimo passaggio a perdita (Fase 2)', '5.00', '2018-04-26 15:48:54', NULL);
 
 update regolaprovvigione 
-set Formula='ImpPagatoTotale*IFNULL(PercProvvigioneLegale,0.1)',
+set Formula='ImpPagatoTotale*IFNULL(PercProvvigioneLegale/100,0.1)',
 AbbrRegolaProvvigione='10% (f1), 5% (f2)', FlagPerPratica='Y',
 Condizione='IdStatoRecupero IN (7,25)'
 where datafin>now() and fasciarecupero='LEGALE'
 ;
 UPDATE `regolaprovvigione` SET `Formula`=NULL WHERE `IdRegolaProvvigione`='4114';
+
+
+INSERT INTO `db_cnc`.`target` (`FasciaRecupero`, `FY`, `Valore`, `Ordine`, `DataIni`, `DataFin`, `ENDFY`, `Gruppo`) VALUES ('LEGALE', '2018', '0', '300', '2015-01-01', '9999-12-31', '9999', '4');

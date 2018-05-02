@@ -546,8 +546,7 @@ DCS.Provvigioni = function(){
 						});
 						TabPanelProv.add(grid1);
 						break;
-					case 2: // provvigioni STR/LEG: due tipi di sintesi
-					case 3: // tipo=3 (legali: per ora non usato)
+					case 2: // provvigioni STR due tipi di sintesi
 						grid1 = new DCS.GridProvvigioni({
 							stateId: 'Provvigioni1'+tipo,
 							stateful: true,
@@ -567,6 +566,17 @@ DCS.Provvigioni = function(){
 						});
 						TabPanelProv.add(grid1);
 						TabPanelProv.add(grid2);
+						break;
+					case 3: // tipo=3 legali 
+						grid1 = new DCS.GridProvvigioni({
+							stateId: 'Provvigioni1'+tipo,
+							stateful: true,
+							titlePanel: 'Sintesi per mese (doppio click per il dettaglio di ogni elemento)',
+							title: 'Sintesi per mese',
+							task: "sintesiPerLotto",
+							tipoProvv: tipo
+						});
+						TabPanelProv.add(grid1);
 						break;
 					case 4: // provvigioni per rinegoziazione
 						grid1 = new DCS.GridProvvigioni({

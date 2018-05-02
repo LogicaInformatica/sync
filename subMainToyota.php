@@ -147,6 +147,7 @@
 			} else {
 				menu_affidamenti.add({xtype: 'btnsubmenu',text: 'Provvigioni pre-DBT',panel: DCS.Provvigioni.create,param:1});
 				menu_affidamenti.add({xtype: 'btnsubmenu',text: 'Provvigioni STR',	panel: DCS.Provvigioni.create,param:2});
+				menu_affidamenti.add({xtype: 'btnsubmenu',text: 'Provvigioni LEGAL',	panel: DCS.Provvigioni.create,param:3});
 				menu_affidamenti.add({xtype: 'btnsubmenu',text: 'Provvigioni rinegoziazione',	panel: DCS.Provvigioni.create,param:4});
 			} 
 		}

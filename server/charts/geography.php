@@ -23,22 +23,28 @@ function doMain()
 	//-----------------------------------------
 	// Lettura dati per la tabella dei target
 	//-----------------------------------------
-	if ($task=="GEO")
-	{
-		if (isset($_REQUEST['mese']))
-			$arr = getFetchArray("SELECT * from v_geography_pivot WHERE Mese=".$_REQUEST['mese']);
-		else // dati annuali
-			$arr = getFetchArray("SELECT * from v_geography_pivot_fy WHERE Anno=$anno");
+	switch ($task) {
+        case "GEO": // pre-DBT
+            if (isset($_REQUEST['mese']))
+                $arr = getFetchArray("SELECT * from v_geography_pivot WHERE Mese=".$_REQUEST['mese']);
+            else // dati annuali
+                $arr = getFetchArray("SELECT * from v_geography_pivot_fy WHERE Anno=$anno");
+            break;
+        case 'GEO2': // stragiudiziale
+            if (isset($_REQUEST['mese']))
+                $arr = getFetchArray("SELECT * from v_geography_pivot_STR WHERE Mese=".$_REQUEST['mese']);
+            else // dati annuali
+                $arr = getFetchArray("SELECT * from v_geography_pivot_fy_STR WHERE Anno=$anno");
+            break;
+        case 'GEO3': // legale
+            if (isset($_REQUEST['mese']))
+                $arr = getFetchArray("SELECT * from v_geography_pivot_LEG WHERE Mese=".$_REQUEST['mese']);
+            else // dati annuali
+                $arr = getFetchArray("SELECT * from v_geography_pivot_fy_LEG WHERE Anno=$anno");
+            break;
 	}
-	else
-	{
-		if (isset($_REQUEST['mese']))
-			$arr = getFetchArray("SELECT * from v_geography_pivot_STR WHERE Mese=".$_REQUEST['mese']);
-		else // dati annuali
-			$arr = getFetchArray("SELECT * from v_geography_pivot_fy_STR WHERE Anno=$anno");
-	}
-		$data = json_encode_plus($arr);  //encode the data in json format
-		$cb = isset($_GET['callback']) ? $_GET['callback'] : '';
-		echo $cb . '({"total":"' . count($arr) . '","results":' . $data . '})';
+    $data = json_encode_plus($arr);  //encode the data in json format
+    $cb = isset($_GET['callback']) ? $_GET['callback'] : '';
+    echo $cb . '({"total":"' . count($arr) . '","results":' . $data . '})';
 }
 ?>
