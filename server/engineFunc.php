@@ -1906,7 +1906,7 @@ function aggiornaProvvigioni($changeStatus=TRUE,$condizione="TRUE")
 						if ($ImpProvvigioni>0) 
 							$numRiconosciuti++; // conta come contratto accreditato
                         
-						if (!execute("UPDATE dettaglioprovvigione SET ImpProvvigione=$ImpProvvigioni WHERE IdProvvigione=$IdProvvigione")) {
+						if (!execute("UPDATE dettaglioprovvigione SET ImpProvvigione=$ImpProvvigioni WHERE IdProvvigione=$IdProvvigione AND IdContratto=$IdContratto")) {
 							rollback();
 							return FALSE;
                         }                            
