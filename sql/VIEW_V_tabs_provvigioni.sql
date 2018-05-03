@@ -5,7 +5,8 @@ select DISTINCT rp.idreparto,titoloufficio as agenzia,
              WHEN FasciaRecupero = 'LEGALE' then 3
              WHEN FasciaRecupero = 'RINE' then 4
               ELSE 1 END AS tipo
- from regolaprovvigione rp 
+from regolaprovvigione rp 
 join reparto r on r.idreparto=rp.idreparto
 where ordine is not null
+AND EXISTS (SELECT 1 FROM provvigione p WHERE p.IdRegolaProvvigione=rp.IdRegolaProvvigione)
 order by rp.ordine,titoloufficio;
