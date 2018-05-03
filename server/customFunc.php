@@ -1,7 +1,5 @@
 <?php
-echo("a");
 require_once("workflowFunc.php");
-echo("b");
 //==============================================================
 //   FUNZIONI CUSTOMIZZABILI PER I MOTORI DI WORKFLOW
 //   CLASSIFICAZIONE, AFFIDAMENTO ECC.
