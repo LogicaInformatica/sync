@@ -215,7 +215,8 @@ DCS.PraticheLavorInt = function() {
 				url: 'server/AjaxRequest.php',
 				params: {
 					task: 'read',
-					sql: "SELECT IdCategoria,CodCategoria,TitoloCategoria FROM categoria WHERE IdCategoria not in (1006, 1064) "
+                                        // 2018-02-05 Tolta esclusione della "Gestione maxirate" 1006
+					sql: "SELECT IdCategoria,CodCategoria,TitoloCategoria FROM categoria "
 						 +" UNION ALL SELECT 0,'NUL','Senza categoria' order by TitoloCategoria"
 				},
 				method: 'POST',

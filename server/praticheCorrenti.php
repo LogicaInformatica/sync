@@ -223,25 +223,20 @@ function doMain()
 		// Pratiche presso operatore con flag che indica niente affido
 		
 		if ($_REQUEST['expAll']==1) { // export di tutte le pagina in lavorazione interna
-			$query = "v_insoluti_opt v $join WHERE v.stato='INT' AND InRecupero='Y' and v.idclasse not in(12,37,40,41)  AND v.ImpInsoluto>=26 $condNotEstinti" ;
+			$query = "v_insoluti_opt v $join WHERE v.classif='MAX' AND InRecupero='Y' AND v.ImpInsoluto>=26 $condNotEstinti" ;
 			$query .= filtroInsolutiOperatore();
-			$queryForCount = "v_insoluti_count_opt v WHERE v.stato='INT' InRecupero='Y' and v.idclasse not in(12,37,40,41)  AND v.ImpInsoluto>=26 $condNotEstinti";
-			$queryForCount .= filtroInsolutiOperatore();
+            $queryForCount = $query;
 		} else {
 			$cat = ($_REQUEST['CategoriaMaxirata']) ? ($_REQUEST['CategoriaMaxirata']) : 0;
 			if ($cat>0)
 			{
-				$query = "v_insoluti_opt v $join WHERE v.stato='INT' and v.IdCategoriaMaxirata=$cat  AND InRecupero='Y' and v.idclasse not in(12,37,40,41)  AND v.ImpInsoluto>=26 $condNotEstinti" ;
+				$query = "v_insoluti_opt v $join WHERE v.classif='MAX' AND InRecupero='Y' and v.IdCategoriaMaxirata=$cat  AND InRecupero='Y' and v.idclasse not in(12,37,40,41)  AND v.ImpInsoluto>=26 $condNotEstinti" ;
 				$query .= filtroInsolutiOperatore();
-				$queryForCount = "v_insoluti_count_opt v WHERE v.stato='INT' and v.IdCategoriaMaxirata=$cat AND InRecupero='Y' and v.idclasse not in(12,37,40,41)  AND v.ImpInsoluto>=26 $condNotEstinti";
-				$queryForCount .= filtroInsolutiOperatore();
 			}
 			else
 			{
-				$query = "v_insoluti_opt v $join WHERE v.stato IN ('INT','OPE') and v.categoria='Gestione maxi rate' and v.CategoriaMaxirata is null and v.idclasse not in(18,12,37,40,41) AND v.ImpInsoluto>=26 $condNotEstinti" ;
+				$query = "v_insoluti_opt v $join WHERE v.classif='MAX' AND InRecupero='Y' and v.CategoriaMaxirata is null AND v.ImpInsoluto>=26 $condNotEstinti" ;
 				$query .= filtroInsolutiOperatore();
-				$queryForCount = "v_insoluti_count_opt v WHERE v.stato IN ('INT','OPE') and v.categoria='Gestione maxi rate' and v.CategoriaMaxirata is null and v.idclasse not in(18,12,37,40,41) AND v.ImpInsoluto>=26 $condNotEstinti";
-				$queryForCount .= filtroInsolutiOperatore();
 			}
 			$ordine = "$sortDStato,DataCambioStato,DataCambioClasse,DataScadenzaAzione,DataScadenza";
 		}

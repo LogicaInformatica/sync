@@ -631,7 +631,7 @@ function svecchiamento($mesi) {
 		echo "Riempimento tabella con in gestione maxirate o riscatti leasing scaduti<br>\n";
 		flush();
 		execute("$sql_insert_tmp WHERE c.idcontratto IN "
-            . "(SELECT IdContratto FROM contratto WHERE IdCategoria=1006 OR IdAttributo=86)") or die(getLastError());
+            . "(SELECT IdContratto FROM contratto WHERE IdCategoria=1006 OR IdAttributo=86 OR IdClasse=38)") or die(getLastError());
 		$n = getAffectedRows();
 		$cont |= ($n>0);
 	} while ($cont);

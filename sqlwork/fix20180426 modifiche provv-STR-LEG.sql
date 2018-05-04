@@ -60,3 +60,21 @@ UPDATE `regolaprovvigione` SET `Formula`=NULL WHERE `IdRegolaProvvigione`='4114'
 
 
 INSERT INTO `db_cnc`.`target` (`FasciaRecupero`, `FY`, `Valore`, `Ordine`, `DataIni`, `DataFin`, `ENDFY`, `Gruppo`) VALUES ('LEGALE', '2018', '0', '300', '2015-01-01', '9999-12-31', '9999', '4');
+
+UPDATE `db_cnc`.`funzione` SET `IdGruppo`='501' WHERE `IdFunzione`='116';
+UPDATE `db_cnc`.`funzione` SET `IdGruppo`='501' WHERE `IdFunzione`='293';
+UPDATE `db_cnc`.`funzione` SET `IdGruppo`='501' WHERE `IdFunzione`='409';
+UPDATE `db_cnc`.`funzione` SET `IdGruppo`='501' WHERE `IdFunzione`='207';
+UPDATE `db_cnc`.`funzione` SET `IdGruppo`='501' WHERE `IdFunzione`='258';
+
+
+INSERT INTO funzione values(
+'2070', 'MENU_GP_GRAF_MAXRAT', 'Grafici statistiche maxirate', '2018-03-23 16:17:59', 'system', '501', 'Menu', NULL),(
+'2072', 'MENU_GP_GRAF_RISLEAS', 'Grafici riscatti scaduti', '2018-03-23 16:41:28', 'system', '501', 'Menu', NULL
+);
+insert into profilofunzione (IdProfilo,IdFunzione,DataIni,DataFin)
+select IdProfilo,2070,DataIni,DataFin from profilofunzione 
+where idfunzione=409;
+insert into profilofunzione (IdProfilo,IdFunzione,DataIni,DataFin)
+select IdProfilo,2072,DataIni,DataFin from profilofunzione 
+where idfunzione=409;
