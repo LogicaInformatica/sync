@@ -97,3 +97,21 @@ UPDATE `db_cnc`.`regolaprovvigione` SET `durata`='30' WHERE `IdRegolaProvvigione
 
 UPDATE `db_cnc`.`classificazione` SET `FlagManuale`='S', `FlagNoAffido`='N' WHERE `IdClasse`='36';
 UPDATE `db_cnc`.`classificazione` SET `FlagNoAffido`='N' WHERE `IdClasse`='38';
+
+insert into modello values(
+'6', 'Lettera per insoluto maxirata', 'Lettera INS.txt', 'L', NULL, '2001-01-01', '9999-12-31', NOW(), 'system', '6', NULL
+);
+
+insert into automatismo values(
+'318', 'lettera', 'Stampa lettera INS per Maxirata', NULL, 'CodClasse=\'M1\' AND IdStatoRecupero IN (4,5) AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)', NULL, 'system',NOW(), '6', 'N')
+
+UPDATE `db_cnc`.`automatismo` SET `Condizione`='CodClasse IN (\'R90\',\'B90\',\'M2\',\'RS\')  AND IdStatoContratto=1  AND IdStatoRecupero IN (4,5) AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and idclasse>106 AND datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)\r\n' 
+WHERE `IdAutomatismo`='19';
+UPDATE `db_cnc`.`automatismo` SET `Condizione`='CodClasse IN (\'R90\',\'B90\',\'M2\',\'RS\') AND IdStatoContratto=1  AND IdStatoRecupero IN (4,5) AND EXISTS (SELECT 1 FROM v_recapiti_mandato v WHERE v.IdContratto=c.IdContratto and FlagGarante=\'Y\') AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and idclasse>106 AND datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)\r\n' 
+WHERE `IdAutomatismo`='20';
+UPDATE `db_cnc`.`automatismo` SET `Condizione`='c.IdRegolaProvvigione IN (2115,2212,5000,5001,5100) AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and IdRegolaProvvigione IN (2115,2212,5000,5001,5100) AND datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)\r\n' 
+WHERE `IdAutomatismo`='113';
+UPDATE `db_cnc`.`automatismo` SET `Condizione`='c.IdRegolaProvvigione IN (2115,2212,5000,5001,5100) AND  EXISTS (SELECT 1 FROM v_recapiti_mandato v WHERE v.IdContratto=c.IdContratto and FlagGarante=\'Y\') AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and IdRegolaProvvigione IN (2115,2212,5000,5001,5100) AND datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)\r ' 
+WHERE `IdAutomatismo`='115';
+
+INSERT INTO `db_cnc`.`azioneautomatica` (`IdAzione`, `IdAutomatismo`, `DataIni`, `DataFin`, `LastUser`) VALUES ('5', '318', '2018-05-05', '9999-12-31', 'system');

@@ -241,15 +241,14 @@ function doMain()
 			$ordine = "$sortDStato,DataCambioStato,DataCambioClasse,DataScadenzaAzione,DataScadenza";
 		}
 		break;
-	case "riscattoleasing":
+    case "riscattoleasing": 
 		// 21/5/2013: esclude quelle con importo <26 (positive)
-		// Pratiche presso operatore con flag che indica niente affido
+		// 5/5/2018: non condiziona sugli importi, perché il riscatto non pagato potrebbe anche non essere stato messo
+        // nei movimenti
 		
 		if ($_REQUEST['expAll']==1) { // export di tutte le pagina in lavorazione interna
-			$query = "v_insoluti_opt v $join WHERE v.IdAttributo=86 $condNotEstinti" ;
+			$query = "v_insoluti_opt v $join WHERE (v.IdAttributo=86 OR classif='RIS') $condNotEstinti" ;
 			$query .= filtroInsolutiOperatore();
-			$queryForCount = "v_insoluti_count_opt v WHERE v.IdAttributo=86 $condNotEstinti";
-			$queryForCount .= filtroInsolutiOperatore();
 		} else {
 			$confrontoData='';
 			$cat = ($_REQUEST['CategoriaRiscattoLeasing']) ? ($_REQUEST['CategoriaRiscattoLeasing']) : 0;
@@ -272,18 +271,15 @@ function doMain()
 			}
 			if ($cat>0)
 			{
-				$query = "v_insoluti_opt v $join WHERE v.IdCategoriaRiscattoLeasing=$cat  AND v.IdAttributo=86 $condNotEstinti $confrontoData" ;
+				$query = "v_insoluti_opt v $join WHERE v.IdCategoriaRiscattoLeasing=$cat  AND (v.IdAttributo=86 OR classif='RIS') $condNotEstinti $confrontoData" ;
 				$query .= filtroInsolutiOperatore();
-				$queryForCount = "v_insoluti_count_opt v WHERE v.IdCategoriaRiscattoLeasing=$cat AND v.IdAttributo=86 $condNotEstinti $confrontoData";
-				$queryForCount .= filtroInsolutiOperatore();
 			}
 			else
 			{
-				$query = "v_insoluti_opt v $join WHERE v.categoria='Nessuna' and v.CategoriaRiscattoLeasing is null AND v.IdAttributo=86 $condNotEstinti $confrontoData" ;
+				$query = "v_insoluti_opt v $join WHERE v.CategoriaRiscattoLeasing is null AND (v.IdAttributo=86 OR classif='RIS') $condNotEstinti $confrontoData" ;
 				$query .= filtroInsolutiOperatore();
-				$queryForCount = "v_insoluti_count_opt v WHERE v.categoria='Nessuna' and v.CategoriaRiscattoLeasing is null AND v.IdAttributo=86 $condNotEstinti $confrontoData";
-				$queryForCount .= filtroInsolutiOperatore();
 			}
+			$queryForCount = $query;
 			$ordine = "$sortDStato,DataCambioStato,DataCambioClasse,DataScadenzaAzione,DataScadenza";
 		}
 		break;		

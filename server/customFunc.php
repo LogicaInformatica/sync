@@ -437,7 +437,7 @@ function Custom_Return($IdContratto,$IdAgenzia,$CodRegolaProvvigione,$dataInizio
 	// 15/6/2015: aggiunta OSIRC 2A (che sostituisce SETEL 27)
     // 5/5/2018: stesso trattamento per il rientro da M2 (maxirata fase 2) e riscatto leasing (RS)
 	//-----------------------------------------------------------------------------------
-	if (in_array($CodRegolaProvvigione, array("27", "L2", "L3", "2A", "M2", "RS") 
+	if (in_array($CodRegolaProvvigione, array("27", "L2", "L3", "2A", "M2", "RS")))
 	{
 		$IdAffidoForzato = getScalar("SELECT IdAffidoForzato FROM assegnazione WHERE IdContratto=$IdContratto"
 			." AND IdAgenzia=$IdAgenzia AND DataFin='".ISODate($dataFineAffido)."'");
@@ -633,6 +633,4 @@ function Custom_Import_Check($table,$column,$value,&$reason) {
 	}else{
 		return true;
 	}
-	
-	
 }
