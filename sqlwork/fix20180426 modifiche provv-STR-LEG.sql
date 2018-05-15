@@ -1,5 +1,5 @@
-ALTER TABLE `db_cnc`.`statolegale` 
-ADD COLUMN `PercProvvigione` DECIMAL(10,2) NULL DEFAULT NULL AFTER `TitoloStatoLegale`;
+ALTER TABLE statolegale 
+ADD COLUMN PercProvvigione DECIMAL(10,2) NULL DEFAULT NULL AFTER TitoloStatoLegale;
 
 set session foreign_key_checks=0;
 REPLACE INTO statolegale VALUES (
@@ -56,16 +56,16 @@ AbbrRegolaProvvigione='10% (f1), 5% (f2)', FlagPerPratica='Y',
 Condizione='IdStatoRecupero IN (7,25)'
 where datafin>now() and fasciarecupero='LEGALE'
 ;
-UPDATE `regolaprovvigione` SET `Formula`=NULL WHERE `IdRegolaProvvigione`='4114';
+UPDATE regolaprovvigione SET Formula=NULL WHERE IdRegolaProvvigione='4114';
 
 
-INSERT INTO `db_cnc`.`target` (`FasciaRecupero`, `FY`, `Valore`, `Ordine`, `DataIni`, `DataFin`, `ENDFY`, `Gruppo`) VALUES ('LEGALE', '2018', '0', '300', '2015-01-01', '9999-12-31', '9999', '4');
+INSERT INTO target (FasciaRecupero, FY, Valore, Ordine, DataIni, DataFin, ENDFY, Gruppo) VALUES ('LEGALE', '2018', '0', '300', '2015-01-01', '9999-12-31', '9999', '4');
 
-UPDATE `db_cnc`.`funzione` SET `IdGruppo`='501' WHERE `IdFunzione`='116';
-UPDATE `db_cnc`.`funzione` SET `IdGruppo`='501' WHERE `IdFunzione`='293';
-UPDATE `db_cnc`.`funzione` SET `IdGruppo`='501' WHERE `IdFunzione`='409';
-UPDATE `db_cnc`.`funzione` SET `IdGruppo`='501' WHERE `IdFunzione`='207';
-UPDATE `db_cnc`.`funzione` SET `IdGruppo`='501' WHERE `IdFunzione`='258';
+UPDATE funzione SET IdGruppo='501' WHERE IdFunzione='116';
+UPDATE funzione SET IdGruppo='501' WHERE IdFunzione='293';
+UPDATE funzione SET IdGruppo='501' WHERE IdFunzione='409';
+UPDATE funzione SET IdGruppo='501' WHERE IdFunzione='207';
+UPDATE funzione SET IdGruppo='501' WHERE IdFunzione='258';
 
 
 INSERT INTO funzione values(
@@ -79,39 +79,51 @@ insert into profilofunzione (IdProfilo,IdFunzione,DataIni,DataFin)
 select IdProfilo,2072,DataIni,DataFin from profilofunzione 
 where idfunzione=409;
 
-UPDATE `db_cnc`.`reparto` SET `CodUfficio`='L99,M1,M2,RS', `TitoloUfficio`='Toyota FS recupero' WHERE `IdReparto`='1040';
+UPDATE reparto SET CodUfficio='L99,M1,M2,RS', TitoloUfficio='Toyota FS recupero' WHERE IdReparto='1040';
+
+INSERT INTO regolaprovvigione (IdRegolaProvvigione, IdReparto, DataIni, DataFin, CodRegolaProvvigione, AbbrRegolaProvvigione, TitoloRegolaProvvigione, FasciaRecupero, Condizione, durata, FlagNoRientro, FlagMensile, FlagCerved) VALUES ('5000', '1040', '2018-05-01', '9999-12-31', 'M1', '-', 'maxirata fase1', 'MAXIRATA', 'IdClasse=38', '60', 'N', 'N', 'N');
+UPDATE regolaprovvigione SET AbbrRegolaProvvigione='-' WHERE IdRegolaProvvigione='4114';
+INSERT INTO regolaprovvigione (IdRegolaProvvigione, IdReparto, DataIni, DataFin, CodRegolaProvvigione, TitoloRegolaProvvigione, FasciaRecupero, Condizione, durata, FlagNoRientro, FlagMensile, FlagCerved) VALUES ('5001', '1040', '2018-05-01', '9999-12-31', 'M2', 'maxirata fase2', 'MAXIRATA', 'IdClasse=38', '30', 'N', 'N', 'N');
+INSERT INTO regolaprovvigione (IdRegolaProvvigione, IdReparto, DataIni, DataFin, CodRegolaProvvigione, TitoloRegolaProvvigione, FasciaRecupero, Condizione, durata, FlagNoRientro, FlagMensile, FlagCerved) VALUES ('5100', '1040', '2018-05-01', '9999-12-31', 'RS', 'riscatto', 'RISCATTO', 'IdAttributo=\'RS\'', '60', 'N', 'N', 'N');
+UPDATE regolaprovvigione SET durata='30' WHERE IdRegolaProvvigione='5100';
+
+INSERT INTO regolaassegnazione VALUES(
+'4123', '60', NULL, NULL, NULL, '1040', NULL, '2018-05-01', '9999-12-31', '2018-05-10 09:00:03', NULL, NULL, '20', NULL, NULL, 'I', '2', NULL, NULL, 'IdClasse=38 AND IdStatoRecupero=2', '5000'),
+('4124', '30', NULL, NULL, NULL, '1040', NULL, '2018-05-01', '9999-12-31', '2018-05-14 15:38:32', NULL, NULL, '21', NULL, NULL, 'I', '2', NULL, NULL, 'IdClasse=38 AND IdStatoRecupero=2 AND CodProvvigionePrecedente=\'M1\'', '5001'),
+('4125', '30', NULL, NULL, NULL, '1040', NULL, '2018-05-01', '9999-12-31', '2018-05-14 15:38:32', NULL, NULL, '20', NULL, NULL, 'I', '2', NULL, NULL, 'IdAttributo=\'RS\' AND IdStatoRecupero=2', '5100');
 
 
-INSERT INTO `db_cnc`.`regolaassegnazione` (`DurataAssegnazione`, `DataIni`, `DataFin`, `Ordine`, `TipoDistribuzione`, `TipoAssegnazione`, `Condizione`, `IdRegolaProvvigione`) VALUES ('60', '2018-05-01', '9999-12-31', '20', 'I', '2', 'IdClasse=38', NULL);
-INSERT INTO `db_cnc`.`regolaassegnazione` (`DurataAssegnazione`, `DataIni`, `DataFin`, `Ordine`, `TipoDistribuzione`, `TipoAssegnazione`, `Condizione`, `IdRegolaProvvigione`) VALUES ('30', '2018-05-01', '9999-12-31', '21', 'I', '2', 'IdClasse=38 AND CodProvvigionePrecedente=\'M1\'', NULL);
-
-INSERT INTO `db_cnc`.`regolaprovvigione` (`IdRegolaProvvigione`, `IdReparto`, `DataIni`, `DataFin`, `CodRegolaProvvigione`, `AbbrRegolaProvvigione`, `TitoloRegolaProvvigione`, `FasciaRecupero`, `Condizione`, `durata`, `FlagNoRientro`, `FlagMensile`, `FlagCerved`) VALUES ('5000', '1040', '2018-05-01', '9999-12-31', 'M1', '-', 'maxirata fase1', 'MAXIRATA', 'IdClasse=38', '60', 'N', 'N', 'N');
-UPDATE `db_cnc`.`regolaprovvigione` SET `AbbrRegolaProvvigione`='-' WHERE `IdRegolaProvvigione`='4114';
-INSERT INTO `db_cnc`.`regolaprovvigione` (`IdRegolaProvvigione`, `IdReparto`, `DataIni`, `DataFin`, `CodRegolaProvvigione`, `TitoloRegolaProvvigione`, `FasciaRecupero`, `Condizione`, `durata`, `FlagNoRientro`, `FlagMensile`, `FlagCerved`) VALUES ('5001', '1040', '2018-05-01', '9999-12-31', 'M2', 'maxirata fase2', 'MAXIRATA', 'IdClasse=38', '30', 'N', 'N', 'N');
-INSERT INTO `db_cnc`.`regolaprovvigione` (`IdRegolaProvvigione`, `IdReparto`, `DataIni`, `DataFin`, `CodRegolaProvvigione`, `TitoloRegolaProvvigione`, `FasciaRecupero`, `Condizione`, `durata`, `FlagNoRientro`, `FlagMensile`, `FlagCerved`) VALUES ('5100', '1040', '2018-05-01', '9999-12-31', 'RS', 'riscatto', 'RISCATTO', 'IdAttributo=\'RS\'', '60', 'N', 'N', 'N');
-UPDATE `db_cnc`.`regolaassegnazione` SET `DurataAssegnazione`='60', `Condizione`='IdClasse=38 AND IdStatoRecupero=2', `IdRegolaProvvigione`='5000' WHERE `IdRegolaAssegnazione`='4123';
-UPDATE `db_cnc`.`regolaassegnazione` SET `DurataAssegnazione`='30', `Condizione`='IdClasse=38 AND IdStatoRecupero=2 AND CodProvvigionePrecedente=\'M1\'', `IdRegolaProvvigione`='5001' WHERE `IdRegolaAssegnazione`='4124';
-INSERT INTO `db_cnc`.`regolaassegnazione` (`IdRegolaAssegnazione`, `DurataAssegnazione`, `DataIni`, `DataFin`, `Ordine`, `TipoDistribuzione`, `TipoAssegnazione`, `Condizione`, `IdRegolaProvvigione`) VALUES ('4125', '60', '2018-05-01', '9999-12-31', '20', 'I', '2', 'IdAttributo=\'RS\' AND IdStatoRecupero=2', '5100');
-UPDATE `db_cnc`.`regolaassegnazione` SET `DurataAssegnazione`='30' WHERE `IdRegolaAssegnazione`='4125';
-UPDATE `db_cnc`.`regolaprovvigione` SET `durata`='30' WHERE `IdRegolaProvvigione`='5100';
-
-UPDATE `db_cnc`.`classificazione` SET `FlagManuale`='S', `FlagNoAffido`='N' WHERE `IdClasse`='36';
-UPDATE `db_cnc`.`classificazione` SET `FlagNoAffido`='N' WHERE `IdClasse`='38';
+UPDATE classificazione SET FlagManuale='S', FlagNoAffido='N' WHERE IdClasse='36';
+UPDATE classificazione SET FlagNoAffido='N' WHERE IdClasse='38';
 
 insert into modello values(
 '6', 'Lettera per insoluto maxirata', 'Lettera INS.txt', 'L', NULL, '2001-01-01', '9999-12-31', NOW(), 'system', '6', NULL
 );
 
 insert into automatismo values(
-'318', 'lettera', 'Stampa lettera INS per Maxirata', NULL, 'CodClasse=\'M1\' AND IdStatoRecupero IN (4,5) AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)', NULL, 'system',NOW(), '6', 'N')
+'318', 'lettera', 'Stampa lettera INS per Maxirata', NULL, 'CodRegolaProvvigione=\'M1\' AND IdStatoRecupero IN (4,5) AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)', NULL, 'system',NOW(), '6', 'N')
 
-UPDATE `db_cnc`.`automatismo` SET `Condizione`='CodClasse IN (\'R90\',\'B90\',\'M2\',\'RS\')  AND IdStatoContratto=1  AND IdStatoRecupero IN (4,5) AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and idclasse>106 AND datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)\r\n' 
-WHERE `IdAutomatismo`='19';
-UPDATE `db_cnc`.`automatismo` SET `Condizione`='CodClasse IN (\'R90\',\'B90\',\'M2\',\'RS\') AND IdStatoContratto=1  AND IdStatoRecupero IN (4,5) AND EXISTS (SELECT 1 FROM v_recapiti_mandato v WHERE v.IdContratto=c.IdContratto and FlagGarante=\'Y\') AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and idclasse>106 AND datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)\r\n' 
-WHERE `IdAutomatismo`='20';
-UPDATE `db_cnc`.`automatismo` SET `Condizione`='c.IdRegolaProvvigione IN (2115,2212,5000,5001,5100) AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and IdRegolaProvvigione IN (2115,2212,5000,5001,5100) AND datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)\r\n' 
-WHERE `IdAutomatismo`='113';
-UPDATE `db_cnc`.`automatismo` SET `Condizione`='c.IdRegolaProvvigione IN (2115,2212,5000,5001,5100) AND  EXISTS (SELECT 1 FROM v_recapiti_mandato v WHERE v.IdContratto=c.IdContratto and FlagGarante=\'Y\') AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and IdRegolaProvvigione IN (2115,2212,5000,5001,5100) AND datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)\r ' 
-WHERE `IdAutomatismo`='115';
+UPDATE automatismo SET Condizione='CodClasse IN (\'R90\',\'B90\',\'M2\',\'RS\')  AND IdStatoContratto=1  AND IdStatoRecupero IN (4,5) AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and idclasse>106 AND datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)\r\n' 
+WHERE IdAutomatismo='19';
+UPDATE automatismo SET Condizione='CodClasse IN (\'R90\',\'B90\',\'M2\',\'RS\') AND IdStatoContratto=1  AND IdStatoRecupero IN (4,5) AND EXISTS (SELECT 1 FROM v_recapiti_mandato v WHERE v.IdContratto=c.IdContratto and FlagGarante=\'Y\') AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and idclasse>106 AND datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)\r\n' 
+WHERE IdAutomatismo='20';
+UPDATE automatismo SET Condizione='c.IdRegolaProvvigione IN (2115,2212,5000,5001,5100) AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and IdRegolaProvvigione IN (2115,2212,5000,5001,5100) AND datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)\r\n' 
+WHERE IdAutomatismo='113';
+UPDATE automatismo SET Condizione='c.IdRegolaProvvigione IN (2115,2212,5000,5001,5100) AND  EXISTS (SELECT 1 FROM v_recapiti_mandato v WHERE v.IdContratto=c.IdContratto and FlagGarante=\'Y\') AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and IdRegolaProvvigione IN (2115,2212,5000,5001,5100) AND datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)\r ' 
+WHERE IdAutomatismo='115';
 
-INSERT INTO `db_cnc`.`azioneautomatica` (`IdAzione`, `IdAutomatismo`, `DataIni`, `DataFin`, `LastUser`) VALUES ('5', '318', '2018-05-05', '9999-12-31', 'system');
+INSERT INTO azioneautomatica (IdAzione, IdAutomatismo, DataIni, DataFin, LastUser) 
+VALUES ('5', '318', '2018-05-05', '9999-12-31', 'system');
+
+-- serve a far considerare le classi MAX e RIS come candidate all'affido in rielaboraNegative
+UPDATE classificazione SET NumGiorniA=9999999 WHERE IdClasse IN (36,38);
+UPDATE classificazione SET Ordine='96' WHERE IdClasse='38';
+
+UPDATE `db_cnc`.`regolaprovvigione` SET `Formula`='0' WHERE `IdRegolaProvvigione`='4114';
+
+UPDATE `db_cnc`.`regolaassegnazione` SET `GiorniFissiFine`='4,14,24' WHERE `IdRegolaAssegnazione`='4123';
+UPDATE `db_cnc`.`regolaassegnazione` SET `GiorniFissiFine`='4,14,24' WHERE `IdRegolaAssegnazione`='4124';
+UPDATE `db_cnc`.`regolaassegnazione` SET `GiorniFissiFine`='4,14,24' WHERE `IdRegolaAssegnazione`='4125';
+
+
+### AGGIORNARE VIEWS MODIFICATE
