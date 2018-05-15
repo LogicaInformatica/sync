@@ -121,9 +121,13 @@ UPDATE classificazione SET Ordine='96' WHERE IdClasse='38';
 
 UPDATE `db_cnc`.`regolaprovvigione` SET `Formula`='0' WHERE `IdRegolaProvvigione`='4114';
 
+UPDATE `db_cnc`.`regolaprovvigione` SET `Formula`='0' WHERE `IdRegolaProvvigione`>= 5000;
+
 UPDATE `db_cnc`.`regolaassegnazione` SET `GiorniFissiFine`='4,14,24' WHERE `IdRegolaAssegnazione`='4123';
 UPDATE `db_cnc`.`regolaassegnazione` SET `GiorniFissiFine`='4,14,24' WHERE `IdRegolaAssegnazione`='4124';
 UPDATE `db_cnc`.`regolaassegnazione` SET `GiorniFissiFine`='4,14,24' WHERE `IdRegolaAssegnazione`='4125';
+
+
 
 
 ### AGGIORNARE VIEWS MODIFICATE
