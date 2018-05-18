@@ -188,7 +188,7 @@ function Custom_Delegation($IdContratto,&$msgForHistory,&$idRegolaProvvigione,$I
 			return FALSE;	// trattamento ordinario
 			
 			
-		$dati = getRow("SELECT c.IdClasse,c.IdCliente,c.IdAgenzia,c.ImpInsoluto,IFNULL(cl.Ordine,999) AS Ordine,CodContratto
+		$dati = getRow("SELECT c.IdClasse,c.IdCliente,c.IdAgenzia,c.ImpInsoluto,cl.Ordine,CodContratto
 		                FROM contratto c LEFT JOIN classificazione cl ON cl.IdClasse=c.IdClasse 
 		                WHERE c.IdContratto = $IdContratto");
 		$IdAgenzia = $dati["IdAgenzia"];
