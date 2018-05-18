@@ -223,19 +223,19 @@ function doMain()
 		// Pratiche presso operatore con flag che indica niente affido
 		
 		if ($_REQUEST['expAll']==1) { // export di tutte le pagina in lavorazione interna
-			$query = "v_insoluti_opt v $join WHERE v.classif='MAX' AND InRecupero='Y' AND v.ImpInsoluto>=26 $condNotEstinti" ;
+			$query = "v_insoluti_opt v $join WHERE v.classif='MAX' AND InRecupero='Y' AND v.ImpInsoluto>=26 and (IdAgenzia is null OR IdAgenzia=1040) $condNotEstinti" ;
 			$query .= filtroInsolutiOperatore();
             $queryForCount = $query;
 		} else {
 			$cat = ($_REQUEST['CategoriaMaxirata']) ? ($_REQUEST['CategoriaMaxirata']) : 0;
 			if ($cat>0)
 			{
-				$query = "v_insoluti_opt v $join WHERE v.classif='MAX' AND InRecupero='Y' and v.IdCategoriaMaxirata=$cat  AND InRecupero='Y' and v.idclasse not in(12,37,40,41)  AND v.ImpInsoluto>=26 $condNotEstinti" ;
+				$query = "v_insoluti_opt v $join WHERE v.classif='MAX' AND InRecupero='Y' and v.IdCategoriaMaxirata=$cat  AND InRecupero='Y' and (IdAgenzia is null OR IdAgenzia=1040) AND v.ImpInsoluto>=26 $condNotEstinti" ;
 				$query .= filtroInsolutiOperatore();
 			}
 			else
 			{
-				$query = "v_insoluti_opt v $join WHERE v.classif='MAX' AND InRecupero='Y' and v.CategoriaMaxirata is null AND v.ImpInsoluto>=26 $condNotEstinti" ;
+				$query = "v_insoluti_opt v $join WHERE v.classif='MAX' AND InRecupero='Y' and v.CategoriaMaxirata is null and (IdAgenzia is null OR IdAgenzia=1040) AND v.ImpInsoluto>=26 $condNotEstinti" ;
 				$query .= filtroInsolutiOperatore();
 			}
 			$ordine = "$sortDStato,DataCambioStato,DataCambioClasse,DataScadenzaAzione,DataScadenza";
@@ -247,7 +247,7 @@ function doMain()
         // nei movimenti
 		
 		if ($_REQUEST['expAll']==1) { // export di tutte le pagina in lavorazione interna
-			$query = "v_insoluti_opt v $join WHERE (v.IdAttributo=86 OR classif='RIS') $condNotEstinti" ;
+			$query = "v_insoluti_opt v $join WHERE (v.IdAttributo=86 OR classif='RIS') and (IdAgenzia is null OR IdAgenzia=1040) $condNotEstinti" ;
 			$query .= filtroInsolutiOperatore();
 		} else {
 			$confrontoData='';
@@ -271,12 +271,12 @@ function doMain()
 			}
 			if ($cat>0)
 			{
-				$query = "v_insoluti_opt v $join WHERE v.IdCategoriaRiscattoLeasing=$cat  AND (v.IdAttributo=86 OR classif='RIS') $condNotEstinti $confrontoData" ;
+				$query = "v_insoluti_opt v $join WHERE v.IdCategoriaRiscattoLeasing=$cat  AND (v.IdAttributo=86 OR classif='RIS') and (IdAgenzia is null OR IdAgenzia=1040) $condNotEstinti $confrontoData" ;
 				$query .= filtroInsolutiOperatore();
 			}
 			else
 			{
-				$query = "v_insoluti_opt v $join WHERE v.CategoriaRiscattoLeasing is null AND (v.IdAttributo=86 OR classif='RIS') $condNotEstinti $confrontoData" ;
+				$query = "v_insoluti_opt v $join WHERE v.CategoriaRiscattoLeasing is null AND (v.IdAttributo=86 OR classif='RIS') and (IdAgenzia is null OR IdAgenzia=1040) $condNotEstinti $confrontoData" ;
 				$query .= filtroInsolutiOperatore();
 			}
 			$queryForCount = $query;

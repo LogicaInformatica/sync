@@ -492,6 +492,7 @@ Ext.ux.Printer.GridPanelRenderer = Ext.extend(Ext.ux.Printer.BaseRenderer, {
 		    url: 'server/export.php'
 		});
 		var frm = escapeForm.getForm();
+		frm.el.dom.action = escapeForm.url;
 		//frm.getEl().dom.target='_blank';
 		frm.submit();
 		//escapeForm.destroy();

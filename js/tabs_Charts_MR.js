@@ -222,7 +222,7 @@ DCS.ChartsMr.Maxirate = Ext.extend(Ext.Panel, {
 							        color: 'rgba(0, 0, 0, 1)'
 							    },
 				                legend: {
-				                    position: 'bottom',
+				                    position: 'bottom'
 				                },
 				                tooltips: {
 				                	mode: 'single',
@@ -286,7 +286,7 @@ DCS.ChartsMr.Maxirate = Ext.extend(Ext.Panel, {
 					        method: 'GET',
 					        params: {type: 'stack', mese: record.data.num, task: this.task, data: dataType},
 					        success: function(obj) {
-					        	strDataSet = new Array();
+					        	strDataSetNum = new Array();
 					        	var jsonData = Ext.util.JSON.decode(obj.responseText);
 					        	//var arrLabel = jsonData.categorie; 
 	                            var arrRes = jsonData.results;
@@ -295,7 +295,7 @@ DCS.ChartsMr.Maxirate = Ext.extend(Ext.Panel, {
 	                            if(arrRes.length>0) {
 	                            	for (i = 0; i < arrRes.length; i++) {
 						        		categoriaMaxirata = arrRes[i].CategoriaMaxirata;
-						        		var ind = strDataSet.indexOf(categoriaMaxirata);
+						        		var ind =strDataSetNum.indexOf(categoriaMaxirata);
 										if (ind<0) {
 											var newDataset = {
 										        label: arrRes[i].CategoriaMaxirata,
@@ -303,11 +303,11 @@ DCS.ChartsMr.Maxirate = Ext.extend(Ext.Panel, {
 										        backgroundColor: colori[this.gc.data.datasets.length],
 										        borderColor: '#FF6384',
 										        borderWidth: 1,
-										        data: [],
+										        data: []
 										    };
 										    this.gc.data.datasets.push(newDataset);
-											strDataSet.push(categoriaMaxirata);
-											ind = strDataSet.indexOf(categoriaMaxirata);
+											strDataSetNum.push(categoriaMaxirata);
+											ind = strDataSetNum.indexOf(categoriaMaxirata);
 										}
 										this.gc.data.datasets[ind].data.push(arrRes[i].NumCategoriaMaxirata);	
 									}
@@ -344,7 +344,7 @@ DCS.ChartsMr.Maxirate = Ext.extend(Ext.Panel, {
 							        color: 'rgba(0, 0, 0, 1)'
 							    },
 							    legend: {
-				                    position: 'bottom',
+				                    position: 'bottom'
 				                },
 				                tooltips: {
 				                	mode: 'single',
@@ -413,7 +413,7 @@ DCS.ChartsMr.Maxirate = Ext.extend(Ext.Panel, {
 					        method: 'GET',
 					        params: {type: 'stack', mese: record.data.num, task: this.task, data: dataType},
 					        success: function(obj) {
-					        	strDataSet = new Array();
+					        	strDataSetImporto = new Array();
 					        	var jsonData = Ext.util.JSON.decode(obj.responseText);
 					        	//var arrLabel = jsonData.categorie; 
 	                            var arrRes = jsonData.results;
@@ -422,7 +422,7 @@ DCS.ChartsMr.Maxirate = Ext.extend(Ext.Panel, {
 	                            if(arrRes.length>0) {
 	                            	for (i = 0; i < arrRes.length; i++) {
 						        		categoriaMaxirata = arrRes[i].CategoriaMaxirata;
-						        		var ind = strDataSet.indexOf(categoriaMaxirata);
+						        		var ind = strDataSetImporto.indexOf(categoriaMaxirata);
 										if (ind<0) {
 											var newDataset = {
 										        label: arrRes[i].CategoriaMaxirata,
@@ -430,11 +430,11 @@ DCS.ChartsMr.Maxirate = Ext.extend(Ext.Panel, {
 										        backgroundColor: colori[this.gc2.data.datasets.length],
 										        borderColor: '#FF6384',
 										        borderWidth: 1,
-										        data: [],
+										        data: []
 										    };
 										    this.gc2.data.datasets.push(newDataset);
-											strDataSet.push(categoriaMaxirata);
-											ind = strDataSet.indexOf(categoriaMaxirata);
+											strDataSetImporto.push(categoriaMaxirata);
+											ind = strDataSetImporto.indexOf(categoriaMaxirata);
 										}
 										this.gc2.data.datasets[ind].data.push(arrRes[i].TotaleImportoInsoluto);	
 									}
@@ -460,155 +460,50 @@ DCS.ChartsMr.Maxirate = Ext.extend(Ext.Panel, {
 			listeners: {
 				select: function(combo, record, index) {
 					if (this.comboTipo.getValue()!=='Storico') {
-					  this.comboTipo.setValue('Storico');	
+					  this.comboTipo.setValue('Storico');
+					  this.comboMese.setValue(null);
 					  this.comboTipo.fireEvent('select',this.comboTipo,null,1);	
-					}
-					var dataType = this.comboData.getRawValue();
-					if (dataType!=='') {
-					  //Ext.getCmp(this.task+'_title').update('<h1>'+dataType+' - Fiscal Year '+record.data.num +'</h1>');
-					  Ext.getCmp(this.task+'_title').update('<h1>'+dataType+' - Anno '+record.data.num +'</h1>');	
 					} else {
-						//Ext.getCmp(this.task+'_title').update('<h1> Fiscal Year '+record.data.num +'</h1>');
-						Ext.getCmp(this.task+'_title').update('<h1> Anno '+record.data.num +'</h1>');
-					}
-										
-					var idPanel = this.id;
-					
-					Chart.plugins.register({
-						afterDraw: function(chart) {
-						  	if (chart.data.datasets.length === 0) {
-						    	// No data is present
-						      var ctx = chart.chart.ctx;
-						      var width = chart.chart.width;
-						      var height = chart.chart.height;
-						      chart.clear();
-						      
-						      ctx.save();
-						      ctx.textAlign = 'center';
-						      ctx.textBaseline = 'middle';
-						      ctx.font = '12px "Helvetica Nueue"';
-						      ctx.fontColor = 'black';
-						      ctx.fillText('No data to display', width / 2, height / 2);
-						      ctx.restore();
+						var dataType = this.comboData.getRawValue();
+						if (dataType!=='') {
+						  //Ext.getCmp(this.task+'_title').update('<h1>'+dataType+' - Fiscal Year '+record.data.num +'</h1>');
+						  Ext.getCmp(this.task+'_title').update('<h1>'+dataType+' - Anno '+record.data.num +'</h1>');	
+						} else {
+							//Ext.getCmp(this.task+'_title').update('<h1> Fiscal Year '+record.data.num +'</h1>');
+							Ext.getCmp(this.task+'_title').update('<h1> Anno '+record.data.num +'</h1>');
+						}
+											
+						var idPanel = this.id;
+						
+						Chart.plugins.register({
+							afterDraw: function(chart) {
+							  	if (chart.data.datasets.length === 0) {
+							    	// No data is present
+							      var ctx = chart.chart.ctx;
+							      var width = chart.chart.width;
+							      var height = chart.chart.height;
+							      chart.clear();
+							      
+							      ctx.save();
+							      ctx.textAlign = 'center';
+							      ctx.textBaseline = 'middle';
+							      ctx.font = '12px "Helvetica Nueue"';
+							      ctx.fontColor = 'black';
+							      ctx.fillText('No data to display', width / 2, height / 2);
+							      ctx.restore();
+							    }
 						    }
-					    }
-					});
-					
-					Chart.defaults.line.spanGaps = true;
-					
-					var canvasStory = document.getElementById(this.id+'_canvasStory');
-					var ctxStory = canvasStory.getContext("2d");
-					if (this.gcStory!=null) {
-                      this.gcStory.destroy();	
-                    }
-					this.gcStory = new Chart(ctxStory, {
-			            type: 'line',
-			            plugins: [],
-			            data: {
-				            labels: ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu","Lug", "Ago", "Set", "Ott", "Nov", "Dic"],
-				            datasets: []
-				        },
-			            options: {
-			                responsive: true,
-			                hover: {
-							    animationDuration : 0
-							},
-							layout: {
-					            padding: {
-					                left: 15,
-					                right: 0,
-					                top: 15,
-					                bottom: 0
-					            }
-					        },
-					        legend: {
-			                    position: 'bottom'
-			                },
-			                tooltips: {
-			                	mode: 'point',
-			                	backgroundColor: 'rgba(0, 0, 0, 1)',
-				                titleFontSize: 0,
-			                	callbacks: {
-							    	label: function(tooltipItem, data) {
-						                return data.datasets[tooltipItem.datasetIndex].label+', '+tooltipItem.yLabel;
-						            }
-						        }
-							},
-						    scales: {
-						    	yAxes: [{
-					            	gridLines: {
-		                                display: true
-		                            },
-		                            ticks: {
-		                            	beginAtZero: true,
-					                	callback: function(value) {
-								            if (Math.floor(value) === value) {
-						                        return value;
-						                    }
-								        }
-					                },
-					                scaleLabel: {
-								        display: true,
-								        labelString: 'NUMERO  PRATICHE',
-									    fontSize: '20',
-									    fontFamily: 'Helvetica Nueue',
-									    fontStyle: 'bold'
-								    }
-					            }]
-					        },
-					        animation: {
-						        duration: 2000
-						    }
-			            }
-			        });
-			        Ext.Ajax.request({
-				        url: 'server/charts/maxirateStory.php',
-				        method: 'GET',
-				        params: {type: 'stack', id:this.id, anno: record.data.num, task: this.task, data: dataType},
-				        success: function(obj) {
-							strDataSet = new Array();
-                            var jsonData = Ext.util.JSON.decode(obj.responseText);
-                            //var arrLabel = jsonData.categorie; 
-                            var arrRes = jsonData.results;
-                            //var arrTarget = jsonData.target;
-                            var colori = ['#99bbe8','#aa88ff','#3588aa','#489999','#66aa88','#02b955','#55ca00','#a2ca00','#ff4400','#ffca00','#cc0088','#aa2266','#bbaa99'];
-		                    var tension = [0.1,0.9,0.1,0.9,0.1,0.9,0.1,0.9,0.1,0.9,0.1,0.9,0.1];
-                            if(arrRes.length>0) {
-                            	for (i = 0; i < arrRes.length; i++) {
-					        		categoriaMaxirata = arrRes[i].CategoriaMaxirata;
-					        		var ind = strDataSet.indexOf(categoriaMaxirata);
-									if (ind<0) {
-										var newDataset = {
-									        label: arrRes[i].CategoriaMaxirata,
-									        fill: false,
-									        backgroundColor: colori[this.gcStory.data.datasets.length],
-									        borderColor: colori[this.gcStory.data.datasets.length],
-									        lineTension: tension[this.gcStory.data.datasets.length],
-									        borderWidth: 3,
-									        data: new Array(12),
-									    };
-									    this.gcStory.data.datasets.push(newDataset);
-										strDataSet.push(categoriaMaxirata);
-										ind = strDataSet.indexOf(categoriaMaxirata);
-									}
-									//inserisco i valori dell'agenzia al mese corrispondente
-								    data = arrRes[i].Mese;
-								    anno = data.substr(0,4);
-								    mese = data.substr(4,data.length);
-								    //indexLabel =this.gcStory.data.labels.indexOf(mese); 
-								    this.gcStory.data.datasets[ind].data[parseInt(mese)-1] = arrRes[i].NumCategoriaMaxirata;	
-								}
-					        }
-				        	this.gcStory.update();
-				        },	scope: this});
-				        
-				        var canvas2Story = document.getElementById(this.id+'_canvas2Story');
-						var ctx2Story = canvas2Story.getContext("2d");
-						if (this.gc2Story!=null) {
-		                  this.gc2Story.destroy();	
-		                }
-						this.gc2Story = new Chart(ctx2Story, {
-				            type: 'line',
+						});
+						
+						Chart.defaults.line.spanGaps = true;
+						
+						var canvasStory = document.getElementById(this.id+'_canvasStory');
+						var ctxStory = canvasStory.getContext("2d");
+						if (this.gcStory!=null) {
+	                      this.gcStory.destroy();	
+	                    }
+						this.gcStory = new Chart(ctxStory, {
+				            type: 'bar',
 				            plugins: [],
 				            data: {
 					            labels: ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu","Lug", "Ago", "Set", "Ott", "Nov", "Dic"],
@@ -616,13 +511,13 @@ DCS.ChartsMr.Maxirate = Ext.extend(Ext.Panel, {
 					        },
 				            options: {
 				                responsive: true,
-			                    hover: {
+				                hover: {
 								    animationDuration : 0
 								},
 								layout: {
 						            padding: {
-						                left: 0,
-						                right: 20,
+						                left: 15,
+						                right: 0,
 						                top: 15,
 						                bottom: 0
 						            }
@@ -631,36 +526,40 @@ DCS.ChartsMr.Maxirate = Ext.extend(Ext.Panel, {
 				                    position: 'bottom'
 				                },
 				                tooltips: {
-			                	    mode: 'point',
-			                	    backgroundColor: 'rgba(0, 0, 0, 1)',
-				                	titleFontSize: 0,
+				                	//mode: 'point',
+				                	mode: 'single',
+					                position: 'cursor',
+				                	backgroundColor: 'rgba(0, 0, 0, 1)',
+					                titleFontSize: 0,
 				                	callbacks: {
 								    	label: function(tooltipItem, data) {
-							                return data.datasets[tooltipItem.datasetIndex].label+', \u20ac '+Ext.util.Format.number(tooltipItem.yLabel, '0.0,00/i');
+							                return data.datasets[tooltipItem.datasetIndex].label+', '+tooltipItem.yLabel;
 							            }
 							        }
 								},
-						        scales: {
+							    scales: {
 							    	yAxes: [{
 						            	gridLines: {
 			                                display: true
 			                            },
 			                            ticks: {
 			                            	beginAtZero: true,
-							                callback: function(label, index, labels) {
-						                        return '\u20ac '+Ext.util.Format.number(label, '0.0/i');
-						                    }
+						                	callback: function(value) {
+									            if (Math.floor(value) === value) {
+							                        return value;
+							                    }
+									        }
 						                },
 						                scaleLabel: {
 									        display: true,
-									        labelString: 'TOTALE  INSOLUTO',
-									        fontSize: '20',
-									        fontFamily: 'Helvetica Nueue',
-									        fontStyle: 'bold'
+									        labelString: 'NUMERO  PRATICHE',
+										    fontSize: '20',
+										    fontFamily: 'Helvetica Nueue',
+										    fontStyle: 'bold'
 									    }
 						            }]
 						        },
-			                    animation: {
+						        animation: {
 							        duration: 2000
 							    }
 				            }
@@ -670,40 +569,147 @@ DCS.ChartsMr.Maxirate = Ext.extend(Ext.Panel, {
 					        method: 'GET',
 					        params: {type: 'stack', id:this.id, anno: record.data.num, task: this.task, data: dataType},
 					        success: function(obj) {
-								strDataSet = new Array();
-		                        var jsonData = Ext.util.JSON.decode(obj.responseText);
-		                        //var arrLabel = jsonData.categorie; 
-		                        var arrRes = jsonData.results;
-		                        //var arrTarget = jsonData.target;
-		                        var colori = ['#99bbe8','#aa88ff','#3588aa','#489999','#66aa88','#02b955','#55ca00','#a2ca00','#ff4400','#ffca00','#cc0088','#aa2266','#bbaa99'];
-		                        var tension = [0.1,0.9,0.1,0.9,0.1,0.9,0.1,0.9,0.1,0.9,0.1,0.9,0.1];
-		                        if(arrRes.length>0) {
-		                        	for (i = 0; i < arrRes.length; i++) {
+								strDataSetNumStory = new Array();
+	                            var jsonData = Ext.util.JSON.decode(obj.responseText);
+	                            //var arrLabel = jsonData.categorie; 
+	                            var arrRes = jsonData.results;
+	                            //var arrTarget = jsonData.target;
+	                            var colori = ['#99bbe8','#aa88ff','#3588aa','#489999','#66aa88','#02b955','#55ca00','#a2ca00','#ff4400','#ffca00','#cc0088','#aa2266','#bbaa99'];
+			                    var tension = [0.1,0.9,0.1,0.9,0.1,0.9,0.1,0.9,0.1,0.9,0.1,0.9,0.1];
+	                            if(arrRes.length>0) {
+	                            	for (i = 0; i < arrRes.length; i++) {
 						        		categoriaMaxirata = arrRes[i].CategoriaMaxirata;
-						        		var ind = strDataSet.indexOf(categoriaMaxirata);
+						        		var ind = strDataSetNumStory.indexOf(categoriaMaxirata);
 										if (ind<0) {
 											var newDataset = {
 										        label: arrRes[i].CategoriaMaxirata,
 										        fill: false,
-										        backgroundColor: colori[this.gc2Story.data.datasets.length],
-										        borderColor: colori[this.gc2Story.data.datasets.length],
+										        backgroundColor: colori[this.gcStory.data.datasets.length],
+										        borderColor: colori[this.gcStory.data.datasets.length],
+										        lineTension: tension[this.gcStory.data.datasets.length],
 										        borderWidth: 3,
-										        lineTension: tension[this.gc2Story.data.datasets.length],
-										        data: new Array(12),
+										        data: new Array(12)
 										    };
-										    this.gc2Story.data.datasets.push(newDataset);
-											strDataSet.push(categoriaMaxirata);
-											ind = strDataSet.indexOf(categoriaMaxirata);
+										    this.gcStory.data.datasets.push(newDataset);
+											strDataSetNumStory.push(categoriaMaxirata);
+											ind = strDataSetNumStory.indexOf(categoriaMaxirata);
 										}
 										//inserisco i valori dell'agenzia al mese corrispondente
 									    data = arrRes[i].Mese;
 									    anno = data.substr(0,4);
 									    mese = data.substr(4,data.length);
-									    this.gc2Story.data.datasets[ind].data[parseInt(mese)-1] = arrRes[i].TotaleImportoInsoluto;	
+									    //indexLabel =this.gcStory.data.labels.indexOf(mese); 
+									    this.gcStory.data.datasets[ind].data[parseInt(mese)-1] = arrRes[i].NumCategoriaMaxirata;	
 									}
 						        }
-					        	this.gc2Story.update();
+					        	this.gcStory.update();
 					        },	scope: this});
+					        
+					        var canvas2Story = document.getElementById(this.id+'_canvas2Story');
+							var ctx2Story = canvas2Story.getContext("2d");
+							if (this.gc2Story!=null) {
+			                  this.gc2Story.destroy();	
+			                }
+							this.gc2Story = new Chart(ctx2Story, {
+					            type: 'bar',
+					            plugins: [],
+					            data: {
+						            labels: ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu","Lug", "Ago", "Set", "Ott", "Nov", "Dic"],
+						            datasets: []
+						        },
+					            options: {
+					                responsive: true,
+				                    hover: {
+									    animationDuration : 0
+									},
+									layout: {
+							            padding: {
+							                left: 0,
+							                right: 20,
+							                top: 15,
+							                bottom: 0
+							            }
+							        },
+							        legend: {
+					                    position: 'bottom'
+					                },
+					                tooltips: {
+				                	    //mode: 'point',
+					                	mode: 'single',
+					                	position: 'cursor',
+				                	    backgroundColor: 'rgba(0, 0, 0, 1)',
+					                	titleFontSize: 0,
+					                	callbacks: {
+									    	label: function(tooltipItem, data) {
+								                return data.datasets[tooltipItem.datasetIndex].label+', \u20ac '+Ext.util.Format.number(tooltipItem.yLabel, '0.0,00/i');
+								            }
+								        }
+									},
+							        scales: {
+								    	yAxes: [{
+							            	gridLines: {
+				                                display: true
+				                            },
+				                            ticks: {
+				                            	beginAtZero: true,
+								                callback: function(label, index, labels) {
+							                        return '\u20ac '+Ext.util.Format.number(label, '0.0/i');
+							                    }
+							                },
+							                scaleLabel: {
+										        display: true,
+										        labelString: 'TOTALE  INSOLUTO',
+										        fontSize: '20',
+										        fontFamily: 'Helvetica Nueue',
+										        fontStyle: 'bold'
+										    }
+							            }]
+							        },
+				                    animation: {
+								        duration: 2000
+								    }
+					            }
+					        });
+					        Ext.Ajax.request({
+						        url: 'server/charts/maxirateStory.php',
+						        method: 'GET',
+						        params: {type: 'stack', id:this.id, anno: record.data.num, task: this.task, data: dataType},
+						        success: function(obj) {
+									strDataSetImportoStory = new Array();
+			                        var jsonData = Ext.util.JSON.decode(obj.responseText);
+			                        //var arrLabel = jsonData.categorie; 
+			                        var arrRes = jsonData.results;
+			                        //var arrTarget = jsonData.target;
+			                        var colori = ['#99bbe8','#aa88ff','#3588aa','#489999','#66aa88','#02b955','#55ca00','#a2ca00','#ff4400','#ffca00','#cc0088','#aa2266','#bbaa99'];
+			                        var tension = [0.1,0.9,0.1,0.9,0.1,0.9,0.1,0.9,0.1,0.9,0.1,0.9,0.1];
+			                        if(arrRes.length>0) {
+			                        	for (i = 0; i < arrRes.length; i++) {
+							        		categoriaMaxirata = arrRes[i].CategoriaMaxirata;
+							        		var ind = strDataSetImportoStory.indexOf(categoriaMaxirata);
+											if (ind<0) {
+												var newDataset = {
+											        label: arrRes[i].CategoriaMaxirata,
+											        fill: false,
+											        backgroundColor: colori[this.gc2Story.data.datasets.length],
+											        borderColor: colori[this.gc2Story.data.datasets.length],
+											        borderWidth: 3,
+											        lineTension: tension[this.gc2Story.data.datasets.length],
+											        data: new Array(12)
+											    };
+											    this.gc2Story.data.datasets.push(newDataset);
+												strDataSetImportoStory.push(categoriaMaxirata);
+												ind = strDataSetImportoStory.indexOf(categoriaMaxirata);
+											}
+											//inserisco i valori dell'agenzia al mese corrispondente
+										    data = arrRes[i].Mese;
+										    anno = data.substr(0,4);
+										    mese = data.substr(4,data.length);
+										    this.gc2Story.data.datasets[ind].data[parseInt(mese)-1] = arrRes[i].TotaleImportoInsoluto;	
+										}
+							        }
+						        	this.gc2Story.update();
+						        },	scope: this});
+					  }
 				},
 				scope: this
 			}
@@ -730,12 +736,12 @@ DCS.ChartsMr.Maxirate = Ext.extend(Ext.Panel, {
 					xtype:'panel',
 					columnWidth: .5,
 					id:this.task+'_cc',
-					html: '<canvas id="'+this.id+'_canvas" height="200px"></canvas>',
+					html: '<canvas id="'+this.id+'_canvas" height="200px"></canvas>'
 				},{
 					xtype:'panel',
 					columnWidth: .5,
 					id:this.task+'_cc2',
-					html: '<canvas id="'+this.id+'_canvas2" height="200px"></canvas>',
+					html: '<canvas id="'+this.id+'_canvas2" height="200px"></canvas>'
 			}]},{
 				xtype:'panel',
 				layout: 'column',
@@ -745,12 +751,12 @@ DCS.ChartsMr.Maxirate = Ext.extend(Ext.Panel, {
 					xtype:'panel',
 					columnWidth: .5,
 					id:this.task+'_story',
-					html: '<canvas id="'+this.id+'_canvasStory" height="200px"></canvas>',
+					html: '<canvas id="'+this.id+'_canvasStory" height="200px"></canvas>'
 				},{
 					xtype:'panel',
 					columnWidth: .5,
 					id:this.task+'_story2',
-					html: '<canvas id="'+this.id+'_canvas2Story" height="200px"></canvas>',
+					html: '<canvas id="'+this.id+'_canvas2Story" height="200px"></canvas>'
 			}]}],
 			listeners: {
 				activate: function(pnl) {
@@ -857,7 +863,7 @@ DCS.ChartsMr.Statistiche = Ext.extend(Ext.grid.GridPanel, {
 
 	 	var columns = [{dataIndex:'CategoriaMaxirata',width:100, header:'Categoria maxirata',sortable:true,align:'right'},
 	   	               {dataIndex:'TotaleImportoInsoluto',width:100, header:'TOTALE Importo Insoluto',sortable:true,align:'right',css:'background-color:aquamarine;font-weight:bold;',xtype:'numbercolumn',format:'0.000,00/i'},
-	   	               {dataIndex:'NumCategoriaMaxirata',width:50, header:'TOTALE N.',sortable:true,align:'right'},
+	   	               {dataIndex:'NumCategoriaMaxirata',width:50, header:'TOTALE N.',sortable:true,align:'right'}
 	   	              ];
 		
 		this.gstore = new Ext.data.GroupingStore({
