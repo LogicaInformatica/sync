@@ -14,3 +14,5 @@ ADD COLUMN `FlagVisuraAci` CHAR(1) CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci
 
 UPDATE contratto SET FlagVisuraAci='Y' where IdContratto IN
 (SELECT IdContratto FROM db_cnc.allegato where IdTipoAllegato = 13);
+
+UPDATE `db_cnc`.`funzione` SET `IdGruppo`='169' WHERE `IdFunzione`='2069';

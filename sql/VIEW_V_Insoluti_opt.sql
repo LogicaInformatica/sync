@@ -7,7 +7,7 @@ co.IdContratto,v.Prodotto AS prodotto,co.CodContratto AS numPratica,co.CodContra
 v.operatore,co.IdOperatore,co.IdAgente,v.CodAgente,co.ImpSaldoStralcio,co.DataSaldoStralcio,
 v.cliente,NumRata AS rata,NumInsoluti AS insoluti,DATEDIFF(CURDATE(), DataRata) AS giorni,
 ImpInsoluto,
-IFNULL(co.ImpInsoluto,IF(IdAgenzia>0,ImpSpeseRecupero,0)+IF(rp.FlagInteressiMora='Y',ImpInteressiMora,0)) as importo,
+IFNULL(co.ImpInsoluto,IF(IdAgenzia>0,ImpSpeseRecupero,0)+IF(rp.FlagInteressiMora='Y',ImpInteressiMora,0))+IF(co.IdAttributo=86,co.ImpRiscatto,0) as importo,
 ImpInsoluto+ImpDebitoResiduo AS ImpDebitoResiduo,ImpPagato,DataRata AS DataScadenza,
 v.stato,v.AbbrStatoRecupero,v.classif,v.AbbrClasse,v.agenzia,
 co.IdCliente,v.tipoPag,v.IdFamiglia,v.OrdineStato,v.stato AS CodStatoRecupero,co.IdAgenzia,

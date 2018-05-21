@@ -487,8 +487,11 @@ DCS.Charts.Sintesi = Ext.extend(Ext.Panel, {
 			listeners: {
 				select: function(combo, record, index) {
 					var dataType = this.comboData.getValue();
-					Ext.getCmp(this.task+'_title').update('<h1>'+dataType+' - Fiscal Year '+record.data.num +'</h1>');
-		
+					if (record!=undefined) {
+					  Ext.getCmp(this.task+'_title').update('<h1>'+dataType+' - Fiscal Year '+record.data.num +'</h1>');
+					} else {
+						 Ext.getCmp(this.task+'_title').update('<h1>'+dataType+' - Fiscal Year '+this.comboAnni.getValue() +'</h1>');
+					}
 					var g = FusionCharts(this.task+"_chartId3"); 
 					if (g) g.dispose();
 					g = new FusionCharts("FusionCharts/"+DCS.Charts.tipi[this.itipo]+".swf", this.task+"_chartId3", "100%", "90%", "0", "1" );
@@ -633,11 +636,16 @@ DCS.Charts.Sintesi = Ext.extend(Ext.Panel, {
 				        success: function(obj) {
 							g.setXMLData(obj.responseText);
 							g.render(this.task+"_story");
-				        },	scope: this});*/	
+				        },	scope: this});*/
+					if (record!=undefined) {
+						var anno = record.data.num;
+					} else {
+					    var anno = this.comboAnni.getValue();
+					}
                     Ext.Ajax.request({
 				        url: 'server/charts/sintesiStory.php',
 				        method: 'GET',
-				        params: {type: 'stack', id:this.id, anno: record.data.num, task: this.task, data: dataType},
+				        params: {type: 'stack', id:this.id, anno: anno, task: this.task, data: dataType},
 				        success: function(obj) {
 							strDataSet = new Array();
                             var jsonData = Ext.util.JSON.decode(obj.responseText);
@@ -1296,8 +1304,11 @@ DCS.Charts.Pyramid = Ext.extend(Ext.Panel, {
 			width: 60,
 			listeners: {
 				select: function(combo, record, index) {
-					Ext.getCmp(this.task+'_title').update('<h1>Fiscal Year '+record.data.num +'</h1>');
-		
+					if (record!=undefined) {
+					  Ext.getCmp(this.task+'_title').update('<h1>Fiscal Year '+record.data.num +'</h1>');
+					} else {
+						Ext.getCmp(this.task+'_title').update('<h1>Fiscal Year '+this.comboAnni.getValue() +'</h1>');
+					}  
 					var g = FusionCharts(this.task+"_chartId2");
 					if (g) g.dispose();
 					g = new FusionCharts("FusionCharts/"+DCS.Charts.tipi[this.itipo]+".swf", this.task+"_chartId2", "100%", "90%", "0", "1" );
@@ -1395,10 +1406,15 @@ DCS.Charts.Pyramid = Ext.extend(Ext.Panel, {
 							g.setXMLData(parti[1]);
 							g.render(this.task+"_story");
 				        },	scope: this});*/
+				    if (record!=undefined) {
+				      var anno = record.data.num;
+				    } else {
+				    	var anno = this.comboAnni.getValue(); 
+				    }
 				    Ext.Ajax.request({
 				        url: 'server/charts/pyramid.php',
 				        method: 'GET',
-				        params: {type: 'stack', anno: record.data.num, gruppo: this.gruppo},
+				        params: {type: 'stack', anno: anno, gruppo: this.gruppo},
 				        success: function(obj) {
 				        	var jsonData = Ext.util.JSON.decode(obj.responseText);
 				        	catRes = jsonData.categorie;
@@ -1424,14 +1440,27 @@ DCS.Charts.Pyramid = Ext.extend(Ext.Panel, {
 								    affidati += parseInt(arrRes[i].Affidati);
 								}	
 				        	}
-				        	Ext.getCmp(this.task+'_title').update('<h1>Fiscal Year '+record.data.num  + 
+				        	if (record!=undefined) {    
+							  Ext.getCmp(this.task+'_title').update('<h1>Fiscal Year '+record.data.num  + 
 									'<br>('+affidati+' pratiche affidate in totale)</h1>');
+						    } else {
+						    	Ext.getCmp(this.task+'_title').update('<h1>Fiscal Year '+this.comboAnni.getValue()  + 
+									'<br>('+affidati+' pratiche affidate in totale)</h1>');
+						    }  
+				        	
 							this.gcStoryTFSI.update();
 				        },	scope: this});    	
 					// Aggiorna la griglia dei target
-					this.grid.titlePanel = "Target Fiscal Year "+record.data.num;
-					var gstore = this.grid.getStore();
-					gstore.baseParams = {task:'table', anno:record.data.num, gruppo:this.gruppo};
+				    var gstore = this.grid.getStore();    
+				    if (record!=undefined) {    
+					  this.grid.titlePanel = "Target Fiscal Year "+record.data.num;
+					  gstore.baseParams = {task:'table', anno:record.data.num, gruppo:this.gruppo};
+				    } else {
+				    	this.grid.titlePanel = "Target Fiscal Year "+this.comboAnni.getValue();
+					    gstore.baseParams = {task:'table', anno:this.comboAnni.getValue(), gruppo:this.gruppo};
+				    }  
+					
+					//gstore.baseParams = {task:'table', anno:record.data.num, gruppo:this.gruppo};
 					gstore.reload();
 				},
 				scope: this
@@ -1635,11 +1664,21 @@ DCS.Charts.Geography = Ext.extend(Ext.Panel, {
 			width: 60,
 			listeners: {
 				select: function(combo, record, index) {
-					Ext.getCmp(this.task+'_title').update('<h1>Fiscal Year '+record.data.num +'</h1>');
+					if (record!=undefined) {
+					  Ext.getCmp(this.task+'_title').update('<h1>Fiscal Year '+record.data.num +'</h1>');
+					  this.grid.titlePanel = "Risultati per regione - Fiscal Year "+record.data.num;
+					} else {
+						Ext.getCmp(this.task+'_title').update('<h1>Fiscal Year '+this.comboAnni.getValue() +'</h1>');
+						this.grid.titlePanel = "Risultati per regione - Fiscal Year "+this.comboAnni.getValue();
+					}
 		
-					this.grid.titlePanel = "Risultati per regione - Fiscal Year "+record.data.num;
+					
 					var gstore = this.grid.getStore();
-					gstore.baseParams = {task:this.task,anno:record.data.num, gruppo:this.gruppo};
+					if (record!=undefined) { 
+					  gstore.baseParams = {task:this.task,anno:record.data.num, gruppo:this.gruppo};
+					} else {
+					   gstore.baseParams = {task:this.task,anno:this.comboAnni.getValue(), gruppo:this.gruppo};
+					}  
 					gstore.reload();
 				},
 				scope: this

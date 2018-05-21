@@ -8,3 +8,5 @@ INSERT INTO `db_cnc`.`profilofunzione` (`IdProfilo`, `IdFunzione`, `DataIni`, `D
 
 ALTER TABLE `db_cnc`.`tipoallegato` 
 ADD COLUMN `Pattern` VARCHAR(50) NULL DEFAULT NULL AFTER `Ordine`;
+
+UPDATE `db_cnc`.`funzione` SET `IdGruppo`='169' WHERE `IdFunzione`='2073';

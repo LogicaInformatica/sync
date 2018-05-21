@@ -15,7 +15,7 @@ select a.titoloarea as area,concat(titolofamiglia,' - ',Prodotto) as Prodotto,Ti
 	   END AS StatoRecupero ,
        CodUtente,Operatore AS NomeUtente,TitoloUfficio As NomeAgenzia,
        c.NumRata as Rata,NumInsoluti as Insoluti,Datediff(curdate(),DataRata) as Giorni,
-       IFNULL(c.ImpInsoluto,IF(IdAgenzia>0,ImpSpeseRecupero,0)+IF(rp.FlagInteressiMora='Y',ImpInteressiMora,0)) as Importo,
+       IFNULL(c.ImpInsoluto,IF(IdAgenzia>0,ImpSpeseRecupero,0)+IF(rp.FlagInteressiMora='Y',ImpInteressiMora,0))+IF(c.IdAttributo=86,c.ImpRiscatto,0) as Importo,
        DataRata as DataScadenza,fp.IdFamiglia,cli.IdArea as AreaCliente,cli.IdTipoCliente,
        cli.IdArea AS IdAreaCliente,fp.IdFamigliaParent,TitoloTipoSpeciale as TitTipoSpec,ifnull(cliV.Nominativo,cliV.RagioneSociale) as NomeVenditore,ifnull(cliPV.Nominativo,cliPV.RagioneSociale) as NomePuntoVendita,TitoloAttributo as Attributo,
        c.*,cli.sesso,cli.CodiceFiscale,cli.PartitaIVA,

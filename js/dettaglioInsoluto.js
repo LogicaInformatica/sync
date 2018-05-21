@@ -8,7 +8,8 @@ DCS.recordInsoluto = Ext.data.Record.create([
 	 		{name: 'Capitale',		convert:numdec_it, type: 'float', useNull: true},
 	 		{name: 'InteressiMora',	convert:numdec_it, type: 'float', useNull: true},
 	 		{name: 'AltriAddebiti',	convert:numdec_it, type: 'float', useNull: true},
-	 		{name: 'SpeseRecupero',	convert:numdec_it, type: 'float', useNull: true}
+	 		{name: 'SpeseRecupero',	convert:numdec_it, type: 'float', useNull: true},
+	 		{name: 'Riscatto',	    convert:numdec_it, type: 'float', useNull: true}
 	 ]);
 
 DCS.DettaglioInsoluto = Ext.extend(Ext.Panel, {
@@ -73,6 +74,11 @@ DCS.DettaglioInsoluto = Ext.extend(Ext.Panel, {
 						readOnly:true,
 						style:'text-align:right',
 						name: 'SpeseRecupero'
+					}, {
+						fieldLabel: 'Riscatto scaduto',
+						readOnly:true,
+						style:'text-align:right',
+						name: 'Riscatto'
 					}]
 				}]
 			}],
@@ -120,9 +126,9 @@ function showInsolutoDetail(idContratto) {
 	var winTitle = 'Dettaglio insoluto';
 	win = new Ext.Window({
 		width: 360,
-		height: 230,
+		height: 260,
 		minWidth: 360,
-		minHeight: 230,
+		minHeight: 260,
 		layout: 'fit',
 		id:'dettaglioInsoluto'+idContratto,
 		stateful:false,

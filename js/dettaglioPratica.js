@@ -667,7 +667,7 @@ DCS.DettaglioPratica = Ext.extend(Ext.TabPanel, {
 						},{        
 							xtype:'panel', layout:'form', labelWidth:57, columnWidth:.47,defaultType:'textfield',
 							defaults: {readOnly:true, anchor:'90%'},
-							items: [{fieldLabel:'Riscatto',	name:'ImpRiscatto',	style:'text-align:right', width:90}]//2nd column 1st row
+							items: [{fieldLabel:'Riscatto', cls: 'txt_evid', name:'ImpRiscatto', style:'text-align:right; background:#ffff60', width:90}]//2nd column 1st row
 						}]//end sub fieldset left column
 					},{
 						xtype:'fieldset', autoHeight:true, layout:'column', columnWidth: .47, border: false,

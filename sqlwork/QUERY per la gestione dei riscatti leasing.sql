@@ -75,3 +75,4 @@ INSERT INTO `db_cnc`.`azionetipoazione` (`IdAzione`, `IdTipoAzione`, `DataIni`, 
 INSERT INTO `db_cnc`.`statoazione` (`IdStatoAzione`, `IdAzione`, `Condizione`, `DataIni`, `DataFin`, `LastUser`, `IdStatoRecupero`) VALUES ('2068', '2068', 'IdAttributo=86', '2001-01-01', '9999-12-31', 'system', '13');
 
 UPDATE `db_cnc`.`statoazione` SET `IdStatoRecupero`=NULL WHERE `IdStatoAzione`='2068';
+UPDATE `db_cnc`.`azione` SET `CodAzione`='CCRL' WHERE `IdAzione`='2066';

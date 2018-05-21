@@ -55,3 +55,4 @@ INSERT INTO `db_cnc`.`azione` (`IdAzione`, `IdFunzione`, `CodAzione`, `TitoloAzi
 INSERT INTO `db_cnc`.`azionetipoazione` (`IdAzione`, `IdTipoAzione`, `DataIni`, `DataFin`, `LastUser`) VALUES ('2064', '5', '2001-01-01', '9999-12-31', 'system');
 
 INSERT INTO `db_cnc`.`statoazione` (`IdStatoAzione`, `IdAzione`, `Condizione`, `DataIni`, `DataFin`, `LastUser`, `IdStatoRecupero`) VALUES ('2064', '2064', 'IdCategoria=1006', '2001-01-01', '9999-12-31', 'system', '13');
+UPDATE `db_cnc`.`statoazione` SET `Condizione`='IdClasse=38', `IdStatoRecupero`=NULL WHERE `IdStatoAzione`='2064';
