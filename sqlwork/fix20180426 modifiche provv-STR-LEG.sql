@@ -127,6 +127,9 @@ UPDATE `db_cnc`.`regolaassegnazione` SET `GiorniFissiFine`='4,14,24' WHERE `IdRe
 UPDATE `db_cnc`.`regolaassegnazione` SET `GiorniFissiFine`='4,14,24' WHERE `IdRegolaAssegnazione`='4124';
 UPDATE `db_cnc`.`regolaassegnazione` SET `GiorniFissiFine`='4,14,24' WHERE `IdRegolaAssegnazione`='4125';
 
+## rende possibile le azioni di affido sulle pratiche RS/MX
+UPDATE `db_cnc`.`statoazione` SET `Condizione`='IdStatoRecupero IN (2,3,4,13) OR IdClasse IN (36,38) OR IdAttributo=86' WHERE `IdStatoAzione`='2';
+UPDATE `db_cnc`.`statoazione` SET `Condizione`='IdStatoRecupero IN (2,3,4,5,6,13,25,26)  OR IdClasse IN (36,38) OR IdAttributo=86' WHERE `IdStatoAzione`='7';
 
 
 
