@@ -130,6 +130,10 @@ UPDATE `db_cnc`.`regolaassegnazione` SET `GiorniFissiFine`='4,14,24' WHERE `IdRe
 ## rende possibile le azioni di affido sulle pratiche RS/MX
 UPDATE `db_cnc`.`statoazione` SET `Condizione`='IdStatoRecupero IN (2,3,4,13) OR IdClasse IN (36,38) OR IdAttributo=86' WHERE `IdStatoAzione`='2';
 UPDATE `db_cnc`.`statoazione` SET `Condizione`='IdStatoRecupero IN (2,3,4,5,6,13,25,26)  OR IdClasse IN (36,38) OR IdAttributo=86' WHERE `IdStatoAzione`='7';
+UPDATE `db_cnc`.`statoazione` SET `Condizione`='IdStatoRecupero IN (2,3,4,5,6,13,25,26)  OR IdClasse IN (36,38) OR IdAttributo=86' WHERE `IdStatoAzione`='6';
+UPDATE `db_cnc`.`statoazione` SET `Condizione`='IdStatoRecupero IN (2,3,4,13)   OR IdClasse IN (36,38) OR IdAttributo=86' WHERE `IdStatoAzione`='163';
+UPDATE `db_cnc`.`statoazione` SET `Condizione`='IdStatoRecupero IN (2,3,4,5,6,13,25,26)  OR IdClasse IN (36,38) OR IdAttributo=86' WHERE `IdStatoAzione`='176';
+UPDATE `db_cnc`.`statoazione` SET `Condizione`='IdStatoRecupero IN (2,3,4,5,6,13,25,26) OR IdClasse IN (36,38) OR IdAttributo=86' WHERE `IdStatoAzione`='181';
 
 
 
