@@ -107,10 +107,13 @@ UPDATE automatismo SET Condizione='CodClasse IN (\'R90\',\'B90\',\'M2\',\'RS\') 
 WHERE IdAutomatismo='19';
 UPDATE automatismo SET Condizione='CodClasse IN (\'R90\',\'B90\',\'M2\',\'RS\') AND IdStatoContratto=1  AND IdStatoRecupero IN (4,5) AND EXISTS (SELECT 1 FROM v_recapiti_mandato v WHERE v.IdContratto=c.IdContratto and FlagGarante=\'Y\') AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and idclasse>106 AND datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)\r\n' 
 WHERE IdAutomatismo='20';
-UPDATE automatismo SET Condizione='c.IdRegolaProvvigione IN (2115,2212,5000,5001,5100) AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and IdRegolaProvvigione IN (2115,2212,5000,5001,5100) AND datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)\r\n' 
+UPDATE automatismo SET Condizione='c.IdRegolaProvvigione IN (2115,2212,5001,5100) AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and IdRegolaProvvigione IN (2115,2212,5000,5001,5100) AND datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)\r\n' 
 WHERE IdAutomatismo='113';
-UPDATE automatismo SET Condizione='c.IdRegolaProvvigione IN (2115,2212,5000,5001,5100) AND  EXISTS (SELECT 1 FROM v_recapiti_mandato v WHERE v.IdContratto=c.IdContratto and FlagGarante=\'Y\') AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and IdRegolaProvvigione IN (2115,2212,5000,5001,5100) AND datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)\r ' 
+UPDATE automatismo SET Condizione='c.IdRegolaProvvigione IN (2115,2212,5001,5100) AND  EXISTS (SELECT 1 FROM v_recapiti_mandato v WHERE v.IdContratto=c.IdContratto and FlagGarante=\'Y\') AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and IdRegolaProvvigione IN (2115,2212,5000,5001,5100) AND datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)\r ' 
 WHERE IdAutomatismo='115';
+
+UPDATE `db_cnc`.`automatismo` SET `Condizione`='(CodClasse IN (\'R90\',\'B90\',\'M2\',\'RS\')  AND IdStatoContratto=1 OR c.IdRegolaProvvigione IN (5001,5100))  AND IdStatoRecupero=4 AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and idclasse>106 AND datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)\r\n' WHERE `IdAutomatismo`='19';
+UPDATE `db_cnc`.`automatismo` SET `Condizione`='(CodClasse IN (\'R90\',\'B90\',\'M2\',\'RS\')  AND IdStatoContratto=1 OR c.IdRegolaProvvigione IN (5001,5100))  AND IdStatoRecupero IN (4,5) AND EXISTS (SELECT 1 FROM v_recapiti_mandato v WHERE v.IdContratto=c.IdContratto and FlagGarante=\'Y\') AND NOT exists (select 1 from assegnazione where idcontratto=c.idcontratto and idclasse>106 AND datafin BETWEEN datainizioaffido - interval 3 day AND datainizioaffido - interval 1 day)\r\n' WHERE `IdAutomatismo`='20';
 
 INSERT INTO azioneautomatica (IdAzione, IdAutomatismo, DataIni, DataFin, LastUser) 
 VALUES ('5', '318', '2018-05-05', '9999-12-31', 'system');
@@ -135,6 +138,14 @@ UPDATE `db_cnc`.`statoazione` SET `Condizione`='IdStatoRecupero IN (2,3,4,13)   
 UPDATE `db_cnc`.`statoazione` SET `Condizione`='IdStatoRecupero IN (2,3,4,5,6,13,25,26)  OR IdClasse IN (36,38) OR IdAttributo=86' WHERE `IdStatoAzione`='176';
 UPDATE `db_cnc`.`statoazione` SET `Condizione`='IdStatoRecupero IN (2,3,4,5,6,13,25,26) OR IdClasse IN (36,38) OR IdAttributo=86' WHERE `IdStatoAzione`='181';
 
+# mette "Ordine", necessario per far comparire il reparto 1040 nei tab delle provvigioni
+UPDATE `db_cnc`.`regolaprovvigione` SET `Ordine`='9000' WHERE `IdRegolaProvvigione`='4114';
+UPDATE `db_cnc`.`regolaprovvigione` SET `Ordine`='9001' WHERE `IdRegolaProvvigione`='5000';
+UPDATE `db_cnc`.`regolaprovvigione` SET `Ordine`='9002' WHERE `IdRegolaProvvigione`='5001';
+UPDATE `db_cnc`.`regolaprovvigione` SET `Ordine`='9003' WHERE `IdRegolaProvvigione`='5100';
+
+## forza la classe 36 nelle pratiche RS (non era stata messa per errore storico in CustomFunc)
+UPDATE contratto SET IdClasse=36 WHERE IdAttributo=86;
 
 
 ### AGGIORNARE VIEWS MODIFICATE

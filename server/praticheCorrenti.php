@@ -224,20 +224,20 @@ function doMain()
 		
 		if ($_REQUEST['expAll']==1) { // export di tutte le pagina in lavorazione interna
 			$query = "v_insoluti_opt v $join WHERE v.classif='MAX' AND InRecupero='Y' AND v.ImpInsoluto>=26 and (IdAgenzia is null OR IdAgenzia=1040) $condNotEstinti" ;
-			$query .= filtroInsolutiOperatore();
-            $queryForCount = $query;
 		} else {
 			$cat = ($_REQUEST['CategoriaMaxirata']) ? ($_REQUEST['CategoriaMaxirata']) : 0;
 			if ($cat>0)
 			{
 				$query = "v_insoluti_opt v $join WHERE v.classif='MAX' AND InRecupero='Y' and v.IdCategoriaMaxirata=$cat  AND InRecupero='Y' and (IdAgenzia is null OR IdAgenzia=1040) AND v.ImpInsoluto>=26 $condNotEstinti" ;
-				$query .= filtroInsolutiOperatore();
 			}
 			else
 			{
 				$query = "v_insoluti_opt v $join WHERE v.classif='MAX' AND InRecupero='Y' and v.CategoriaMaxirata is null and (IdAgenzia is null OR IdAgenzia=1040) AND v.ImpInsoluto>=26 $condNotEstinti" ;
-				$query .= filtroInsolutiOperatore();
 			}
+            // Richiesta 2018-05-22: escludere quelli con stato recupero = Prop. DBT
+			$query .= filtroInsolutiOperatore();
+            $query .= " AND v.IdStatoRecupero!=14";
+            $queryForCount = $query;
 			$ordine = "$sortDStato,DataCambioStato,DataCambioClasse,DataScadenzaAzione,DataScadenza";
 		}
 		break;
@@ -248,7 +248,6 @@ function doMain()
 		
 		if ($_REQUEST['expAll']==1) { // export di tutte le pagina in lavorazione interna
 			$query = "v_insoluti_opt v $join WHERE (v.IdAttributo=86 OR classif='RIS') and (IdAgenzia is null OR IdAgenzia=1040) $condNotEstinti" ;
-			$query .= filtroInsolutiOperatore();
 		} else {
 			$confrontoData='';
 			$cat = ($_REQUEST['CategoriaRiscattoLeasing']) ? ($_REQUEST['CategoriaRiscattoLeasing']) : 0;
@@ -272,14 +271,15 @@ function doMain()
 			if ($cat>0)
 			{
 				$query = "v_insoluti_opt v $join WHERE v.IdCategoriaRiscattoLeasing=$cat  AND (v.IdAttributo=86 OR classif='RIS') and (IdAgenzia is null OR IdAgenzia=1040) $condNotEstinti $confrontoData" ;
-				$query .= filtroInsolutiOperatore();
 			}
 			else
 			{
 				$query = "v_insoluti_opt v $join WHERE v.CategoriaRiscattoLeasing is null AND (v.IdAttributo=86 OR classif='RIS') and (IdAgenzia is null OR IdAgenzia=1040) $condNotEstinti $confrontoData" ;
-				$query .= filtroInsolutiOperatore();
 			}
-			$queryForCount = $query;
+            // Richiesta 2018-05-22: escludere quelli con stato recupero = Prop. DBT
+			$query .= filtroInsolutiOperatore();
+            $query .= " AND v.IdStatoRecupero!=14";
+            $queryForCount = $query;
 			$ordine = "$sortDStato,DataCambioStato,DataCambioClasse,DataScadenzaAzione,DataScadenza";
 		}
 		break;		

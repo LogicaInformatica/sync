@@ -595,7 +595,7 @@ DCS.Provvigioni = function(){
 					url : 'server/AjaxRequest.php' , 
 					params : {
 						task: 'read',
-						sql: "SELECT IdReparto,Agenzia FROM v_tabs_provvigioni WHERE tipo="+tipo},
+						sql: "SELECT IdReparto,Agenzia,Ordine FROM v_tabs_provvigioni WHERE tipo="+tipo+" ORDER BY 3,2"},
 					method: 'POST',
 					reader:  new Ext.data.JsonReader(
 		    				{
