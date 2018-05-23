@@ -22,7 +22,7 @@ sum(IF(i.ImpAltriAddebiti IS NOT NULL,i.ImpAltriAddebiti,
       )
    ) as AltriAddebiti,
 ## Riscatti scaduti
-sum(IF(c.IdAttributo=86,c.ImpRiscatto,0)) as Riscatto,   
+IF(c.IdAttributo=86,c.ImpRiscatto,0) as Riscatto,   
 ## Spese di recupero (moltiplica la percentuale per il capitale se applicabile)
 ## dal 20/4/2014 lette dal contratto
 c.ImpSpeseRecupero AS SpeseRecupero,c.ImpSpeseRecupero AS SpeseIncasso,c.IdClasse,c.datacambiostato,c.idstatorecupero,c.lastupd as lastupd_contratto,
