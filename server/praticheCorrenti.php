@@ -223,16 +223,16 @@ function doMain()
 		// Pratiche presso operatore con flag che indica niente affido
 		
 		if ($_REQUEST['expAll']==1) { // export di tutte le pagina in lavorazione interna
-			$query = "v_insoluti_opt v $join WHERE v.classif='MAX' AND InRecupero='Y' AND v.ImpInsoluto>=26 and (IdAgenzia is null OR IdAgenzia=1040) $condNotEstinti" ;
+			$query = "v_insoluti_opt v $join WHERE v.classif='MAX' AND InRecupero='Y' AND v.ImpInsoluto>=26 and (v.IdAgenzia is null OR v.IdAgenzia=1040) $condNotEstinti" ;
 		} else {
 			$cat = ($_REQUEST['CategoriaMaxirata']) ? ($_REQUEST['CategoriaMaxirata']) : 0;
 			if ($cat>0)
 			{
-				$query = "v_insoluti_opt v $join WHERE v.classif='MAX' AND InRecupero='Y' and v.IdCategoriaMaxirata=$cat  AND InRecupero='Y' and (IdAgenzia is null OR IdAgenzia=1040) AND v.ImpInsoluto>=26 $condNotEstinti" ;
+				$query = "v_insoluti_opt v $join WHERE v.classif='MAX' AND InRecupero='Y' and v.IdCategoriaMaxirata=$cat  AND InRecupero='Y' and (v.IdAgenzia is null OR v.IdAgenzia=1040) AND v.ImpInsoluto>=26 $condNotEstinti" ;
 			}
 			else
 			{
-				$query = "v_insoluti_opt v $join WHERE v.classif='MAX' AND InRecupero='Y' and v.CategoriaMaxirata is null and (IdAgenzia is null OR IdAgenzia=1040) AND v.ImpInsoluto>=26 $condNotEstinti" ;
+				$query = "v_insoluti_opt v $join WHERE v.classif='MAX' AND InRecupero='Y' and v.CategoriaMaxirata is null and (v.IdAgenzia is null OR v.IdAgenzia=1040) AND v.ImpInsoluto>=26 $condNotEstinti" ;
 			}
             // Richiesta 2018-05-22: escludere quelli con stato recupero = Prop. DBT
 			$query .= filtroInsolutiOperatore();
@@ -247,7 +247,7 @@ function doMain()
         // nei movimenti
 		
 		if ($_REQUEST['expAll']==1) { // export di tutte le pagina in lavorazione interna
-			$query = "v_insoluti_opt v $join WHERE (v.IdAttributo=86 OR classif='RIS') and (IdAgenzia is null OR IdAgenzia=1040) $condNotEstinti" ;
+			$query = "v_insoluti_opt v $join WHERE (v.IdAttributo=86 OR classif='RIS') and (v.IdAgenzia is null OR v.IdAgenzia=1040) $condNotEstinti" ;
 		} else {
 			$confrontoData='';
 			$cat = ($_REQUEST['CategoriaRiscattoLeasing']) ? ($_REQUEST['CategoriaRiscattoLeasing']) : 0;
@@ -270,11 +270,11 @@ function doMain()
 			}
 			if ($cat>0)
 			{
-				$query = "v_insoluti_opt v $join WHERE v.IdCategoriaRiscattoLeasing=$cat  AND (v.IdAttributo=86 OR classif='RIS') and (IdAgenzia is null OR IdAgenzia=1040) $condNotEstinti $confrontoData" ;
+				$query = "v_insoluti_opt v $join WHERE v.IdCategoriaRiscattoLeasing=$cat  AND (v.IdAttributo=86 OR classif='RIS') and (v.IdAgenzia is null OR v.IdAgenzia=1040) $condNotEstinti $confrontoData" ;
 			}
 			else
 			{
-				$query = "v_insoluti_opt v $join WHERE v.CategoriaRiscattoLeasing is null AND (v.IdAttributo=86 OR classif='RIS') and (IdAgenzia is null OR IdAgenzia=1040) $condNotEstinti $confrontoData" ;
+				$query = "v_insoluti_opt v $join WHERE v.CategoriaRiscattoLeasing is null AND (v.IdAttributo=86 OR classif='RIS') and (v.IdAgenzia is null OR v.IdAgenzia=1040) $condNotEstinti $confrontoData" ;
 			}
             // Richiesta 2018-05-22: escludere quelli con stato recupero = Prop. DBT
 			$query .= filtroInsolutiOperatore();
