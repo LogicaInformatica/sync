@@ -59,6 +59,7 @@ vrm.Indirizzo as IndirizzoGar,
 vrm.CAP as CAPGar,
 vrm.Localita as LocalitaGar,
 vrm.SiglaProvincia as SiglaProvinciaGar,
+lr.PrimaData
 lr.ListaRate,CASE WHEN lr.NumRate>1 THEN CONCAT('Rate nn. ',ListaRate,' - Decorrenza ',DATE_FORMAT(PrimaData,'%e/%m/%Y'))
                              WHEN lr.NumRate=1 THEN CONCAT('Rata n. ',ListaRate,' - Scadenza ',DATE_FORMAT(PrimaData,'%e/%m/%Y'))
                              ELSE '' END AS IndicaRate

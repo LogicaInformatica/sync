@@ -97,7 +97,7 @@ UPDATE classificazione SET FlagManuale='S', FlagNoAffido='N' WHERE IdClasse='36'
 UPDATE classificazione SET FlagNoAffido='N' WHERE IdClasse='38';
 
 insert into modello values(
-'6', 'Lettera per insoluto maxirata', 'Lettera INS.txt', 'L', NULL, '2001-01-01', '9999-12-31', NOW(), 'system', '6', NULL
+'6', 'Lettera per insoluto maxirata', 'Lettera INS maxirata.txt', 'L', NULL, '2001-01-01', '9999-12-31', NOW(), 'system', '6', NULL
 );
 
 insert into automatismo values(
