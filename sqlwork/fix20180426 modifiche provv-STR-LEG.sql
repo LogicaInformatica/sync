@@ -147,5 +147,14 @@ UPDATE `db_cnc`.`regolaprovvigione` SET `Ordine`='9003' WHERE `IdRegolaProvvigio
 ## forza la classe 36 nelle pratiche RS (non era stata messa per errore storico in CustomFunc)
 UPDATE contratto SET IdClasse=36 WHERE IdAttributo=86;
 
+# aggiunge righe in tabella Target, per rendere visibili i grafici di tipo standard
+INSERT INTO `db_cnc`.`target` (`FasciaRecupero`, `FY`, `Valore`, `Ordine`, `DataIni`, `DataFin`, `ENDFY`, `Gruppo`) VALUES ('MAXIRATA', '2018', '0', '200', '2018-06-25', '9999-12-31', '9999', '4');
+INSERT INTO `db_cnc`.`target` (`FasciaRecupero`, `FY`, `Valore`, `Ordine`, `DataIni`, `DataFin`, `ENDFY`, `Gruppo`) VALUES ('RISCATTO', '2018', '0', '200', '2018-06-25', '9999-12-31', '9999', '4');
+UPDATE `db_cnc`.`regolaprovvigione` SET `FasciaRecupero`='MAXIRATA1' WHERE `IdRegolaProvvigione`='5000';
+UPDATE `db_cnc`.`regolaprovvigione` SET `FasciaRecupero`='MAXIRATA2' WHERE `IdRegolaProvvigione`='5001';
+UPDATE `db_cnc`.`target` SET `FasciaRecupero`='MAXIRATA1' WHERE `FasciaRecupero`='MAXIRATA' and`FY`='2018' and`DataFin`='9999-12-31';
+INSERT INTO `db_cnc`.`target` (`FasciaRecupero`, `FY`, `Valore`, `Ordine`, `DataIni`, `DataFin`, `ENDFY`, `Gruppo`) VALUES ('MAXIRATA2', '2018', '0', '200', '2018-06-25', '9999-12-31', '9999', '4');
+
+
 
 ### AGGIORNARE VIEWS MODIFICATE

@@ -1151,7 +1151,18 @@ DCS.ChartsMr.TabsMRRL = function(){
 				task: 'statistiche', id:'tabStat',
 				grid: targetGrid, gruppo: 1
 				}));		
-			
+			items.push(new DCS.Charts.Sintesi({
+				titlePanel: 'Maxirate affido fase 1',
+				title: 'M1 Maxirate fase 1',
+				task: 'MAXIRATA1',	
+                                id: 'graphMAXIRATA1'
+				}));
+			items.push(new DCS.Charts.Sintesi({
+				titlePanel: 'Maxirate affido fase 2',
+				title: 'M2 Maxirate fase 2',
+				task: 'MAXIRATA2',	
+                                id: 'graphMAXIRATA2'
+				}));
 			return new Ext.TabPanel({
     			activeTab: 0,
 				enableTabScroll: true,

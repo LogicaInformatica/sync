@@ -1184,7 +1184,13 @@ DCS.ChartsRl.TabsMRRL = function(){
 				task: 'statistiche', id:'tabStat',
 				grid: targetGrid, gruppo: 1
 				}));		
-			
+                        items.push(new DCS.Charts.Sintesi({
+				titlePanel: 'Riscatti scaduti affido',
+				title: 'RS Riscatti scaduti affido',
+				task: 'RISCATTO',	
+                                id: 'graphRISCATTO'
+				}));
+
 			return new Ext.TabPanel({
     			activeTab: 0,
 				enableTabScroll: true,
