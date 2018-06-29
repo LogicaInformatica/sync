@@ -10,52 +10,58 @@ Totale: € %ImpInsolutoIT%
 Roma, %Oggi%
 
 Oggetto:  Sollecito pagamento Euro %ImpInsolutoIT% - %IndicaRate%
-          Contratto   %CodContratto%/%CodProdotto%
+          Contratto n. %CodContratto%/%CodProdotto%
           Intestato a %Intestatario%
 
 Gentile Cliente,
+la informiamo che, in data %DataChiusuraIT%, è scaduta la rata finale di Euro %ImpInsolutoIT%
+relativa al finanziamento in oggetto e che ad oggi non ci risulta saldata.
 
-con la presente la informiamo che, in data %DataChiusuraIT%, è scaduta la rata finale di Euro %ImpInsolutoIT%
-relativa al finanziamento in oggetto e che ad oggi non ne risulta pervenuto il pagamento.
+Le ricordiamo che le opzioni a sua disposizione, in questa fase, sono:
 
-Le rammentiamo le tre alternative che potrà opzionare:
+1.	Rifinanziare l'ammontare residuo;
+2.	Ripartire con una nuova Toyota;
+3.	Saldare in un'unica soluzione.
 
-1.	Saldare in un'unica soluzione;
-2.	Rifinanziare l'ammontare residuo;
-3.	Ripartire con una nuova Toyota.
+Il personale specializzato della sua Concessionaria è a disposizione per supportarla nella scelta e 
+nel caso decidesse di rifinanziare (Opz.1) o acquistare una nuova vettura (Opz.2) dovrà contattarlo 
+entro i prossimi 10 giorni.
 
-Nel caso decidesse di optare per la soluzione n. 2 o n. 3, essendo già decorsa la scadenza della rata, 
-la esortiamo a recarsi entro 10 giorni dal ricevimento della presente, presso la sua Concessionaria di 
-fiducia, dove riceverà il supporto di personale specializzato che l’aiuterà a trovare la soluzione su 
-misura per lei.
-
-Qualora volesse invece tenere la vettura e saldare la rata finale in un'unica soluzione, la preghiamo 
-di effettuare entro massimo di 10 giorni dal ricevimento della presente, il bonifico di Euro %ImpInsolutoIT% 
+Nel caso, invece, volesse saldare la rata finale in un'unica soluzione, la preghiamo di effettuare 
+entro massimo di 10 giorni dal ricevimento della presente, il bonifico di Euro %ImpInsolutoIT%  
 utilizzando le seguenti coordinate:
 
 - UNICREDIT BANCA 
 - Cod. IBAN IT 36 B 02008 05364 000500045561 
-- intestato alla Toyota Financial Services ( UK ) Plc
-- causale: Pagamento rata finale finanziamento n. xxxxx/PA
+- Intestato alla Toyota Financial Services ( UK ) Plc
+- Causale: Pagamento rata finale finanziamento n. %CodContratto%/PA
 
-La informiamo, inoltre, che continuando l'attuale stato di insolvenza, saremo tenuti alla segnalazione 
-ai Sistemi di Informazione Creditizia ai sensi degli articoli 4 del Codice Deontologico sulla Privacy, 
-125 comma 3 del Decreto Legislativo n. 385 del 1 settembre 1993 (“T.U.B.”)  e della Circolare di Banca 
-di Italia n.139 del 11/2/1991 e s.m.i..
+Con l'occasione la informiamo che il mancato saldo della rata finale in oggetto comporterà la 
+segnalazione ai Sistemi di Informazione Creditizia ai sensi degli articoli 4 del Codice Deontologico
+sulla Privacy, 125 comma 3 del Decreto Legislativo n. 385 del 1° settembre 1993 ("T.U.B.")  e della 
+Circolare di Banca di Italia n.139 del 11/2/1991 e s.m.i..
  
-La segnalazione presso le suddette banche dati potrebbe avere riflessi negativi per l'accesso al credito.
+Le ricordiamo, inoltre, che tale segnalazione presso le suddette banche dati potrebbe avere riflessi 
+negativi per l'accesso al credito.
 
-Qualora avesse già provveduto al pagamento della rata finale, la preghiamo di inviarci una copia della 
-contabile del bonifico all’indirizzo email collection@it.itoyota-fs.com al fine di monitorare il corretto 
-incasso.
+Qualora avesse già provveduto al pagamento della rata finale, le chiediamo di inviarci una copia della 
+contabile del bonifico all'indirizzo email: collection@it.itoyota-fs.com al fine di permetterci di 
+effettuare le dovute verifiche contabili.
 
-Nel caso avesse, invece, già optato per il rifinanziamento della rata finale o per l’acquisto di una nuova
-vettura, la invitiamo a richiedere alla sua concessionaria l'aggiornamento della sua pratica e di contattarci 
-ai riferimenti di seguito indicati al fine di perfezionare le operazioni connesse alla sua opzione.
 
-Per qualsiasi ulteriore chiarimento siamo a sua completa disposizione all'indirizzo e-mail 
-collection@it.toyota-fs.com oppure al numero 06/54898.414 dal lunedì al giovedì dalle ore 09.00 alle 13.30 
-e dalle ore 14.15 alle 18.00; il venerdì il servizio è attivo fino alle ore 16:45.
+
+
+Nel caso in cui avesse già effettuato il rifinanziamento della rata finale o acquistato una nuova vettura,
+dovrà rivolgersi alla sua Concessionaria o prendere contatto con i nostri uffici per poter procedere con 
+l'aggiornamento della sua pratica e perfezionare le operazioni connesse alla sua opzione.
+
+Per qualsiasi ulteriore chiarimento siamo a sua completa disposizione ai seguenti riferimenti:
+e-mail: collection@it.toyota-fs.com 
+Telefono: 06/50524923
+
+La informiamo che i nostri uffici sono operativi dal lunedì al giovedì dalle ore 09.00 alle 12.00 e dalle 
+ore 15.00 alle 18.00; il venerdì il servizio è attivo fino alle ore 16:45.
+
 
 Cordiali saluti.
 															Toyota Financial Services (UK) PLC
