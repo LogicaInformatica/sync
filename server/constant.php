@@ -89,9 +89,9 @@ define('TMP_REL_PATH','tmp');      // inizio URL relativo per file in tmp
 define('TEMPLATE_PATH','/efs/cnc/templates'); // per i templates di email, lettere ecc.
 
 // URL da richiamare per le funzioni di lista del DMS: i parametri sono: (1) codice pratica senza prefisso, (2) prefisso LE/CO
-define('DMS_API_LIST_URL',get_cfg_var('EB_WEB_PROTOCOL')."://desired".get_cfg_var('EB_DNS_SUFFIX').".".get_cfg_var('EB_DNS_DOMAIN').'/php/k2/sf/k2/web/app_dev.php/api/document/list/%s/%s');
+define('DMS_API_LIST_URL',get_cfg_var('EB_WEB_PROTOCOL')."://desired".get_cfg_var('EB_DNS_SUFFIX').".".get_cfg_var('EB_DNS_DOMAIN').'/php/k2/sf/k2/web/app.php/api/document/list/%s/%s');
 // URL da richiamare per le funzioni di download di documenti dal DMS: i parametri sono: (1) ID del documento sul DMS, (2) token
-define('DMS_API_GET_URL',get_cfg_var('EB_WEB_PROTOCOL')."://desired".get_cfg_var('EB_DNS_SUFFIX').".".get_cfg_var('EB_DNS_DOMAIN').'/php/k2/sf/k2/web/app_dev.php/api/document/file/%s/%s');
+define('DMS_API_GET_URL',get_cfg_var('EB_WEB_PROTOCOL')."://desired".get_cfg_var('EB_DNS_SUFFIX').".".get_cfg_var('EB_DNS_DOMAIN').'/php/k2/sf/k2/web/app.php/api/document/file/%s/%s');
 // Authorization key da specificare nell'header HTTP
 define('DMS_API_KEY','5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8');
 
