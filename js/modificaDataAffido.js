@@ -156,10 +156,10 @@ DCS.ModificaDataAffido = function(){
 								       	  Ext.getCmp('DateVariate' + i).setValue(Date.parseDate(r[i].data.DateVariate, "Y-m-d"));
 								       	  Ext.getCmp('DateVariate' + i).originalValue = new Date(Ext.getCmp('DateStandard' + i).getValue());
 								       	  var minValue = new Date(r[i].data.DateStandard);
-								       	  minValue.setDate(minValue.getDate()-3);
+								       	  minValue.setDate(minValue.getDate()-7);
 								       	  Ext.getCmp('DateVariate' + i).setMinValue(minValue.toISOString().slice(0,10));
 								       	  var maxValue = new Date(r[i].data.DateStandard);
-								       	  maxValue.setDate(maxValue.getDate()+3);
+								       	  maxValue.setDate(maxValue.getDate()+7);
 								       	  Ext.getCmp('DateVariate' + i).setMaxValue(maxValue.toISOString().slice(0,10));
 								       }
 								    }
