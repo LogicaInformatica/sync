@@ -14,6 +14,8 @@ require_once('funzioniStorico.php');
 require_once("estrattoSpeseRecupero.php");
 require_once("../funzioni_experian.php");
 require_once("../funzioni_euroinvestigation.php");
+require_once("statisticheMaxirata.php");
+require_once("statisticheRiscattiLeasing.php");
 ini_set("memory_limit","2048M");
 
 try
