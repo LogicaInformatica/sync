@@ -76,8 +76,8 @@ function importFile(){
 				//prendo il nome del file senza estensione
 				$noext = basename($fn,".pdf");
 				$arr = explode('-',$noext);
-				$codContratto = $arr[0];
-				$pattern = $arr[1];
+				$codContratto = trim($arr[0]);
+				$pattern = trim($arr[1]);
 				//tramite pattern cerco la tipologia di lettera da inserire (TipoAllegato)
 				$idtipo = getScalar("SELECT IdTipoAllegato FROM tipoallegato WHERE Pattern LIKE '%".$pattern."%'");
 				
