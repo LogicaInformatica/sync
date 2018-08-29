@@ -81,14 +81,14 @@ where idfunzione=409;*/
 
 UPDATE reparto SET CodUfficio='L99,M1,M2,RS', TitoloUfficio='Toyota FS recupero' WHERE IdReparto='1040';
 
-INSERT INTO regolaprovvigione (IdRegolaProvvigione, IdReparto, DataIni, DataFin, CodRegolaProvvigione, AbbrRegolaProvvigione, TitoloRegolaProvvigione, FasciaRecupero, Condizione, durata, FlagNoRientro, FlagMensile, FlagCerved) VALUES ('5000', '1040', '2018-05-01', '9999-12-31', 'M1', '-', 'maxirata fase1', 'MAXIRATA', 'IdClasse=38', '60', 'N', 'N', 'N');
+INSERT INTO regolaprovvigione (IdRegolaProvvigione, IdReparto, DataIni, DataFin, CodRegolaProvvigione, AbbrRegolaProvvigione, TitoloRegolaProvvigione, FasciaRecupero, Condizione, durata, FlagNoRientro, FlagMensile, FlagCerved) VALUES ('5000', '1040', '2018-05-01', '9999-12-31', 'M1', 'Maxirata Fase 1', 'Maxirata Fase 1', 'MAXIRATA', 'IdClasse=38', '60', 'N', 'N', 'N');
 UPDATE regolaprovvigione SET AbbrRegolaProvvigione='-' WHERE IdRegolaProvvigione='4114';
 INSERT INTO regolaprovvigione (IdRegolaProvvigione, IdReparto, DataIni, DataFin, CodRegolaProvvigione, TitoloRegolaProvvigione, FasciaRecupero, Condizione, durata, FlagNoRientro, FlagMensile, FlagCerved) VALUES ('5001', '1040', '2018-05-01', '9999-12-31', 'M2', 'maxirata fase2', 'MAXIRATA', 'IdClasse=38', '30', 'N', 'N', 'N');
 INSERT INTO regolaprovvigione (IdRegolaProvvigione, IdReparto, DataIni, DataFin, CodRegolaProvvigione, TitoloRegolaProvvigione, FasciaRecupero, Condizione, durata, FlagNoRientro, FlagMensile, FlagCerved) VALUES ('5100', '1040', '2018-05-01', '9999-12-31', 'RS', 'riscatto', 'RISCATTO', 'IdAttributo=\'RS\'', '60', 'N', 'N', 'N');
 UPDATE regolaprovvigione SET durata='30' WHERE IdRegolaProvvigione='5100';
 
 INSERT INTO regolaassegnazione VALUES(
-'4123', '60', NULL, NULL, NULL, '1040', NULL, '2018-05-01', '9999-12-31', '2018-05-10 09:00:03', NULL, NULL, '20', NULL, NULL, 'I', '2', NULL, NULL, 'IdClasse=38 AND IdStatoRecupero=2', '5000'),
+'4123', '60', NULL, NULL, NULL, '1040', NULL, '2018-05-01', '9999-12-31', '2018-05-10 09:00:03', NULL, NULL, '20', NULL, NULL, 'I', '2', NULL, NULL, 'IdClasse=38 AND IdStatoRecupero=2 AND IFNULL(CodProvvigionePrecedente,\'\'!=\'M1\'', '5000'),
 ('4124', '30', NULL, NULL, NULL, '1040', NULL, '2018-05-01', '9999-12-31', '2018-05-14 15:38:32', NULL, NULL, '21', NULL, NULL, 'I', '2', NULL, NULL, 'IdClasse=38 AND IdStatoRecupero=2 AND CodProvvigionePrecedente=\'M1\'', '5001'),
 ('4125', '30', NULL, NULL, NULL, '1040', NULL, '2018-05-01', '9999-12-31', '2018-05-14 15:38:32', NULL, NULL, '20', NULL, NULL, 'I', '2', NULL, NULL, 'IdAttributo=\'RS\' AND IdStatoRecupero=2', '5100');
 
