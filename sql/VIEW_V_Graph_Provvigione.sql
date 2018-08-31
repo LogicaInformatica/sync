@@ -6,7 +6,9 @@ SUM(NumAffidati) AS NumAffidati,sum(NumIncassati) as NumIncassati,
 sum(ImpCapitaleAffidato) as ImpCapitaleAffidato,sum(ImpCapitaleIncassato) as ImpCapitaleIncassato,
 concat('€ ',replace(format(sum(impCapitaleAffidato),0),',','.'),'\n  (',sum(NumAffidati),')') AS LabelAffidato,
 concat('€ ',replace(format(sum(ImpCapitaleIncassato),0),',','.'),'\n  (',sum(NumIncassati),')') AS LabelIncassato,
-ROUND(SUM(IPR*NumAffidati)/SUM(NumAffidati),2) AS IPR,ROUND(SUM(IPM*NumAffidati)/SUM(NumAffidati),2) AS IPM,gruppo,
+# 2018-08-31: cambiata la media ponderata
+# ROUND(SUM(IPR*NumAffidati)/SUM(NumAffidati),2) AS IPR,ROUND(SUM(IPM*NumAffidati)/SUM(NumAffidati),2) AS IPM,gruppo,
+ROUND(SUM(IPR*ImpCapitaleAffidato)/SUM(ImpCapitaleAffidato),2) AS IPR,ROUND(SUM(IPM*ImpCapitaleAffidato)/SUM(ImpCapitaleAffidato),2) AS IPM,gruppo,
 IF ( DataFineFascia >= 	 # esclude le fasce che non erano più valide alla fine del fiscal year precedente
 	CAST(CONCAT(YEAR(CURDATE())-IF(MONTH(CURDATE())>3,1,0),'-03-31') AS DATE) # espressione che indica il fine fiscal year precedente
    ,'N','Y') AS FasciaVecchia

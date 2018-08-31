@@ -8,7 +8,9 @@ select idArea,Area,Agenzia,
  	DATE_FORMAT(DataFineAffido,'%Y%m') as Mese,
 	SUM(NumPratiche) AS NumPratiche,
 	YEAR(DataFineAffido+INTERVAL 9 MONTH) as Anno,
-	ROUND(SUM(IPR*NumPratiche)/sum(NumPratiche),2) AS IPR,
+        # 2018-08-31: cambiata la media ponderata
+	#ROUND(SUM(IPR*NumPratiche)/sum(NumPratiche),2) AS IPR,
+	ROUND(SUM(IPR*ImpCapitaleAffidato)/sum(ImpCapitaleAffidato),2) AS IPR,
 	SUM(ImpCapitaleAffidato) AS ImpCapitaleAffidato,
 	SUM(ImpCapitalePagato) AS ImpCapitalePagato,idagenzia,fasciarecupero,TipoFascia
 from v_geography_lotto
