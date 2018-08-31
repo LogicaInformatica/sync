@@ -182,6 +182,7 @@ function allegaFileEuroinvestigation($path,$fileName) {
 	try
 	{
 		// Inizio processo
+		$fileName = pathinfo($fileName,PATHINFO_BASENAME); // perché il fileName puo' contenere un nome directory da zip
 		trace("Elaborazione file da allegare: $path/$fileName",false);
 
 		// Nella prima versione, il filePath è composto come CodContratto.pdf oppure CodContratto_x.pdf (dove x è un progressivo)
