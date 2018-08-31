@@ -5,7 +5,7 @@
 require_once ('workflowFunc.php');
 $EIPATH = ATT_PATH.'/euroInvestigation';
 
-riceveDatiEuroInvestigation(); // per provare
+//riceveDatiEuroInvestigation(); // per provare
 
 /*
  * ftp_getFiles
@@ -42,7 +42,7 @@ function riceveDatiEuroInvestigation(){
 			trace("File n.".($iFile).": $file",false);
 			$pathInfo = pathInfo($file);
 			$zipFileName = $pathInfo['basename'];
-			if((substr($zipFileName,0,3) !== 'OLD' || preg_match('/OLD_TOYOTA_Evase n. 13/',$zipFileName)) && preg_match('/\.zip$/',$file)){
+			if (substr($zipFileName,0,3) !== 'OLD' && preg_match('/\.zip$/',$file)){
 				trace("Il file $file viene elaborato",false);
 				$local_file = downloadEuroInvFiles($ftp,$zipFileName,$file); // fa download del file
 				if ($local_file!==false) {
