@@ -5,9 +5,7 @@
 require_once ('workflowFunc.php');
 $EIPATH = ATT_PATH.'/euroInvestigation';
 
-
-//riceveDatiEuroInvestigation(); // per provare
-
+riceveDatiEuroInvestigation(); // per provare
 
 /*
  * ftp_getFiles
@@ -44,7 +42,7 @@ function riceveDatiEuroInvestigation(){
 			trace("File n.".($iFile).": $file",false);
 			$pathInfo = pathInfo($file);
 			$zipFileName = $pathInfo['basename'];
-			if(substr($zipFileName,0,3) !== 'OLD' && preg_match('/\.zip$/',$file)){
+			if((substr($zipFileName,0,3) !== 'OLD' || preg_match('/OLD_TOYOTA_Evase n. 13/',$zipFileName)) && preg_match('/\.zip$/',$file)){
 				trace("Il file $file viene elaborato",false);
 				$local_file = downloadEuroInvFiles($ftp,$zipFileName,$file); // fa download del file
 				if ($local_file!==false) {
@@ -52,7 +50,7 @@ function riceveDatiEuroInvestigation(){
 					$list = unzipAndDelete($local_file);
 					foreach ($list as $filename) {
 						if (pathinfo($filename,PATHINFO_EXTENSION)=='pdf') {
-							allegaFileEuroinvestigation("$EIPATH/$filename");
+							allegaFileEuroinvestigation($EIPATH,$filename);
 						} else {
 							trace("File $filename non processato perche' non e' un file PDF",false);
 						}
@@ -177,22 +175,20 @@ function unzipAndDelete($zipFile) {
 
 /**
  * allegaFileEuroinvestigation
- * @param {String} $filePath percorso completo del file pdf da allegare (che si presume sia stato già messo in una cartella permanente del server, da cui
- * non viene spostato)
+ * @param {String} $path percorso completo della cartella Euroinvestigation
+ * @param {String} $fileName nome del file pdf da allegare 
  */
-function allegaFileEuroinvestigation($filePath) {
+function allegaFileEuroinvestigation($path,$fileName) {
 	try
 	{
 		// Inizio processo
-		trace("Elaborazione file da allegare: $filePath",false);
+		trace("Elaborazione file da allegare: $path/$fileName",false);
 
 		// Nella prima versione, il filePath è composto come CodContratto.pdf oppure CodContratto_x.pdf (dove x è un progressivo)
-		preg_match('/^[A-Z0-9]+/',pathinfo($filePath,PATHINFO_FILENAME),$arr);
+		preg_match('/^[A-Z0-9]+/',$fileName,$arr);
 		$codContratto = $arr[0];
 		
 		trace('Trovato codice contratto: '.$codContratto, false);
-		$fileName = pathinfo($filePath,PATHINFO_BASENAME);
-		//trace('file name: '.$codContratto, false);
 		// ottiene l'id di tutti i contratti intestati al nome dato
 		$ids = getColumn("select IdContratto from contratto c WHERE codContratto =".quote_smart($codContratto));//JOIN cliente cl ON cl.IdCliente=c.IdCliente WHERE IFNULL(Nominativo,RagioneSociale) LIKE ".quote_smart($nomeCliente));
 		if (count($ids)==0) {
@@ -209,6 +205,12 @@ function allegaFileEuroinvestigation($filePath) {
 
 		// Loop di creazione degli allegati
 		foreach ($ids as $IdContratto) {
+            // 2018-08-31: Per evitare che dossier prodotti sullo stesso cliente in epoche successive siano sovrascritti, prepone
+            // ad ogni filename la data di oggi
+            $prefix = date('Ymd');
+            rename("$path/$fileName","$path/{$prefix}_$fileName");
+            $fileName = "{$prefix}_$fileName";
+            
 			$url = quote_smart("attachments/euroInvestigation/$fileName");
 			$titolo = quote_smart('Dossier Euroinvestigation sul contratto n. '.$codContratto);
 			$sql = "INSERT INTO allegato (IdContratto, TitoloAllegato, UrlAllegato,LastUser, IdTipoAllegato, FlagRiservato)"
