@@ -1870,8 +1870,16 @@ function allegaDocumento($pratica,$idtipo,$titolo,$riservato,$fileName='docPath'
 				return FALSE;
 			}		
 		}
-		trace("allegaDocumento 3",false);
-		
+        		
+        // 2018-08-31 Se un allegato con lo stesso file name esiste già nella tabella "allegato", fa in modo di generare un nuovo
+        // filename univoco
+		$url = quote_smart(str_replace(ATT_PATH,REL_PATH,$localDir)."/".$fileName);			
+		$IdContratto = $pratica['IdContratto'];
+        if (rowExistsInTable("allegato","IdContratto=$IdContratto AND UrlAllegato=$url")) {
+            $fileName = pathinfo($fileName,PATHINFO_FILENAME).'_'.date('YmdHis')."_".pathinfo($fileName,PATHINFO_EXTENSION);
+    		$url = quote_smart(str_replace(ATT_PATH,REL_PATH,$localDir)."/".$fileName);			
+        }   
+		       
 		if (move_uploaded_file ($tmpName, $localDir."/".$fileName))
 		{
 			chmod($localDir."/".$fileName,0777);
