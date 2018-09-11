@@ -14,7 +14,10 @@ JOIN contratto c ON c.IdContratto=v.IdContratto
 JOIN cliente cl ON cl.IdCliente=c.IdCliente
 JOIN reparto re ON re.IdReparto=v.IdAgenzia
 LEFT JOIN area a ON a.IdArea=cl.IdArea
-WHERE FasciaRecupero NOT LIKE 'DBT%' AND FasciaRecupero NOT LIKE '%REPO%'
+WHERE FasciaRecupero NOT LIKE 'DBT%' AND FasciaRecupero NOT LIKE '%REPO%' 
+AND FasciaRecupero NOT LIKE 'LEGA%' AND FasciaRecupero NOT LIKE 'MAXI%'
+AND FasciaRecupero NOT LIKE 'RINE%'
+AND FasciaRecupero NOT LIKE 'RISCA%'
 group by cl.idarea,r.CodRegolaProvvigione,v.dataFineAffido
 
 UNION ALL 
@@ -48,7 +51,10 @@ JOIN regolaprovvigione r ON p.idregolaprovvigione=r.idregolaprovvigione
 JOIN contratto c ON c.IdContratto=v.IdContratto
 JOIN cliente cl ON cl.IdCliente=c.IdCliente
 LEFT JOIN area a ON a.IdArea=cl.IdArea
-WHERE FasciaRecupero NOT LIKE 'DBT%' AND FasciaRecupero NOT LIKE '%REPO%'
+WHERE FasciaRecupero NOT LIKE 'DBT%' AND FasciaRecupero NOT LIKE '%REPO%' 
+AND FasciaRecupero NOT LIKE 'LEGA%' AND FasciaRecupero NOT LIKE 'MAXI%'
+AND FasciaRecupero NOT LIKE 'RINE%'
+AND FasciaRecupero NOT LIKE 'RISCA%'
 group by cl.idarea,v.dataFineAffido,CASE WHEN (fasciarecupero like '%ESA%' OR fasciarecupero like '%HOME%' OR fasciarecupero like '%LEASING%' or fasciarecupero='FLOTTE' or fasciarecupero LIKE 'SALDO%') THEN 1
      ELSE 0
 END
