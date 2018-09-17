@@ -1,3 +1,7 @@
+#
+# O B S O L E T O  (vedi file VIEW_V_Geography_lotto_NEW.sql
+#
+
 CREATE OR REPLACE VIEW v_geography_lotto
 AS
 select a.idArea,IFNULL(TitoloArea,'n/a') AS Area,CONCAT(TitoloUfficio,' (',r.CodRegolaProvvigione,')') AS Agenzia,count(*) as NumPratiche,v.datafineaffido,
@@ -38,7 +42,9 @@ group by cl.idarea,r.CodRegolaProvvigione,v.dataFineAffido
 UNION ALL 
 
 select a.idArea,IFNULL(TitoloArea,'n/a') AS Area,'Totale' AS Agenzia,count(*) as NumPratiche,v.datafineaffido,
-CASE WHEN SUM(v.ImpCapitaleAffidato)=0 THEN 0 ELSE ROUND(SUM(IF(v.ImpPagato>v.ImpCapitaleAffidato,v.ImpCapitaleAffidato,v.ImpPagato))*100.0/SUM(v.ImpCapitaleAffidato),2) END AS IPR,
+CASE WHEN SUM(v.ImpCapitaleAffidato)=0 THEN 0 
+     ELSE ROUND(SUM(IF(v.ImpPagato>v.ImpCapitaleAffidato,v.ImpCapitaleAffidato,v.ImpPagato))*100.0/SUM(v.ImpCapitaleAffidato),2) 
+END AS IPR,
 SUM(v.ImpCapitaleAffidato) AS ImpCapitaleAffidato,
 SUM(IF(v.ImpPagato>v.ImpCapitaleAffidato,v.ImpCapitaleAffidato,v.ImpPagato)) AS ImpCapitalePagato,0,
 'Totale' as fasciarecupero,'Totale' as CodRegolaProvvigione,
@@ -55,13 +61,13 @@ WHERE FasciaRecupero NOT LIKE 'DBT%' AND FasciaRecupero NOT LIKE '%REPO%'
 AND FasciaRecupero NOT LIKE 'LEGA%' AND FasciaRecupero NOT LIKE 'MAXI%'
 AND FasciaRecupero NOT LIKE 'RINE%'
 AND FasciaRecupero NOT LIKE 'RISCA%'
-group by cl.idarea,v.dataFineAffido,CASE WHEN (fasciarecupero like '%ESA%' OR fasciarecupero like '%HOME%' OR fasciarecupero like '%LEASING%' or fasciarecupero='FLOTTE' or fasciarecupero LIKE 'SALDO%') THEN 1
-     ELSE 0
-END
+group by cl.idarea,v.dataFineAffido
 
 UNION ALL
 select a.idArea,IFNULL(TitoloArea,'n/a') AS Area,'Totale' AS Agenzia,count(*) as NumPratiche,v.datafineaffido,
-CASE WHEN SUM(v.ImpCapitaleAffidato)=0 THEN 0 ELSE ROUND(SUM(IF(v.ImpPagato>v.ImpCapitaleAffidato,v.ImpCapitaleAffidato,v.ImpPagato))*100.0/SUM(v.ImpCapitaleAffidato),2) END AS IPR,
+CASE WHEN SUM(v.ImpCapitaleAffidato)=0 THEN 0 
+     ELSE ROUND(SUM(IF(v.ImpPagato>v.ImpCapitaleAffidato,v.ImpCapitaleAffidato,v.ImpPagato))*100.0/SUM(v.ImpCapitaleAffidato),2) 
+END AS IPR,
 SUM(v.ImpCapitaleAffidato) AS ImpCapitaleAffidato,
 SUM(IF(v.ImpPagato>v.ImpCapitaleAffidato,v.ImpCapitaleAffidato,v.ImpPagato)) AS ImpCapitalePagato,0,
 'Totale' as fasciarecupero,'Totale' as CodRegolaProvvigione,2 AS TipoFascia

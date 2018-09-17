@@ -12,8 +12,11 @@ select idArea,Area,Agenzia,
 	#ROUND(SUM(IPR*NumPratiche)/sum(NumPratiche),2) AS IPR,
 	ROUND(SUM(IPR*ImpCapitaleAffidato)/sum(ImpCapitaleAffidato),2) AS IPR,
 	SUM(ImpCapitaleAffidato) AS ImpCapitaleAffidato,
-	SUM(ImpCapitalePagato) AS ImpCapitalePagato,idagenzia,fasciarecupero,TipoFascia
+	SUM(ImpCapitalePagato) AS ImpCapitalePagato,idagenzia,fasciarecupero,
+        MAX(TipoFascia) AS TipoFascia # per fascia 0,1 produce 1
 from v_geography_lotto
-group by idarea,TipoFascia,CodRegolaProvvigione,Mese;
+group by idarea,IF(TipoFascia=0,1,TipoFascia),CodRegolaProvvigione,Mese;
+# in pratica raggruppa i lotti di un mese, calcolando un IPR come media ponderata dei tre IPR
+# (IPR di base è il rapporto tra capitale incassato e affidato)
 
 
