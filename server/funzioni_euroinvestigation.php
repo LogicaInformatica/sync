@@ -209,7 +209,8 @@ function allegaFileEuroinvestigation($path,$fileName) {
             // 2018-08-31: Per evitare che dossier prodotti sullo stesso cliente in epoche successive siano sovrascritti, prepone
             // ad ogni filename la data di oggi
             $prefix = date('Ymd');
-            rename("$path/$fileName","$path/{$prefix}_$fileName");
+            unlink("$path/{$prefix}_$fileName"); // cancella eventuale preesistente stesso giorno
+            rename("$path/$fileName","$path/{$prefix}_$fileName"); // rinomina col nome del giorno
             $fileName = "{$prefix}_$fileName";
             
 			$url = quote_smart("attachments/euroInvestigation/$fileName");
