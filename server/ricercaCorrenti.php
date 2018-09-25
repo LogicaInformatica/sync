@@ -86,15 +86,16 @@ function doMain()
 				
 				if ($context['InternoEsterno']=="E")
 				{
-					/* aggiunge condizione per non vedere le pratiche affidate dopo il giorni limite di visibilità affidi */ 
+					/* aggiunge condizione per non vedere le pratiche affidate dopo il giorni limite di visibilitï¿½ affidi */ 
 					$dataMassima1 = $context["sysparms"]["DATA_ULT_VIS"]; 
 					if ($dataMassima1=="") $dataMassima1 = '9999-12-31';
 					$dataMassima2 = $context["sysparms"]["DATA_ULT_VIS_STR"]; 
 					if ($dataMassima2=="") $dataMassima2 = '9999-12-31';
-					$where_search .= " AND (DataInizioAffidoContratto<='$dataMassima1' AND v.stato NOT IN ('INT','STR1','STR2','LEG')"
+					$where_search .= " AND (DataFineAffidoContratto<=CURDATE()" // 2018: se il lotto Ã¨ chiuso non ci sono condizioni da applicare
+                        . "OR DataInizioAffidoContratto<='$dataMassima1' AND v.stato NOT IN ('INT','STR1','STR2','LEG')"
 	           			." OR DataInizioAffidoContratto<='$dataMassima2' AND v.stato IN ('STR1','STR2','LEG'))";
 				}
-				$ordine = "CodContratto"; // perché nella view non c'è numPratica
+				$ordine = "CodContratto"; // perchï¿½ nella view non c'ï¿½ numPratica
 				break;
 			case "PSintesi":
 				//trace("stato= ".$_REQUEST["stato"]." agenzia= ".$_REQUEST["agenzia"]." classe= ".$_REQUEST["classe"]." famiglia= ".$_REQUEST["prodotto"],FALSE);
@@ -170,7 +171,7 @@ function doMain()
 	                          . " and Idnota not in (SELECT IdNota FROM notautente WHERE idutente=$idUtente))";
 				break;
 			case "Wrkflow":
-				//le condizioni delle azioni di workflow che l'utente può gestire
+				//le condizioni delle azioni di workflow che l'utente puï¿½ gestire
 				$sqlWrkFlowCondition="select CASE WHEN condizione IS NOT NULL THEN condizione
                  WHEN sa.IdStatoRecupero>0 THEN CONCAT('IdStatoRecupero=',sa.IdStatoRecupero)
                  ELSE 'true' END AS condizione ".
@@ -237,7 +238,7 @@ function doMain()
 
 		// Gestione abbreviata per l'export
 		if ($exportingToExcel) // rinuncia all'order by, per accelerare l'export
-		{   // la export può passare i parametri per il limit
+		{   // la export puï¿½ passare i parametri per il limit
 	//		trace("exporting con $exportFrom $exportLimit",FALSE);
 			$start = $exportFrom>"" 	? $exportFrom:0;
 			$limit = $exportLimit>"" 	? $exportLimit:9999999;
@@ -267,7 +268,7 @@ function doMain()
 			if (count($arr)>$numrows && $numrows>0) // tutte le n+1 righe sono state restituite, deve contare quante ce ne sono in tutto
 			{
 				$counter = getScalar("SELECT count(*) FROM $mainTable v $joinCount WHERE $where_search");
-				unset($arr[count($arr)-1]); // elimina elemento letto in più
+				unset($arr[count($arr)-1]); // elimina elemento letto in piï¿½
 			}
 			else // sono state lette meno righe del massimo
 				$counter = count($arr)+$start;
@@ -290,7 +291,7 @@ function filtroInsolutiAgenziaSearch()
 	global $context;
 	$IdReparto = $context["IdReparto"];
 	
-	/* aggiunge condizione per non vedere le pratiche affidate dopo il giorni limite di visibilità affidi */ 
+	/* aggiunge condizione per non vedere le pratiche affidate dopo il giorni limite di visibilitï¿½ affidi */ 
 	$dataMassima1 = $context["sysparms"]["DATA_ULT_VIS"]; 
 	if ($dataMassima1=="") $dataMassima1 = '9999-12-31';
 	$dataMassima2 = $context["sysparms"]["DATA_ULT_VIS_STR"]; 
@@ -309,7 +310,7 @@ function filtroInsolutiAgenziaSearch()
 function filtroInsolutiOperatore()
 {
 	global $context;
-	if (userCanDo("READ_TUTTE")) { // può vedere tutte le pratiche
+	if (userCanDo("READ_TUTTE")) { // puï¿½ vedere tutte le pratiche
 		return ""; // nessuna condizione
 	}
 	$IdUtente = $context["IdUtente"];
@@ -422,7 +423,7 @@ function generaSearch($fields,$schema)
 				case "IdFiliale": // filiale (lista di id)
 					$clauses[] = clausolaIn("IdFiliale",$value);
 					break;
-				case "IdFormaGiuridica": // forma giuridica (attenzione id in realtà è CodFormaGiuridica, una stringa)
+				case "IdFormaGiuridica": // forma giuridica (attenzione id in realtï¿½ ï¿½ CodFormaGiuridica, una stringa)
 					$clauses[] = "CodFormaGiuridica IN ('". str_replace(",","','",$value)."')";
 					break;
 				case "IdProdotto": // prodotto (lista di id)
@@ -510,15 +511,15 @@ function generaSearch($fields,$schema)
 // clausolaIn
 // Genera nua clausola IN per le liste di ID separati da virgole
 // tenendo anche conto del fatto che un id=-1 significa NULL
-// (perché lo generano così le viste usate in formRicercaAvanzata.php
+// (perchï¿½ lo generano cosï¿½ le viste usate in formRicercaAvanzata.php
 //--------------------------------------------------------------------
 function clausolaIn($field,$values)
 {
 	return "IFNULL($field,-1) IN ($values)";
 	/*
-	if (strpos(",$values,","-1")===FALSE) // non c'è il valore -1
+	if (strpos(",$values,","-1")===FALSE) // non c'ï¿½ il valore -1
 		return "$field IN ($values)";
-	else if ($values=="-1") // c'è solo il valore -1
+	else if ($values=="-1") // c'ï¿½ solo il valore -1
 		return "$field IS NULL";
 	else // ci sono sia il -1 sia altri valori
 		return "($field IS NULL OR $field IN ($values))";	
