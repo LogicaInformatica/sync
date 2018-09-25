@@ -92,7 +92,7 @@ function doMain()
 					$dataMassima2 = $context["sysparms"]["DATA_ULT_VIS_STR"]; 
 					if ($dataMassima2=="") $dataMassima2 = '9999-12-31';
 					$where_search .= " AND (DataFineAffidoContratto<=CURDATE()" // 2018: se il lotto è chiuso non ci sono condizioni da applicare
-                        . "OR DataInizioAffidoContratto<='$dataMassima1' AND v.stato NOT IN ('INT','STR1','STR2','LEG')"
+                        ." OR DataInizioAffidoContratto<='$dataMassima1' AND v.stato NOT IN ('INT','STR1','STR2','LEG')"
 	           			." OR DataInizioAffidoContratto<='$dataMassima2' AND v.stato IN ('STR1','STR2','LEG'))";
 				}
 				$ordine = "CodContratto"; // perch� nella view non c'� numPratica
