@@ -5,7 +5,7 @@ doMain();
 
 function doMain()
 {
-	$task = $_REQUEST['task']; // tipo tabella (GEO=esattoriale, GEO2=stragiudiziale)
+	$task = $_REQUEST['task']; // tipo tabella (GEO=esattoriale, GEO2=stragiudiziale, GEO3=Legale)
 	if ($task=="") // accade se chiamato da export
 		return;
 	if (isset($_REQUEST['mese'])) {

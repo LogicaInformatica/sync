@@ -215,15 +215,18 @@ function allegaFileEuroinvestigation($path,$fileName) {
             
 			$url = quote_smart("attachments/euroInvestigation/$fileName");
 			$titolo = quote_smart('Dossier Euroinvestigation sul contratto n. '.$codContratto);
-			$sql = "INSERT INTO allegato (IdContratto, TitoloAllegato, UrlAllegato,LastUser, IdTipoAllegato, FlagRiservato)"
-			." VALUES($IdContratto,$titolo,$url,'system',$idTipo,'N')";
-			$idAzione = getscalar("select idAzione from azione where CodAzione='ALL'");
-			beginTrans();
-			writeHistory($idAzione,"Allegato documento",$IdContratto,$titolo);
-			if (!execute($sql)) {
-				return false;
-			}
-			commit();
+            
+            if (!rowExistsInTable("allegato","IdContratto=$IdContratto AND UrlAllegato=$url")) {
+    			$sql = "INSERT INTO allegato (IdContratto, TitoloAllegato, UrlAllegato,LastUser, IdTipoAllegato, FlagRiservato)"
+        		." VALUES($IdContratto,$titolo,$url,'system',$idTipo,'N')";
+    			$idAzione = getscalar("select idAzione from azione where CodAzione='ALL'");
+        		beginTrans();
+            	writeHistory($idAzione,"Allegato documento",$IdContratto,$titolo);
+                if (!execute($sql)) {
+                    return false;
+                }
+                commit();
+            }
 			return true;
 		}
 	}

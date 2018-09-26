@@ -13,8 +13,9 @@ SUM(NumPratiche) AS NumPratiche,
 #ROUND(SUM(IPR*NumPratiche)/sum(NumPratiche),2) AS IPR,
 ROUND(SUM(IPR*ImpCapitaleAffidato)/sum(ImpCapitaleAffidato),2) AS IPR,
 SUM(ImpCapitaleAffidato) AS ImpCapitaleAffidato,
-SUM(ImpCapitalePagato) AS ImpCapitalePagato,idagenzia,fasciarecupero,tipoFascia
+SUM(ImpCapitalePagato) AS ImpCapitalePagato,idagenzia,fasciarecupero,
+MAX(TipoFascia) AS tipoFascia # per fascia 0,1 produce 1
 from v_geography_lotto
-group by idarea,tipoFascia,CodRegolaProvvigione,Anno;
+group by idarea,IF(TipoFascia=0,1,TipoFascia),CodRegolaProvvigione,Anno;
 
 select sum(NumPratiche) from v_geography_fy where agenzia='NCP (31)' and anno=2017
