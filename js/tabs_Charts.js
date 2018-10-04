@@ -943,7 +943,7 @@ DCS.Charts.GeoTable = Ext.extend(Ext.grid.GridPanel, {
 		   	           {dataIndex:'GeaServicesNum',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
 		   	           {dataIndex:'Kreos',width:100, header:'Kreos<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
 		   	           {dataIndex:'KreosNum',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
-		   	           {dataIndex:'Ncp31',width:100, header:'NCP<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
+		   	           {dataIndex:'Ncp31',width:100, header:'NCP/Luzzi<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
 		   	           {dataIndex:'Ncp31Num',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
 		   	           {dataIndex:'Nicol35',width:100, header:'Nicol (35)<br>IPR',sortable:true,align:'right',css:'background-color:lavender;',renderer:DCS.render.floatV},
 		   	           {dataIndex:'Nicol35Num',width:50, header:'N.',sortable:true,align:'right',renderer:DCS.render.intV},
