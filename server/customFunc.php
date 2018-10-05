@@ -303,7 +303,7 @@ function Custom_Classification($IdContratto)
 		// Imposta classificazione per maxirata non pagata
 		//-----------------------------------------------------------------------------------------------------------
 		if ($pratica["ImpRataFinale"]>0  // prevede una rata finale oppure e' uno dei prodotti speciali inclusi 2018/10
-		|| in_array($IdProdotto,array(356,367,372,397,402,418,419))) // Prodotti LO PA LP/BD/VP/RL/GL/VG/VD       
+		|| (!$pratica["IdAgenzia"]) && in_array($IdProdotto,array(356,367,372,397,402,418,419))) // Prodotti LO PA LP/BD/VP/RL/GL/VG/VD       
 		{
 			// Controlla se la rata finale e' insoluta
 			if (rowExistsInTable("insoluto","IdContratto=$IdContratto AND NumRata>" . 

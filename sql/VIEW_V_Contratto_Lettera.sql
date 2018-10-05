@@ -59,7 +59,7 @@ vrm.Indirizzo as IndirizzoGar,
 vrm.CAP as CAPGar,
 vrm.Localita as LocalitaGar,
 vrm.SiglaProvincia as SiglaProvinciaGar,
-lr.PrimaData
+lr.PrimaData,
 lr.ListaRate,CASE WHEN lr.NumRate>1 THEN CONCAT('Rate nn. ',ListaRate,' - Decorrenza ',DATE_FORMAT(PrimaData,'%e/%m/%Y'))
                              WHEN lr.NumRate=1 THEN CONCAT('Rata n. ',ListaRate,' - Scadenza ',DATE_FORMAT(PrimaData,'%e/%m/%Y'))
                              ELSE '' END AS IndicaRate
@@ -72,7 +72,10 @@ IF(RagioneSociale>'','Vostri','Suoi') AS AggettivoPlurale,
 IF(RagioneSociale>'','Vostro','Suo') AS AggettivoSingolare,
 IF(RagioneSociale>'','potrete','potra''') AS VerboPotere,
 # Da migliorare mettendo i cedenti nella tab Compagnia e collegando i contratti, per ora va bene solo per IPIFinance/Unicredit
-SUBSTR(DescrBene,INSTR(DescrBene,'Cedente:')+9,INSTR(DescrBene,'\n')-INSTR(DescrBene,'Cedente:')-9) AS Cedente
+SUBSTR(DescrBene,INSTR(DescrBene,'Cedente:')+9,INSTR(DescrBene,'\n')-INSTR(DescrBene,'Cedente:')-9) AS Cedente,
+# 2018-10-05 campi per maxirata
+replace(replace(replace(format(fin.ImpDebitoIniziale,2),'.',';'),',','.'),';',',') RataFinale, 
+DATE_FORMAT(fin.DataInsoluto,'%e/%m/%Y') AS DataRataFinale
 
 FROM contratto c
 JOIN cliente cl ON cl.IdCliente=c.IdCliente
@@ -80,6 +83,7 @@ LEFT JOIN v_interessi_mora im ON c.IdContratto=im.IdContratto
 LEFT JOIN v_lista_rate lr ON c.IdContratto=lr.IdContratto
 LEFT JOIN v_recapito rl ON c.IdCliente=rl.IdCliente AND rl.CodTipoRecapito='LEG'
 LEFT JOIN v_recapito rp ON c.IdCliente=rp.IdCliente AND  rp.CodTipoRecapito='BASE'
+LEFT JOIN insoluto as fin ON fin.IdContratto=c.IdContratto AND fin.NumRata=c.Numrate
 LEFT JOIN prodotto p on p.idprodotto=c.idprodotto
 LEFT JOIN famigliaprodotto fp on p.idfamiglia=fp.idfamiglia
 LEFT JOIN reparto r on c.IdAgenzia=r.IdReparto
