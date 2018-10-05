@@ -297,13 +297,15 @@ function Custom_Classification($IdContratto)
 	try
 	{
 		$pratica = getRow("SELECT * FROM v_pratiche WHERE IdContratto=$IdContratto");
-		
+		$IdProdotto = $pratica["IdProdotto"];
+
 		//-----------------------------------------------------------------------------------------------------------
 		// Imposta classificazione per maxirata non pagata
 		//-----------------------------------------------------------------------------------------------------------
-		if ($pratica["ImpRataFinale"]>0) // prevede una rata finale
+		if ($pratica["ImpRataFinale"]>0  // prevede una rata finale oppure e' uno dei prodotti speciali inclusi 2018/10
+		|| in_array($IdProdotto,array(356,367,372,397,402,418,419))) // Prodotti LO PA LP/BD/VP/RL/GL/VG/VD       
 		{
-			// Controlla se la rata finale � insoluta
+			// Controlla se la rata finale e' insoluta
 			if (rowExistsInTable("insoluto","IdContratto=$IdContratto AND NumRata>" . 
 			       ($pratica["NumRate"]-1) . " AND ImpInsoluto>10"))
 			{
@@ -315,7 +317,6 @@ function Custom_Classification($IdContratto)
 		//-----------------------------------------------------------------------------------------------------------
 		// Imposta classificazione per primo affido su piano di rientro
 		//-----------------------------------------------------------------------------------------------------------
-		$IdProdotto = $pratica["IdProdotto"];
 		if ($IdProdotto == 165) // insoluto su Piano di Rientro
 		{
 		 	if ($pratica["Insoluti"]==1) // un solo insoluto su Piano di Rientro
