@@ -19,7 +19,7 @@ $speseIncasso = number_format( $dataForm['ImpSpeseRecupero'], 2, ',', '.');
 $interessiMora = number_format( $dataForm['ImpInteressiMora'], 2, ',', '.');
 $impAltriAdd=number_format($dataForm['ImpAltriAddebiti'], 2, ',', '.');
 
-if ($context["InternoEsterno"]=="E") // se utente di agenzia, non può mettere scadenze oltre il periodo di affido
+if ($context["InternoEsterno"]=="E") // se utente di agenzia, non puï¿½ mettere scadenze oltre il periodo di affido
 {
 	$dataLimite = $dataForm["DataFineAffido"];
 	if ($dataLimite==NULL)
@@ -315,7 +315,7 @@ var formPanel = new Ext.form.FormPanel({
 						height: 60,
 			            fieldLabel: 'Nota',
 			            id: 'nota',
-			            value: "<?php echo str_replace('"','\"',$nota)?>"
+			            value: "<?php echo str_replace('\n',' ',str_replace('"','\"',$nota))?>"
 			            //name: 'nota'
 		            }]
 		        },
@@ -364,7 +364,7 @@ var formPanel = new Ext.form.FormPanel({
 						//width: 100,
 						fieldLabel: 'Data vendita',
 						value: '<?php echo $dataVendita?>',
-						//minValue: new Date(), la data vendita può essere nel passato
+						//minValue: new Date(), la data vendita puï¿½ essere nel passato
 						maxValue:'<?php echo italianDate($dataLimite) ?>',
 						name: 'dataVendita',
 						id: 'dataVendita'

@@ -36,7 +36,7 @@ else
 {
 	$saldostralcio = 'saldo = '.str_replace('.',',',$saldostralcio)
 	.' - residuo = '.str_replace('.',',',($dataForm["ImpInsoluto"]-$dataForm["ImpSaldoStralcio"]));
-	// Determina se è una richiesta o proposta e se è normale o differito
+	// Determina se ï¿½ una richiesta o proposta e se ï¿½ normale o differito
 	$tipoSS = getScalar("SELECT CASE WHEN CodAzione LIKE 'WF%AUT%SS'  THEN ''
             WHEN CodAzione LIKE 'WF%SS'      THEN 'proposta: '
             WHEN CodAzione LIKE 'WF%AUT%SSD' THEN 'differito: '
@@ -50,7 +50,7 @@ else
 	$saldostralcio = $tipoSS.$saldostralcio;
 }
 
-if ($context["InternoEsterno"]=="E") // se utente di agenzia, non può mettere scadenze oltre il periodo di affido
+if ($context["InternoEsterno"]=="E") // se utente di agenzia, non puï¿½ mettere scadenze oltre il periodo di affido
 {
 	$dataLimite = $dataForm["DataFineAffido"];
 	if ($dataLimite==NULL)
@@ -171,7 +171,7 @@ var formPanel = new Ext.form.FormPanel({
     autoHeight: true,
         defaultType: 'textfield',
         items: [
-            // la struttura è fatta di righe isolate, perché se si usa uno solo layout column
+            // la struttura ï¿½ fatta di righe isolate, perchï¿½ se si usa uno solo layout column
             // il wrap dei testi o i campi vuoti disallineano le righe
 		{xtype:'container', layout:'column',
         	items:[{
@@ -224,7 +224,7 @@ var formPanel = new Ext.form.FormPanel({
 						height: 60,
 			            fieldLabel: 'Nota',
 			            id: 'nota',
-			            value: "<?php echo str_replace('"','\"',$nota)?>"
+			            value: "<?php echo str_replace('\n',' ',str_replace('"','\"',$nota))?>"
 			            //name: 'nota'
 		            }]
 		        },
