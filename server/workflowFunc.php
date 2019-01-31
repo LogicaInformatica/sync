@@ -2788,15 +2788,15 @@ function replaceVariables($strTxt,$parameters,$parametersDefault="")
     			$newVal = html_entity_decode($newVal,ENT_COMPAT,"ISO-8859-1");	
     			$newVal = str_replace("&","&amp;",$newVal);
 				// con il passaggio alla nuova versione di php sono diventate problematiche anche le lettere accentate
-				$newVal = str_replace("�","e'",$newVal); 
-				$newVal = str_replace("�","e'",$newVal); 
-				$newVal = str_replace("�","i'",$newVal); 
-				$newVal = str_replace("�","a'",$newVal); 
-				$newVal = str_replace("�","o'",$newVal); 
-				$newVal = str_replace("�","u'",$newVal); 
+				$newVal = str_replace("è","e'",$newVal); 
+				$newVal = str_replace("é","e'",$newVal); 
+				$newVal = str_replace("ì","i'",$newVal); 
+				$newVal = str_replace("à","a'",$newVal); 
+				$newVal = str_replace("ò","o'",$newVal); 
+				$newVal = str_replace("ù","u'",$newVal); 
 				
     			$strTxt = substr_replace($strTxt,$newVal,$pos,$pos1-$pos+1);
-    			$pos = strpos($strTxt, '%',$pos+1); // prossima occorrenza
+    			$pos = strpos($strTxt, '%',$pos+1+strlen($newVal)); // prossima occorrenza
     		}
     		else
     			break; 
