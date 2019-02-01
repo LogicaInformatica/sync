@@ -1931,6 +1931,8 @@ function aggiornaProvvigioni($changeStatus=TRUE,$condizione="TRUE")
 							$numAffidati--;
 						if ($riga["ImpPagato"]>0 && $riga["ImpPagato"] <= -$rowMod["DiffPagato"]) // imp.pagato completamente annullato
 							$numIncassati--;
+						if ($riga["ImpPagato"]<=0 && $riga["ImpPagato"]+$rowMod["DiffPagato"]>0) // imp.pagato era non pagato
+							$numIncassati++;
 						if ($riga["RateViaggiantiIncassate"]>0 && $riga["RateViaggiantiIncassate"]<=-$rowMod["DiffRataViaggiante"])
 							$numViagg--;
 						else if ($riga["RateViaggiantiIncassate"]==0 && $rowMod["DiffRataViaggiante"]>0)
