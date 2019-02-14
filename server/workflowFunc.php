@@ -5729,8 +5729,8 @@ function creaPdfDaHtml($html,$filePath) {
 		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 		
 		// set header and footer fonts
-		$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
-		$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+		$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', 9 /* PDF_FONT_SIZE_MAIN */)); // era 10
+		$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', 9 /* PDF_FONT_SIZE_DATA */)); // era 10
 		$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
 		
 		$pdf->SetMargins(18,50); // millimetri
@@ -5758,8 +5758,9 @@ function creaPdfDaHtml($html,$filePath) {
 		
 		// set font		
 		$pdf->AddFont('PdfaHelveticai', 'I',__DIR__."/tcpdf/fonts/pdfahelveticai.php" );
-		$pdf->SetFont("PdfaHelveticai", 'I', 10);
-		
+		//$pdf->SetFont("PdfaHelveticai", 'I', 10);
+		$pdf->SetFont("PdfaHelveticai", 'I', 9); // 2019-02-14 diminuito font
+        
 		//add a page
 		$pdf->AddPage();
 		//print text
