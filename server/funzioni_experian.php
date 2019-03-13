@@ -4,9 +4,9 @@
  */
 
 /**
- * inviaDatiExperian Determina se è il giorno giusto per inviare dati ad experian e li invia
+ * inviaDatiExperian Determina se ï¿½ il giorno giusto per inviare dati ad experian e li invia
  * NOTA: la selezione viene effettuata tramite la view v_experian_candidati, che deve essere cambiata ogni volta che si vogliono
- * cambiare i criteri di estrazione (la stessa view è usata nella pagina Experian->Candidati)
+ * cambiare i criteri di estrazione (la stessa view ï¿½ usata nella pagina Experian->Candidati)
  * @param {Number} $numdays numero di giorni feriali prima dell'affido. Se =-1 il file viene prodotto e spedito indipendentemente
  * dal giorno di esecuzione (per i test)
  */
@@ -27,13 +27,13 @@ function inviaDatiExperian($numdays) {
 	$giorni = 0;
 	for ($i=0;$i<$intervallo;$i++) {
 		$giorno = date('w', mktime(0,0,0,date('n'),date('j')+$i,date('Y')));
-		$giorni += ($giorno!=0 && $giorno!=6); // non è un sabato né una domenica
+		$giorni += ($giorno!=0 && $giorno!=6); // non ï¿½ un sabato nï¿½ una domenica
 	} 
 	if ($giorni==$numdays or $numdays==-1) { // mancano esattamente i giorni richiesti
 		//$where = "CodRegolaProvvigione IN ('".str_replace("," , "','" , $codici)."')"; 
 		creaFileExperian('',$error);
 	} else {
-		trace("Invio file a Experian non eseguito perché non è il giorno designato ($numdays giorni feriali prima dell'affido)",false);
+		trace("Invio file a Experian non eseguito perchï¿½ non ï¿½ il giorno designato ($numdays giorni feriali prima dell'affido)",false);
 	}
 }
 
@@ -210,15 +210,15 @@ function my_ssh_disconnect($reason, $message, $language) {
 	printf("Server disconnected with reason code [%d] and message: %s\n",$reason, $message);
 }
 function my_ssh_ignore($message) {
-	printf("Server ignore with message: %s\n",$message);
+	trace(sprintf("Server ignore with message: %s\n",$message),false);
 }
 
 function my_ssh_debug($message, $language, $always_display) {
-	printf("Server debug with message: %s\n",$message);
+	trace(sprintf("Server debug with message: %s\n",$message),false);
 }
 
 function my_ssh_macerror($packet) {
-	printf("Server macerror with packet: %s\n",print_r($packet,true));
+	trace(sprintf("Server macerror with packet: %s\n",print_r($packet,true)),false);
 }
 
 /**
