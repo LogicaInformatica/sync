@@ -451,7 +451,7 @@ DCS.GridProvvigioni = Ext.extend(Ext.grid.GridPanel, {
    	   				scope:this
    	   			}); 		 									
    	   		} else {
-   	   			showAnswFormProvvigione(task, task=='fileCerved'?'creazione file CERVED':'fileAci'?'creazione file ACI':'ricalcolo' ,idProvvigione, this.gstore);
+   	   			showAnswFormProvvigione(task, task=='fileCerved'?'creazione file CERVED':(task=='fileAci'?'creazione file ACI':'ricalcolo') ,idProvvigione, this.gstore);
    	   		}
 		}
 	},	
