@@ -31,7 +31,7 @@ switch ($sito) {
                 define('TEXT_NEWLINE', "\r\n");  // salto linea per le righe delle lettere formato testo semplice
                 define('LOGO_PRODOTTO','<img src="images/logo conn@&cut.jpg">');
                 define('LOGO_SOCIETA','<img src="images/nuovo_logo_TFSI.png">');
-                define('FOOTER','<div style="text-align:center;font-size:10px;color:gray">&copy; 2011-2015 Toyota Financial Services Italia S.p.A. - P.IVA 15162191009</div>');
+                define('FOOTER','<div style="text-align:center;font-size:10px;color:gray">&copy; 2019 Toyota Financial Services Italia S.p.A. - P.IVA 15162191009</div>');
                 break;
         case 'prod':
                 define('SITE_NAME', 'Conn@&cut');
@@ -49,11 +49,11 @@ switch ($sito) {
                 define('PROXYAUTH', "");
                 define('LOGO_PRODOTTO','<img src="images/logo conn@&cut.jpg">');
                 define('LOGO_SOCIETA','<img src="images/nuovo_logo_TFSI.png">');
-                define('FOOTER','<div style="text-align:center;font-size:10px;color:gray">&copy; 2011-2015 Toyota Financial Services Italia S.p.A. - P.IVA 15162191009</div>');
+                define('FOOTER','<div style="text-align:center;font-size:10px;color:gray">&copy; 2019 Toyota Financial Services Italia S.p.A. - P.IVA 15162191009</div>');
                 break;
 }
-define('NUM_VERSIONE','1.11.35');
-define('DATA_VERSIONE','2017-11-27');
+define('NUM_VERSIONE','1.11.40');
+define('DATA_VERSIONE','2019-03-29');
 
 define('PORTAL_URL',   get_cfg_var('EB_WEB_PROTOCOL')."://portal".get_cfg_var('EB_DNS_SUFFIX').".".get_cfg_var('EB_DNS_DOMAIN')."/");
 define('LINK_URL',   get_cfg_var('EB_WEB_PROTOCOL')."://cnc".get_cfg_var('EB_DNS_SUFFIX').".".get_cfg_var('EB_DNS_DOMAIN')."/");
