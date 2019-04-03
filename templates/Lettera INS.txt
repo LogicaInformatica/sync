@@ -14,7 +14,7 @@ Oggetto:  Sollecito pagamento € %ImpInsolutoIT%
           Intestato a %Intestatario%
 
 Rata	Scadenza	Importo	
-%Modello.SubModDEO% 
+%Modello.SubModINS% 
 
 
 Interessi di mora: € %ImpInteressiMoraIT%  - Spese di recupero: € %ImpSpeseRecuperoIT%   Totale: € %TotaleSoloDebito%
