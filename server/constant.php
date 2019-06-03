@@ -76,7 +76,7 @@ define('MAIL_NEWLINE', "\n");  // salto linea per gli header della mail
 //define('SMS_USER','SMSHSRRL9ESS7X6DZM62R');  
 //define('SMS_PWD','TPFRP1CLSEB35KGFK1DC462LQ17EW78R');
 define('SMS_URL','https://SMSH33HIPK76NBH7K0W3P:BHP35BU26RK8BXMGC8XVJ9XDX9CLWU09@api.smshosting.it/rest/api/sms/send'); // SMS URL
-define('SMS_SENDER','Toyota F.S.');
+define('SMS_SENDER','TOYOTA-FS'); // cambiato 2019-06-03
 
 // Directories
 define('LOG_PATH','/efs/cnc/logfiles'); // per i files di traccia
