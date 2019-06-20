@@ -309,6 +309,22 @@ function Custom_Classification($IdContratto)
 			if (rowExistsInTable("insoluto","IdContratto=$IdContratto AND NumRata>" . 
 			       ($pratica["NumRate"]-1) . " AND ImpInsoluto>10"))
 			{
+				if ($pratica["CodClasse"]!='MAX') 
+				{
+					BeginTrans();
+					$colList = ""; // inizializza lista colonne
+					$valList = ""; // inizializza lista valori
+					addInsClause($colList,$valList,"IdContratto",$IdContratto,"N");	 	
+					addInsClause($colList,$valList,"ImpInsoluto",$pratica["ImpInsoluto"],"N");
+					addInsClause($colList,$valList,"datamese","NOW()","G");
+					
+					//trace("INSERT INTO provvigione ($colList) VALUES ($valList)",FALSE);
+					if (!execute("INSERT INTO statistichemaxirate ($colList) VALUES ($valList)")) {
+					  rollback();
+					} else {
+					    commit();
+					  }	
+				}	
 				trace("Custom_Classification: maxirata",FALSE);
 				return getScalar("SELECT IdClasse FROM classificazione WHERE CodClasse='MAX'");	             
 			}
