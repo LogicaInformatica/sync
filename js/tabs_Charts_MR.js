@@ -28,7 +28,7 @@ DCS.ChartsMr.Maxirate = Ext.extend(Ext.Panel, {
 			}),   
 			baseParams:{	//this parameter is passed for any HTTP request
 				task: 'read',
-				sql: "SELECT 0 as IdCategoriaMaxirata, '&nbsp;' as CategoriaMaxirata UNION SELECT IdCategoriaMaxirata,CategoriaMaxirata FROM categoriamaxirata" 
+				sql: "SELECT 0 as IdCategoriaMaxirata, '&nbsp;' as CategoriaMaxirata UNION SELECT IdCategoriaMaxirata,CategoriaMaxirata FROM categoriamaxirata UNION SELECT 99 as IdCategoriaMaxirata, 'Senza categoria' as CategoriaMaxirata FROM categoriamaxirata" 
 			},
 			/*2. specify the reader*/
 			reader:  new Ext.data.JsonReader(
