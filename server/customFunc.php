@@ -309,6 +309,27 @@ function Custom_Classification($IdContratto)
 			if (rowExistsInTable("insoluto","IdContratto=$IdContratto AND NumRata>" . 
 			       ($pratica["NumRate"]-1) . " AND ImpInsoluto>10"))
 			{
+				//Controlla se già in classificazione maxirata 
+				//ed evita di rianggiungerla nella statistica maxirata
+				$CodClasse = getScalar("SELECT cl.CodClasse FROM db_cnc.contratto c 
+				                        left join classificazione cl on cl.IdClasse = c.IdClasse
+                                        where IdContratto=$IdContratto");
+				if ($CodClasse!='MAX') 
+				{
+					BeginTrans();
+					$colList = ""; // inizializza lista colonne
+					$valList = ""; // inizializza lista valori
+					addInsClause($colList,$valList,"IdContratto",$IdContratto,"N");	 	
+					addInsClause($colList,$valList,"ImpInsoluto",$pratica["ImpInsoluto"],"N");
+					addInsClause($colList,$valList,"datamese","NOW()","G");
+					
+					if (!execute("INSERT INTO statistichemaxirate ($colList) VALUES ($valList)")) {
+					  rollback();
+					} else {
+						trace("Custom_Classification: inserimento statistiche maxirata",FALSE);
+					    commit();
+					  }	
+				}	
 				trace("Custom_Classification: maxirata",FALSE);
 				return getScalar("SELECT IdClasse FROM classificazione WHERE CodClasse='MAX'");	             
 			}

@@ -3332,6 +3332,11 @@ function cambioCategoriaMaxirata($contratto,$IdCategoriaMaxirata)
 			trace("Errore nell'assegnazione della categoria maxirata con id $IdCategoriaMaxirata al contratto con id $contratto");
 			return FALSE;
 		}
+		if (!execute("UPDATE statistichemaxirate set IdCategoriaMaxirata=$IdCategoriaMaxirata where IdContratto = $contratto"))
+		{
+			trace("Errore nell'assegnazione della categoria maxirata con id $IdCategoriaMaxirata allle statistiche maxirata con id $contratto");
+			return FALSE;
+		}
 		return getScalar("Select CategoriaMaxirata from categoriamaxirata where IdCategoriaMaxirata=$IdCategoriaMaxirata");
 	}
 	catch (Exception $e)
