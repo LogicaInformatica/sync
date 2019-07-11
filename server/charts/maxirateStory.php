@@ -17,10 +17,10 @@ if ($anno=="") // chiamata da FusionChart senza parametri
 die();
 
 if ($categoria!=="") {
-  $where = " CategoriaMaxirata = '$categoria' AND ";	
+    $where = " CategoriaMaxirata = '$categoria' AND ";	
 } else {
 	$where = "";
-  }	
+}	
 
 //$lastFYMonth = $anno*100+getSysParm("LAST_FY_MONTH","3"); // ad es. 201203
 //$firstFYMonth = $lastFYMonth-99;		// ad es. 201104

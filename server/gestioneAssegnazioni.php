@@ -484,11 +484,6 @@ function addFascia()
 	$valList = "";
 	$colList = "";
 	$setClause = "";
-	isset($_POST['idReg'])?$_POST['idReg']:'';
-	isset($_POST['isMod'])?$_POST['isMod']:0;
-	isset($_POST['DataIni'])?$_POST['DataIni']:date("Y-m-d");
-	isset($_POST['DataFin'])?$_POST['DataFin']:date("Y-m-d");
-	isset($_POST['oldAbbr'])?$_POST['oldAbbr']:'';
 	
 	//*****inserimento in fasciaprovvigione
 	$counter = getScalar("Select count(*) FROM fasciaprovvigione where idregolaprovvigione=".$_REQUEST['idReg']." and AbbrFasciaProvvigione='".$_POST['nomeFascia']."'");
@@ -502,8 +497,8 @@ function addFascia()
 		addInsClause($colList,$valList,"ValoreSoglia",$_POST['valSoglia'],"N");
 		addInsClause($colList,$valList,"Formula",$_POST['Formula'],"S");
 		addInsClause($colList,$valList,"AbbrFasciaProvvigione",$_POST['nomeFascia'],"S");
-		addInsClause($colList,$valList,"DataIni",$_POST['DataIni'],"S");
-		addInsClause($colList,$valList,"DataFin",$_POST['DataFin'],"S");
+		addInsClause($colList,$valList,"DataIni",$_POST['DataIni'],"D");
+		addInsClause($colList,$valList,"DataFin",$_POST['DataFin'],"D");
 		addInsClause($colList,$valList,"LastUser",$context['Userid'],"S");
 		$sqlInsFascia = "INSERT INTO fasciaprovvigione ($colList)  VALUES($valList)";
 		//trace("INSAZIONEPROCEDURA $sqlInsFascia");
@@ -532,8 +527,8 @@ function addFascia()
 			addSetClause($setClause,"ValoreSoglia",$_POST['valSoglia'],"N");
 			addSetClause($setClause,"Formula",$_POST['Formula'],"S");
 			addSetClause($setClause,"AbbrFasciaProvvigione",$_POST['nomeFascia'],"S");
-			addSetClause($setClause,"DataIni",$_POST['DataIni'],"S");
-			addSetClause($setClause,"DataFin",$_POST['DataFin'],"S");
+			addSetClause($setClause,"DataIni",$_POST['DataIni'],"D");
+			addSetClause($setClause,"DataFin",$_POST['DataFin'],"D");
 			addSetClause($setClause,"LastUser",$context['Userid'],"S");
 			$sqlModFascia = "UPDATE fasciaprovvigione $setClause WHERE IdRegolaProvvigione=".$_POST['idReg']." and AbbrFasciaProvvigione='".$_POST['oldAbbr']."'";
 			//trace("ModZIONEPROCEDURA $sqlModFascia");

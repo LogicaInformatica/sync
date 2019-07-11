@@ -35,7 +35,7 @@ DCS.GridFasce = Ext.extend(Ext.grid.GridPanel, {
 		{
 			var myMask = new Ext.LoadMask(Ext.getBody(), {msg: "Caricamento in corso ..."});	
 			myMask.show();
-			showFasciaDetail(IdMain,gstore,regAss,'',titoloReg);
+			showFasciaDetail(0,this.idReg,'',this.store,'');
 			myMask.hide();
 	    };
 	    
@@ -88,7 +88,8 @@ DCS.GridFasce = Ext.extend(Ext.grid.GridPanel, {
 		buttAddName='Crea fascia';
 		buttDelName='Elimina fasce selezionate';
 		
-		var fields = [	{name: 'IdRegolaProvvigione', type: 'int'},
+		var fields = [	{name: 'IdFasciaProvvigione', type: 'int'},
+		              	{name: 'IdRegolaProvvigione', type: 'int'},
 						{name: 'ValoreSoglia', type: 'float'},
 						{name: 'Formula'},
 						{name: 'AbbrFasciaProvvigione'},
@@ -155,7 +156,8 @@ DCS.GridFasce = Ext.extend(Ext.grid.GridPanel, {
 						var tit=titoloReg+"<br /> con fascia \'"+rec.get('AbbrFasciaProvvigione')+"\'";
 						var myMask = new Ext.LoadMask(Ext.getBody(), {msg: "Caricamento in corso ..."});	
 						myMask.show();
-						showFasciaDetail(IdMain,gstore,regAss,rec.get('ValoreSoglia'),tit);
+						showFasciaDetail(rec.get('IdFasciaProvvigione'),rec.get('IdRegolaProvvigione'),tit, gstore, rowIndex);
+								//IdMain,gstore,regAss,rec.get('ValoreSoglia'),tit);
 						myMask.hide();
 				},
 				scope: this
