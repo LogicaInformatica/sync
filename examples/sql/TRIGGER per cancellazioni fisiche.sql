@@ -1,0 +1,13 @@
+/** ESEMPIO DI DEFINIZIONE DI UN TRIGGER PER INTERCETTARE LE CANCELLAZIONI FISICHE, AI FINI DELLA SINCRONIZZAZIONE **/
+DROP TRIGGER IF EXISTS deleted_from_app_message;
+
+delimiter $$ 
+
+CREATE TRIGGER deleted_from_app_message 
+	AFTER DELETE ON `app_message` 
+	FOR EACH ROW
+BEGIN
+   INSERT INTO app_sql (SqlStatement) VALUES( CONCAT('DELETE FROM app_message WHERE IdMessage=',old.IdMessage) );
+END
+$$
+DELIMITER ;
