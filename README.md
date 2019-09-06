@@ -25,8 +25,8 @@ convenzionale (ad es. sync_) e corrispondono a view o tabelle con lo stesso nome
 di colonne compatibili (comunque, considerare che in SQLite tutte le colonne possono essere trattate/considerate come fossero di tipo TEXT).
 
 2. Le tabelle possiedono tutte una chiave primaria come prima colonna (ad es. la solita colonna autoincrement) e un campo 
-DATETIME o TIMESTAMP ad aggiornamento automatico (per default chiamato LastUpd), in modo che si possieda una data certa di ultimo aggiornamento. Ad es. in MySql
-il campo potrebbe essere definito come:
+DATETIME o TIMESTAMP ad aggiornamento automatico (per default chiamato LastUpd), in modo che si possieda una data certa di 
+ultimo aggiornamento. Ad es. in MySql il campo potrebbe essere definito come:
 
 ```
     LastUpd TIMESTAMP NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
