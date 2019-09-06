@@ -2,8 +2,10 @@
 Servizi di sincronizzazione tra App mobile e server
 
 # Descrizione
-Questo progetto contiene i files di definizione del servizio di sincronizzazione tra un App mobile e un database su server, 
+Questo progetto contiene i componenti per i servizi di sincronizzazione tra un App mobile e un database su server, 
 cos&igrave; come &egrave; stato realizzato per le applicazioni di tipo "content management" (ad es. IF Experience).
+Non viene fornita una interfaccia REST a questi servizi, perch&eacute; le funzioni devono accedere anche al file system
+del server applicativo (per le modifiche di tipo javascript e html).
 
 # Funzionamento
 Per ora (Settembre 2019) si gestisce solo una sincornizzazione da server ad App e non viceversa. L'App chiama il server 
@@ -35,12 +37,30 @@ devono essere eseguite sul DB SQLite, anch'esse contraddistinte da un timestamp.
 
 4. Se si vogliono gestire le cancellazioni fisiche di record (cio&egrave; si vogliono replicare su SQLite anche le cancellazioni
 che avvengono sulle tabelle corrispondenti del database del server), si deve definire per ciascuna tabella un trigger di tipo
-AFTER DELETE, che provveda a scrivere su app_sql le istruzioni di DELETE necessarie. Vedi esempio nella cartella examples/sql di questo
-progetto.
+AFTER DELETE, che provveda a scrivere su app_sql le istruzioni di DELETE necessarie. Vedi esempio MySql
+nella cartella examples/sql di questo progetto.
 
-Il programma lato server effettua tre tipi di operazioni:
+Il programma lato server effettua due tipi di operazioni:
 
 1. seleziona dalla tabella speciale (app_sql) i comandi SQL da eseguire e li fornisce nella risposta, in ordine di timestamp
+(in questa tabella troverà anche le istruzioni DELETE corrispondenti alle cancellazioni fisiche intercettate mediante trigger)
 2. seleziona da ogni tabella le righe con data di ultimo aggiornamento maggiore della data fornita e crea una istruzione SQL 
 di tipo REPLACE per ciasuna riga. 
-3. per ogni tabella crea una lista completa di tutti gli ID che la tabella contiene...
+
+## Javascript: acquisizioni modifiche javascript
+Si possono creare modifiche in linguaggio javascript (in particolare, definizioni modificate di funzioni js gia' esistenti nell'App)
+collocandole in files all'interno della cartella dedicata (definita dalla costante SYNC_PATH). Ogni file pu&ograve; contenere
+un qualsiasi numero di istruzioni Javascript.
+I files vengono letti in ordine alfabetico ed "eseguiti" con l'istruzione "eval": il che significa che possono contenere qualsiasi
+istruzione o definizione valida per javascript. Per essere certi che vengano eseguiti nell'ordine desiderato, conviene usare
+una nomemenclatura del tipo 'YYYYMMDD_filexxxx.js', in modo che l'ordinamento alfabetico rispetti l'ordine temporale.
+
+Sul lato App, il contenuto javascript viene conservato in localstorage ed eseguito ad ogni avvio dell'App, in modo che, anche
+in assenza di connessione, le modifiche acquisite vengano applicate.
+
+## HTML: acquisizioni modifiche HTML
+Le modifiche a frammenti HTML possono essere collocate, con lo stesso nome file usato nell'App (in Framework7, il nome di un file
+template HTML) all'interno della cartella dedicata (definita dalla costante SYNC_PATH, la stessa cartella dei file javascript).
+Anch'esse, una volta acquisite dall'App, sono conservate in localstorage, per garantirne l'uso anche in assenza di connessione.
+
+
