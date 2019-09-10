@@ -13,16 +13,16 @@
  *  ritornare il risultato al chiamante (quando viene chiamato al termine di un'altra funzione dispositiva, tipo la
  *  prenotazione, per restituire nuovi aggiornamenti)
  * @param {String} $sync_prefix_local (in $_REQUEST) prefisso che contraddistingue i nomi delle tabelle interessate in SQLite
- *  (puo' essere stringa vuota, il default)
+ *  (puo' essere stringa vuota, per default viene usato "", come nell'App Dior)
  * @param {String} $sync_prefix_remote (in $_REQUEST) prefisso che contraddistingue i nomi delle view e tabelle
- *  interessate in MySql (non puo' essere stringa vuota, per default viene usato "app_")
+ *  interessate in MySql (non puo' essere stringa vuota, per default viene usato "sync_")
  * @param {String} $sync_path path su cui si trovano i file .js e .html da inviare (per default "./sync")
  */
 function li_getupdates($return=false) {
     extract($_REQUEST);
     
-    if (!$sync_prefix_local) $sync_prefix_local = '';
-    if (!$sync_prefix_remote) $sync_prefix_remote = 'app_';
+    if ($sync_prefix_local) $sync_prefix_local = '';
+    if (!$sync_prefix_remote) $sync_prefix_remote = 'sync_';
     if (!$sync_path) $sync_path = './sync';
     
     // Le modifiche ai files javascript sono files di suffisso .js messi nella cartella di sync
@@ -70,12 +70,16 @@ function li_getupdates($return=false) {
     //trace("Individuate ".count($updsql)." istruzioni sql da applicare");
     
     // Legge le modifiche di varie tabelle come istruzioni SQL
-    $tables = li_getColumn("SELECT SUBSTR(table_name,5) FROM information_schema.tables "
-        . "WHERE table_name like 'app\_%' AND table_name!='app_sql' order by 1");
+    $prefix = str_replace('_',"\\_",$sync_prefix_remote);
+    $tables = li_getColumn("SELECT table_name FROM information_schema.tables "
+        . "WHERE table_name like '{$prefix}%' AND table_name!='app_sql' order by 1");
     if (li_getlastError()>'') li_fail();
 
 	foreach ($tables as $table) {
-	    li_sync_createSqlForTable($table,$lastupd,$updsql,$maxTime);
+        // NB: il nome tabella da usare per SQLite usa un prefisso eventualmente diverso da quello MySql
+	    li_sync_createSqlForTable($table,
+                                  str_replace($sync_prefix_remote,$sync_prefix_local,$table),
+                                  $lastupd,$updsql,$maxTime);
 	}    
     
     $response = ["maxTime"=>$maxTime, "updjs"=>$updjs, "updhtml"=>$updhtml, "updsql"=>$updsql];
@@ -88,13 +92,14 @@ function li_getupdates($return=false) {
 /**
  * li_sync_createSqlForTable Crea una istruzione INSERT OR REPLACE per ogni riga di una data tabella app_xxxx modificata
  *  dopo la data fornita. (deve essere una istruzione SQLite)
- * @param {String} $table nome tabella (NOTA: la tabella su sqlite si chiama xxxxxx, su MySql app_xxxxx)
+ * @param {String} $table nome tabella su MySql
+ * @param {String} $targetTable nome tabella su SQLite
  * @param {String} $lastupd data ultimo aggiornamento ricevto dall'App
  * @param {Array} $updates array delle istruzioni di aggiornamento già accumulate (by ref)
  * @param {String} $maxTime massimo valore di Lastupd trovato (by ref)
  */
-function li_sync_createSqlForTable($table,$lastupd,&$updsql,&$maxTime) {
-    $sql = "SELECT * FROM app_{$table} WHERE LastUpd>'$lastupd'";
+function li_sync_createSqlForTable($table,$targetTable,$lastupd,&$updsql,&$maxTime) {
+    $sql = "SELECT * FROM $table WHERE LastUpd>'$lastupd'";
     $rows = li_getRows($sql);
     if (li_getLastError()>'') fail();
     li_trace("Individuate ".count($rows)." righe aggiornate nella tabella $table ($sql)");
@@ -103,7 +108,7 @@ function li_sync_createSqlForTable($table,$lastupd,&$updsql,&$maxTime) {
         foreach ($values as &$value) {
             $value = str_replace("'","''",$value);
         }
-        $updsql[] = "INSERT OR REPLACE INTO $table VALUES('".implode("','",$values)."')";
+        $updsql[] = "INSERT OR REPLACE INTO $targetTable VALUES('".implode("','",$values)."')";
         if ($maxTime<$row['LastUpd']) $maxTime = $row['LastUpd'];
     }
 }
