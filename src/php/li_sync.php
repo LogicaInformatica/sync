@@ -27,14 +27,15 @@ function li_getupdates($return=false) {
     
     // Le modifiche ai files javascript sono files di suffisso .js messi nella cartella di sync
     $updjs = [];
-    $maxTime = "";
+    $maxTime = getScalar("SELECT NOW()"); // prende come ora corrente quella del MySql
+    
     li_trace("Individua files di aggiornamento javascript in $sync_path");
     foreach (scandir($sync_path) as $file) {
         if (is_dir($file) || pathinfo($file,PATHINFO_EXTENSION)!='js') continue;
         $filetime = date('Y-m-d H:i:s',filemtime("$sync_path/$file"));
         if ($filetime>$lastupd) {
             $updjs[] = file_get_contents("$sync_path/$file");
-            if ($maxTime<$filetime) $maxTime = $filetime;
+        //  if ($maxTime<$filetime) $maxTime = $filetime;
         }
     }
     li_trace("Trovati ".count($updjs)." files javascript di aggiornamento");
@@ -51,7 +52,7 @@ function li_getupdates($return=false) {
             $updhtml[] = ["name"    => $file,
                           "content" => file_get_contents("$sync_path/$file")
                          ];
-            if ($maxTime<$filetime) $maxTime = $filetime;
+            //if ($maxTime<$filetime) $maxTime = $filetime;
         }
     }
     li_trace("Trovati ".count($updhtml)." files HTML di aggiornamento");
@@ -65,7 +66,7 @@ function li_getupdates($return=false) {
     $updsql = [];
     foreach ($stmts as $stmt) {
         $updsql[] = $stmt['SqlStatement'];  // è come se il comando SQL fosse un file xxxx.sql
-        $maxTime = max($maxTime, $stmt['LastUpd']);
+        //$maxTime = max($maxTime, $stmt['LastUpd']);
     }
     //trace("Individuate ".count($updsql)." istruzioni sql da applicare");
     
