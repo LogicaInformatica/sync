@@ -27,7 +27,7 @@ function li_getupdates($return=false) {
     
     // Le modifiche ai files javascript sono files di suffisso .js messi nella cartella di sync
     $updjs = [];
-    $maxTime = getScalar("SELECT NOW()"); // prende come ora corrente quella del MySql
+    $maxTime = li_getScalar("SELECT NOW()"); // prende come ora corrente quella del MySql
     
     li_trace("Individua files di aggiornamento javascript in $sync_path");
     foreach (scandir($sync_path) as $file) {
