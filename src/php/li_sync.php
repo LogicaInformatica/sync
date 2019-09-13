@@ -60,7 +60,7 @@ function li_getupdates($return=false) {
     
     // Legge le eventuali istruzioni SQL di modifica del DB sqlite dalla tabella app_sql
     li_trace("Individua istruzioni SQL da applicare (app_sql)");
-    $sql = "SELECT SqlStatement,LastUpd FROM app_sql WHERE LastUpd>'$lastupd' ORDER BY IdSql";
+    $sql = "SELECT SqlStatement,LastUpd FROM app_sql WHERE CAST(LastUpd AS DateTime)>'$lastupd' ORDER BY IdSql";
     $stmts = li_getRows($sql);
     if (li_getLastError()>'') li_fail();
     $updsql = [];
@@ -100,7 +100,7 @@ function li_getupdates($return=false) {
  * @param {String} $maxTime massimo valore di Lastupd trovato (by ref)
  */
 function li_sync_createSqlForTable($table,$targetTable,$lastupd,&$updsql,&$maxTime) {
-    $sql = "SELECT * FROM $table WHERE LastUpd>'$lastupd'";
+    $sql = "SELECT * FROM $table WHERE CAST(LastUpd AS DateTime)>'$lastupd'";
     $rows = li_getRows($sql);
     if (li_getLastError()>'') fail();
     li_trace("Individuate ".count($rows)." righe aggiornate nella tabella $table ($sql)");
