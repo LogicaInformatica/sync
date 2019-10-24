@@ -43,7 +43,6 @@ function li_getupdates($return=false) {
     // Le modifiche ai files html sono files di suffisso .html messi nella cartella di sync
     // l'array restituito ha elementi con le due proprieta' 'name' e 'content'
     $updhtml = [];
-    $maxTime = "";
     li_trace("Individua files di aggiornamento HTML in $sync_path");
     foreach (scandir($sync_path) as $file) {
         if (is_dir($file) || pathinfo($file,PATHINFO_EXTENSION)!='html') continue;
