@@ -42,10 +42,10 @@ function doMain()
 						$where = " WHERE Tipo='Sms' AND IdModello=13";
 						break;
 					case "LET_INS":
-						$where = " WHERE Tipo='Lettera' AND IdModello=5";
+						$where = " WHERE Tipo='Lettera' AND IdModello IN (5,6)";
 						break;
 					case "LET_DEO":
-						$where = " WHERE Tipo='Lettera' AND IdModello IN (7,8)";
+						$where = " WHERE Tipo='Lettera' AND IdModello IN (7,8,207,208,213,215)";
 						break;
 					case "LET_DBT":
 						$where = " WHERE Tipo='Lettera' AND IdModello IN (113,115)";
