@@ -28,12 +28,12 @@ function estrattoSpeseRecupero()
 	
 	trace("Scritte ".count($rows)." righe+1 nel file $filepath",FALSE);
 	
-	$allegato = array(
-					  "name"	=> "EstrattoSpeseRecupero.csv", 
-					  "type" 	=> filetype($filepath),
-					  "tmp_name"=> $filepath, 
-					  "size"    => filesize($filepath)
-					)
+	$allegato = [
+				"name"	=> "EstrattoSpeseRecupero.csv", 
+				"type" 	=> filetype($filepath),
+				"tmp_name"=> $filepath, 
+				"size"    => filesize($filepath)
+	];
 	trace("Parametro attachment passato alla sendmail: ".print_r(allegato,true));
 	$title = "Estratto Spese di Recupero ".date('d/m/Y');
 	$msg   = "Estratto delle spese di recupero maturate al ".date('d/m/Y')."<br>"
