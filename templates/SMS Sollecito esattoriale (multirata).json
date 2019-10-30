@@ -1,3 +1,1 @@
-{"testoSMS":
-   "Gentile Cliente le sollecitiamo il versamento delle rate insolute per Euro %ImpInsolutoIT% IBAN: IT36B0200805364000500045561 (causale ctr %CodContrattoRidotto%) info %TelAgenzia%.TFS"
-}
+{"testoSMS": "Gentile Cliente le sollecitiamo il saldo delle rate insolute per Euro %ImpInsolutoIT% IBAN: IT36B0200805364000500045561 (causale %CodContrattoRidotto%) info %TelAgenzia%.Toyota-FS"}

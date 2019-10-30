@@ -35,9 +35,12 @@ utilizzando una delle seguenti  modalità:
     LOTTOMATICA, utilizzando il codice a barre sul retro della  presente  lettera  (per importi fino a
     € 1.500 di cui massimo € 999,99 in contanti);
 
--   Pagamento a mezzo Carta di Credito tramite il portale della Toyota Financial Services Italia S.p.A.
-    https://www.toyota-fs.it/. Dopo aver selezionato “Area Clienti” (dove non è necessario registrarsi
-    fare clic su “Paga rata scaduta con carta di credito” e compilare i campi con i dati richiesti.
+-   Pagamento   a  mezzo  Carta  di  Credito  tramite  il  portale  della  Toyota  Financial  Services
+    https://www.toyota-fs.it/. Dopo aver  effettuato  l'accesso  nell'Area Clienti,  inserisca  le sue 
+    credenziali e clicchi sul pulsante "Dettagli" del suo contratto, poi su "Paga Subito" compilando i
+    dati richiesti. Qualora non possieda le credenziali per accedere sul suo profilo, la  invitiamo  a 
+    cliccare la sezione "Aiuto" e  a  visualizzare  le  "Faq"  presenti,  per  avere  le  informazioni 
+    necessarie.
 	
 La informiamo inoltre che,  continuando l'attuale stato di insolvenza,  saremo  tenuti a comunicare il
 ritardo nei  pagamenti ai sistemi di informazione creditizia e alla Centrale dei Rischi ai sensi degli
@@ -46,7 +49,7 @@ settembre 1993 e della Circolare di Banca di Italia n.139 del 11/2/1991 e s.m.i.
 Le ricordiamo, inoltre, che tale segnalazione  presso le  suddette banche dati potrebbe avere riflessi 
 negativi per l'accesso al credito.
 
-Qualora  avesse già provveduto al  relativo saldo  e/o avesse attivato la procedura per l'estinzione
+Qualora  avesse già  provveduto al  relativo saldo  e/o avesse attivato la procedura  per l'estinzione
 anticipata, la preghiamo di considerare nulla la presente comunicazione.
 
 Per qualsiasi chiarimento potrà contattare l'agenzia %Agenzia% da noi incaricata all'indirizzo e-mail 
