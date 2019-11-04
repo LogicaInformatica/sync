@@ -103,7 +103,8 @@ function preparaMail($idComp,$fileModello,$idF,$ContrattiFiliale,$colonneContrat
 //		$ret = sendMail($mitt,$dest["mailprincipale"],$subject,$body,$Allegato,
 //					getSysParm("MAIL_OVERRIDE","dummy").",".$dest["mailresponsabile"]);
 //		writeLog("SYS","Invio mail alle filiali per pratiche con override","Inviata mail a ".$dest["mailprincipale"],"MAIL_OVERRIDE");
-		$ret = sendMail($mitt,getSysParm("MAIL_OVERRIDE","dummy"),$subject,$body,$Allegato);
+		// Causa problemi invio mail con allegati in batch su Amazon/AWS (non risolti) elimina l'allegato (tanto la tabella è anche nel corpo) 
+		$ret = sendMail($mitt,getSysParm("MAIL_OVERRIDE","dummy"),$subject,$body,"" /*$Allegato*/);
 		writeLog("SYS","Invio mail per pratiche con override","Inviata mail a ".getSysParm("MAIL_OVERRIDE","dummy"),"MAIL_OVERRIDE");
 		if(!unlink($Allegato['tmp_name']))
 			trace("Errore nella cancellazione del file temporaneo: ".$Allegato['tmp_name']);

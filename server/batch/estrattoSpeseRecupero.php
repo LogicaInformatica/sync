@@ -27,17 +27,20 @@ function estrattoSpeseRecupero()
 	}
 	
 	trace("Scritte ".count($rows)." righe+1 nel file $filepath",FALSE);
-	
+	/* 2019-10-31 sostituito l'allegato con un link 
 	$allegato = [
 				"name"	=> "EstrattoSpeseRecupero.csv", 
 				"type" 	=> filetype($filepath),
 				"tmp_name"=> $filepath, 
 				"size"    => filesize($filepath)
 	];
-	trace("Parametro attachment passato alla sendmail: ".print_r(allegato,true));
+	trace("Parametro attachment passato alla sendmail: ".print_r($allegato,true));
+     * */
 	$title = "Estratto Spese di Recupero ".date('d/m/Y');
+    $url = LETTER_URL."/EstrattoSpeseRecupero.csv";
 	$msg   = "Estratto delle spese di recupero maturate al ".date('d/m/Y')."<br>"
-			."Sono incluse tutte le pratiche con debito totale maggiore o uguale a 26 euro e spese di recupero maggiori di zero.";
+			."Sono incluse tutte le pratiche con debito totale maggiore o uguale a 26 euro e spese di recupero maggiori di zero."
+            ."<br><br>Scarica il file da questo link: <a href='$url'>$url</a>";
 	sendMail(MAIL_SENDER,getSysParm("SPESE_REC_MAIL"),$title,$msg,$allegato);
 	
 	// Registra su log l'avvenuta esecuzione 
