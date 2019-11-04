@@ -16,7 +16,9 @@
  *  (puo' essere stringa vuota, per default viene usato "", come nell'App Dior)
  * @param {String} $sync_prefix_remote (in $_REQUEST) prefisso che contraddistingue i nomi delle view e tabelle
  *  interessate in MySql (non puo' essere stringa vuota, per default viene usato "sync_")
- * @param {String} $sync_path path su cui si trovano i file .js e .html da inviare (per default "./sync")
+ * @param {String} $sync_path (in $_REQUEST) path su cui si trovano i file .js e .html da inviare (per default "./sync")
+ * @param {String} $staging (in $_REQUEST) se =yes la sincronizzazione verra' eseguita considerando i contenuti in staging
+ *  (verranno cioe' usate le views con suffisso _staging, se esistono)
  */
 function li_getupdates($return=false) {
     extract($_REQUEST);
@@ -69,10 +71,21 @@ function li_getupdates($return=false) {
     }
     //trace("Individuate ".count($updsql)." istruzioni sql da applicare");
     
-    // Legge le modifiche di varie tabelle come istruzioni SQL
+    // Legge le modifiche di varie tabelle/views come istruzioni SQL
     $prefix = str_replace('_',"\\_",$sync_prefix_remote);
-    $tables = li_getColumn("SELECT table_name FROM information_schema.tables "
-        . "WHERE table_name like '{$prefix}%' AND table_name!='app_sql' order by 1");
+    if ($staging=='yes') { // se richiesto di leggere i dati in staging (draft), usa view diverse
+        $isql = "SELECT t.table_name 
+                FROM information_schema.tables t
+                LEFT JOIN information_schema.tables x ON x.Table_Name=CONCAT(t.Table_Name,'_staging')
+                WHERE t.table_name like '{$prefix}%' AND t.table_name!='app_sql' AND x.Table_Name IS NULL
+                ORDER by 1;";
+    } else {
+        $isql = "SELECT table_name 
+                  FROM information_schema.tables
+                  WHERE table_name like '{$prefix}%' AND table_name NOT like '%_staging' AND table_name!='app_sql' 
+                  order by 1";
+    }
+    $tables = li_getColumn($isql);
     if (li_getlastError()>'') li_fail();
 
 	foreach ($tables as $table) {
