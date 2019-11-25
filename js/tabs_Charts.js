@@ -915,6 +915,8 @@ DCS.Charts.GeoTable = Ext.extend(Ext.grid.GridPanel, {
 		              {name: 'Ats'},{name: 'AtsNum',type:'int'},
 		              {name: 'City1'},{name: 'City1Num',type:'int'},
 		              {name: 'City2'},{name: 'City2Num',type:'int'},
+		              {name: 'City3'},{name: 'City3Num',type:'int'},
+		              {name: 'Css'},{name: 'CssNum',type:'int'},
 		              {name: 'Eurocollection'},{name: 'EurocollectionNum',type:'int'},
 		              {name: 'Fides'},{name: 'FidesNum',type:'int'},
 		              {name: 'GeaServices'},{name: 'GeaServicesNum',type:'int'},
@@ -922,6 +924,7 @@ DCS.Charts.GeoTable = Ext.extend(Ext.grid.GridPanel, {
 		              {name: 'Ncp31'},{name: 'Ncp31Num',type:'int'},
 		              {name: 'Nicol35'},{name: 'Nicol35Num',type:'int'}, 
 		              {name: 'Osirc'},{name: 'OsircNum',type:'int'},
+		              {name: 'Fire'},{name: 'FireNum',type:'int'},
 		              {name: 'Sogec1'},{name: 'Sogec1Num',type:'int'},
 		              {name: 'Sogec2'},{name: 'Sogec2Num',type:'int'},
 		              {name: 'Starcredit'},{name: 'StarcreditNum',type:'int'}
@@ -1822,15 +1825,22 @@ DCS.Charts.Tabs = function(){
 				}));
 			if (CONTEXT.CAN_GRAPH_ALL || CONTEXT.CAN_GRAPH_III_ESA_LOAN || CONTEXT.CAN_GRAPH_3o_HOME_LOAN)
 				items.push(new DCS.Charts.Sintesi({
-				titlePanel: 'Loan Home coll. 3&deg; Livello: 91-150 gg',
+				titlePanel: 'Loan Home coll. 3&deg; Livello: 91-120 gg',
 				title: '3&deg; HOME LOAN',
 				task: '3&deg; HOME LOAN,III ESA LOAN',	id: 'graph3ESA'
 				}));
+				// 2019-11-25 introduzione del range 120-150 che rinomina il 4-5 livello
+			if (CONTEXT.CAN_GRAPH_ALL || CONTEXT.CAN_GRAPH_III_ESA_LOAN || CONTEXT.CAN_GRAPH_3o_HOME_LOAN)
+				items.push(new DCS.Charts.Sintesi({
+				titlePanel: 'Loan Home coll. a&deg; Livello: 120-150 gg',
+				title: '4&deg; HOME LOAN',
+				task: '4&deg; HOME LOAN',	id: 'graph4ESA'
+				}));
 			if (CONTEXT.CAN_GRAPH_ALL || CONTEXT.CAN_GRAPH_IV_ESA_LOAN || CONTEXT.CAN_GRAPH_4o_HOME_LOAN)
 				items.push(new DCS.Charts.Sintesi({
-				titlePanel: 'Loan Home coll. 4&deg; Livello: > 150gg',
-				title: '4&deg; HOME LOAN',
-				task: '4&deg; HOME LOAN,IV ESA LOAN',	id: 'graph4ESA'
+				titlePanel: 'Loan Home coll. 5&deg; Livello: > 150gg',
+				title: '5&deg; HOME LOAN',
+				task: '5&deg; HOME LOAN,IV ESA LOAN',	id: 'graph5ESA'
 				}));
 			if (CONTEXT.CAN_GRAPH_ALL || CONTEXT.CAN_GRAPH_1o_FLOTTE)
 				items.push(new DCS.Charts.Sintesi({
