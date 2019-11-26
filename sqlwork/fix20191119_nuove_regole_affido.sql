@@ -24,13 +24,13 @@ UPDATE regolaripartizione SET DataFin=CURDATE()+INTERVAL 1 MONTH-INTERVAL 1 DAY 
 
 # crea le regole provvigioni per 120-150 per City e CSS (III Home>IV Home)
 INSERT INTO regolaprovvigione (IdRegolaProvvigione, IdReparto, IdClasse, IdFamiglia, Formula, DataIni, DataFin, lastupd, LastUser, CodRegolaProvvigione, FormulaFascia, AbbrRegolaProvvigione, TitoloRegolaProvvigione, FasciaRecupero, Ordine, Condizione, durata, FlagNoRientro, FlagMensile, FlagCerved, FlagPerPratica)  
-SELECT  7003, IdReparto, IdClasse, IdFamiglia, Formula, CURDATE(), '9999-12-31',NOW(),'system','44', FormulaFascia, AbbrRegolaProvvigione, TitoloRegolaProvvigione, 
+SELECT  7003, IdReparto, IdClasse, IdFamiglia, Formula, CURDATE(), '9999-12-31',NOW(),'system','54', FormulaFascia, AbbrRegolaProvvigione, TitoloRegolaProvvigione, 
 FasciaRecupero=REPLACE(FasciaRecupero,'3','4'), Ordine, 'IdClasse=111', durata, FlagNoRientro, FlagMensile, FlagCerved, FlagPerPratica
 FROM regolaprovvigione 
 WHERE IdRegolaProvvigione=2114;
 
 INSERT INTO regolaprovvigione (IdRegolaProvvigione, IdReparto, IdClasse, IdFamiglia, Formula, DataIni, DataFin, lastupd, LastUser, CodRegolaProvvigione, FormulaFascia, AbbrRegolaProvvigione, TitoloRegolaProvvigione, FasciaRecupero, Ordine, Condizione, durata, FlagNoRientro, FlagMensile, FlagCerved, FlagPerPratica)  
-SELECT  7025, 25, IdClasse, IdFamiglia, Formula, CURDATE(), '9999-12-31',NOW(),'system','45', FormulaFascia, AbbrRegolaProvvigione, TitoloRegolaProvvigione, 
+SELECT  7025, 25, IdClasse, IdFamiglia, Formula, CURDATE(), '9999-12-31',NOW(),'system','55', FormulaFascia, AbbrRegolaProvvigione, TitoloRegolaProvvigione, 
 FasciaRecupero=REPLACE(FasciaRecupero,'3','4'), Ordine, 'IdClasse=111', durata, FlagNoRientro, FlagMensile, FlagCerved, FlagPerPratica
 FROM regolaprovvigione 
 WHERE IdRegolaProvvigione=2114;
@@ -72,8 +72,8 @@ INSERT INTO regolaassegnazione (IdRegolaAssegnazione, DurataAssegnazione, IdTipo
 VALUES 
 	(6003,30,null,null,null,3,null,CURDATE(),'9999-12-31',NOW(),'system',null,10,0.00,0.00,'I','2','5,15,25','4,14,24','(IdClasse=109 OR IdProdotto IN (165,236)) AND IdStatoRecupero=2',6003)
 	,(7003,30,null,null,null,3,null,CURDATE(),'9999-12-31',NOW(),'system',null,10,0.00,0.00,'I','2','5,15,25','4,14,24','IdClasse=111 AND IdStatoRecupero=2',7003)
-	,(6025,30,null,null,null,3,null,CURDATE(),'9999-12-31',NOW(),'system',null,10,0.00,0.00,'I','2','5,15,25','4,14,24','(IdClasse=109 OR IdProdotto IN (165,236)) AND IdStatoRecupero=2',6025)
-	,(7025,30,null,null,null,3,null,CURDATE(),'9999-12-31',NOW(),'system',null,10,0.00,0.00,'I','2','5,15,25','4,14,24','IdClasse=111 AND IdStatoRecupero=2',7025)
+	,(6025,30,null,null,null,25,null,CURDATE(),'9999-12-31',NOW(),'system',null,10,0.00,0.00,'I','2','5,15,25','4,14,24','(IdClasse=109 OR IdProdotto IN (165,236)) AND IdStatoRecupero=2',6025)
+	,(7025,30,null,null,null,25,null,CURDATE(),'9999-12-31',NOW(),'system',null,10,0.00,0.00,'I','2','5,15,25','4,14,24','IdClasse=111 AND IdStatoRecupero=2',7025)
 ;
 
 # crea la regolaprovvigione per FIRE analoga a quella esistente per Osirc 2A (2115: Loan>150gg)
