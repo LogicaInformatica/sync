@@ -532,7 +532,7 @@ function delegate($IdContratto)
 					if ($bool==1)
 					{
 						$forceCond = TRUE; // non accetta piu' le entry con Condizione NULL
-						trace("Verificata condizione affido: ".$regola["Condizione"],FALSE);
+						trace("Verificata condizione affido IdRegolaAssegnazione={$regola["IdRegolaAssegnazione"]}: {$regola["Condizione"]}",FALSE);
 					}
 					else {
 						if ($subtrace) trace("Scartata per check su Condizione",FALSE);

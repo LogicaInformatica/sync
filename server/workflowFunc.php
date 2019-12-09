@@ -1377,18 +1377,18 @@ function storicizzaInsoluto($contratto,$NumRata,$tipoAzione,$dataApertura=0,$dat
 		// le rate non a zero sono scritte su Insoluto durante la ProcessInsoluti se c'� motivo di scriverle
 		// Quindi, se � POS si aggiornano i dati; se � REV si aggiorna anche il tipo; se � RIE
 		// (rientro automatico di fine affido) ha importanza solo se a debito (altrimenti la
-		// riga POS gi� � stata aggiornata con il credito corrispondente). Se � a debito, e
+		// riga POS gia' e' stata aggiornata con il credito corrispondente). Se � a debito, e
 		// impInsoluto, ImpCapitale e ImpPagato sono identici a quelli della riga POS, non registra nulla;
-		// se ImpPagato � aumentato, lo aggiorna nella riga POS, altrimenti inserisce la riga RIE 
+		// se ImpPagato e' aumentato, lo aggiorna nella riga POS, altrimenti inserisce la riga RIE 
 		// ma senza IdAffidamento (in modo che eventuali ulteriori importi a debito siano considerati "viaggianti")
 		//----------------------------------------------------------------------------------------------------------
 		
 		$userid = getUserName();
 		
 		// legge i dati necessari da insoluto e contratto
-		// Non usa v_pratiche, perch� i campi di sintesi nel contratto possono non essere stati ancora aggiornati
+		// Non usa v_pratiche, perche' i campi di sintesi nel contratto possono non essere stati ancora aggiornati
 		// 29/4/13: aggiunta assegnazione.DataIni che ha la precedenza sulla data inizio affido contratto nel
-		// caso di positivit� STR (le chiusre mensili ridefiniscono il periodo di affido ogni mese)
+		// caso di positivita' STR (le chiusre mensili ridefiniscono il periodo di affido ogni mese)
 		$dati = getRow("SELECT c.IdOperatore,c.IdAgenzia,c.IdAgente,i.IdTipoInsoluto,i.DataInsoluto AS DataScadenza,i.ImpDebitoIniziale,i.ImpCapitale,i.ImpInteressi,"
 						 ."i.ImpAltriAddebiti,i.ImpSpeseRecupero,i.ImpCapitaleAffidato,i.ImpIncassoImproprio,"
 						 ."i.ImpPagato,i.ImpInsoluto,IFNULL(a.DataIni,c.DataInizioAffido) AS DataInizioAffido,c.DataFineAffido,i.DataArrivo,i.IdAffidamento,c.IdStatoRecupero"
@@ -1397,7 +1397,7 @@ function storicizzaInsoluto($contratto,$NumRata,$tipoAzione,$dataApertura=0,$dat
 					     ." JOIN insoluto i ON c.IdContratto=i.IdContratto WHERE c.IdContratto=$contratto AND i.NumRata=$NumRata");
 		if (!is_array($dati)) {
 			trace("La query in storicizzaInsoluto per la lettura dei dati dell'insoluto non ha restituito alcuna riga (rata n.$NumRata)",false);
-			return FALSE;
+			return true;
 		}
 					
 		// 22/12/2011: storicizza anche quelli non affidati ma in lavorazione interna)

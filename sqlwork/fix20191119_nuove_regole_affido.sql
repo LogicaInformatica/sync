@@ -1,3 +1,9 @@
+
+##
+# ATTENZIONE: APPLICARE IN PRODUZIONE SOLO GLI UPDATE, E GLI INSERT su regolaassegnazione
+# il resto è gia' stato applicato il 6/12
+##
+
 # Attribuisce la Lombardia anche a Nicol-Seripa (e' per ora solo su Starcredit)
 INSERT INTO regolaassegnazione VALUES(null, '30', NULL, NULL, NULL, '31', NULL,CURDATE(), '9999-12-31', NOW(), 'system', '3', '20', NULL, 
 NULL, 'I', '2', '5,15,25', '4,14,24', 'IdClasse IN (105,106)  and IdStatoRecupero=2', NULL);
@@ -5,14 +11,14 @@ NULL, 'I', '2', '5,15,25', '4,14,24', 'IdClasse IN (105,106)  and IdStatoRecuper
 # crea le regole provvigioni per 91-120 per City e CSS (rimane nominato come III Home)
 INSERT INTO regolaprovvigione (IdRegolaProvvigione, IdReparto, IdClasse, IdFamiglia, Formula, DataIni, DataFin, lastupd, LastUser, CodRegolaProvvigione, FormulaFascia, AbbrRegolaProvvigione, TitoloRegolaProvvigione, FasciaRecupero, Ordine, Condizione, durata, FlagNoRientro, FlagMensile, FlagCerved, FlagPerPratica)  
 SELECT  6003, IdReparto, IdClasse, IdFamiglia, Formula, CURDATE(), '9999-12-31',NOW(),'system','44', FormulaFascia, 
-AbbrRegolaProvvigione, TitoloRegolaProvvigione, FasciaRecupero, Ordine, '(IdClasse=109 OR IdProdotto IN (165,236))', durata, FlagNoRientro, FlagMensile, 
+AbbrRegolaProvvigione, 'Loan 91-120gg', FasciaRecupero, Ordine, '(IdClasse=109 OR IdProdotto IN (165,236))', durata, FlagNoRientro, FlagMensile, 
 FlagCerved, FlagPerPratica
 FROM regolaprovvigione 
 WHERE IdRegolaProvvigione=2114;
 
 INSERT INTO regolaprovvigione (IdRegolaProvvigione, IdReparto, IdClasse, IdFamiglia, Formula, DataIni, DataFin, lastupd, LastUser, CodRegolaProvvigione, FormulaFascia, AbbrRegolaProvvigione, TitoloRegolaProvvigione, FasciaRecupero, Ordine, Condizione, durata, FlagNoRientro, FlagMensile, FlagCerved, FlagPerPratica)  
 SELECT  6025, 25, IdClasse, IdFamiglia, Formula, CURDATE(), '9999-12-31',NOW(),'system','45', FormulaFascia, 
-AbbrRegolaProvvigione, TitoloRegolaProvvigione, FasciaRecupero, Ordine, '(IdClasse=109 OR IdProdotto IN (165,236))', durata, FlagNoRientro, FlagMensile, 
+AbbrRegolaProvvigione, 'Loan 121-150gg', FasciaRecupero, Ordine, '(IdClasse=109 OR IdProdotto IN (165,236))', durata, FlagNoRientro, FlagMensile, 
 FlagCerved, FlagPerPratica
 FROM regolaprovvigione 
 WHERE IdRegolaProvvigione=2114;
@@ -24,13 +30,15 @@ UPDATE regolaripartizione SET DataFin=CURDATE()+INTERVAL 1 MONTH-INTERVAL 1 DAY 
 
 # crea le regole provvigioni per 120-150 per City e CSS (III Home>IV Home)
 INSERT INTO regolaprovvigione (IdRegolaProvvigione, IdReparto, IdClasse, IdFamiglia, Formula, DataIni, DataFin, lastupd, LastUser, CodRegolaProvvigione, FormulaFascia, AbbrRegolaProvvigione, TitoloRegolaProvvigione, FasciaRecupero, Ordine, Condizione, durata, FlagNoRientro, FlagMensile, FlagCerved, FlagPerPratica)  
-SELECT  7003, IdReparto, IdClasse, IdFamiglia, Formula, CURDATE(), '9999-12-31',NOW(),'system','54', FormulaFascia, AbbrRegolaProvvigione, TitoloRegolaProvvigione, 
+SELECT  7003, IdReparto, IdClasse, IdFamiglia, Formula, CURDATE(), '9999-12-31',NOW(),'system','54', FormulaFascia, AbbrRegolaProvvigione, 
+'Loan 91-120gg', 
 FasciaRecupero=REPLACE(FasciaRecupero,'3','4'), Ordine, 'IdClasse=111', durata, FlagNoRientro, FlagMensile, FlagCerved, FlagPerPratica
 FROM regolaprovvigione 
 WHERE IdRegolaProvvigione=2114;
 
 INSERT INTO regolaprovvigione (IdRegolaProvvigione, IdReparto, IdClasse, IdFamiglia, Formula, DataIni, DataFin, lastupd, LastUser, CodRegolaProvvigione, FormulaFascia, AbbrRegolaProvvigione, TitoloRegolaProvvigione, FasciaRecupero, Ordine, Condizione, durata, FlagNoRientro, FlagMensile, FlagCerved, FlagPerPratica)  
-SELECT  7025, 25, IdClasse, IdFamiglia, Formula, CURDATE(), '9999-12-31',NOW(),'system','55', FormulaFascia, AbbrRegolaProvvigione, TitoloRegolaProvvigione, 
+SELECT  7025, 25, IdClasse, IdFamiglia, Formula, CURDATE(), '9999-12-31',NOW(),'system','55', FormulaFascia, AbbrRegolaProvvigione, 
+'Loan 121-150gg', 
 FasciaRecupero=REPLACE(FasciaRecupero,'3','4'), Ordine, 'IdClasse=111', durata, FlagNoRientro, FlagMensile, FlagCerved, FlagPerPratica
 FROM regolaprovvigione 
 WHERE IdRegolaProvvigione=2114;
