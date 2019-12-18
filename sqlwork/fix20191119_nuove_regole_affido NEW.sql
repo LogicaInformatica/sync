@@ -3,7 +3,7 @@
 # ATTENZIONE: APPLICARE IN PRODUZIONE SOLO GLI UPDATE, E GLI INSERT su regolaassegnazione
 # il resto è gia' stato applicato il 6/12
 ##
-
+ 
 # Attribuisce la Lombardia anche a Nicol-Seripa (e' per ora solo su Starcredit)
 INSERT INTO regolaassegnazione VALUES(null, '30', NULL, NULL, NULL, '31', NULL,CURDATE(), '9999-12-31', NOW(), 'system', '3', '20', NULL, 
 NULL, 'I', '2', '5,15,25', '4,14,24', 'IdClasse IN (105,106)  and IdStatoRecupero=2', NULL);
@@ -30,14 +30,17 @@ INSERT INTO regolaripartizione (IdRegolaRipartizione, IdClasse, PercSpeseIncasso
 SELECT null,IdClasse, PercSpeseIncasso, ImpSpeseIncasso, FlagInteressiMora, CURDATE(), '9999-12-31', NOW(), LastUser, IdFamiglia, 25, 6025
 FROM regolaripartizione WHERE IdRegolaProvvigione=2114 
 ;
-
+select * from regolaassegnazione where idregolaprovvigione=2114;
 # copia la regola di assegnazione 2114
 INSERT INTO regolaassegnazione (IdRegolaAssegnazione, DurataAssegnazione, IdTipoCliente, IdFamiglia, IdClasse, IdReparto, IdUtente, DataIni,
  DataFin, lastupd, LastUser, IdArea, Ordine, ImportoDa, ImportoA, TipoDistribuzione, TipoAssegnazione, GiorniFissiInizio, GiorniFissiFine, 
  Condizione, IdRegolaProvvigione) 
 VALUES 
-	(6025,30,null,null,null,25,null,CURDATE(),'9999-12-31',NOW(),'system',null,10,0.00,0.00,'I','2','5,15,25','4,14,24','(IdClasse IN (109,111) OR IdProdotto IN (165,236)) AND IdStatoRecupero=2',6025)
+	(6025,30,null,null,null,25,null,CURDATE(),'9999-12-31',NOW(),'system',null,10,0.00,0.00,'I','2','5,15,25','4,14,24',
+	'(IdClasse IN (109,111) OR IdProdotto IN (165,236)) AND IdStatoRecupero=2',6025)
 ;
+## Corregge data scadenza
+UPDATE regolaassegnazione SET DataFin='9999-12-31' WHERE IdRegolaprovvigione=2114;
 
 # crea la regolaprovvigione per FIRE analoga a quella esistente per Osirc 2A (2115: Loan>150gg)
 INSERT INTO regolaprovvigione (IdRegolaProvvigione, IdReparto, IdClasse, IdFamiglia, Formula, DataIni, DataFin, lastupd, LastUser, CodRegolaProvvigione, FormulaFascia, AbbrRegolaProvvigione, TitoloRegolaProvvigione, FasciaRecupero, Ordine, Condizione, durata, FlagNoRientro, FlagMensile, FlagCerved, FlagPerPratica)  

@@ -1397,7 +1397,7 @@ function storicizzaInsoluto($contratto,$NumRata,$tipoAzione,$dataApertura=0,$dat
 					     ." JOIN insoluto i ON c.IdContratto=i.IdContratto WHERE c.IdContratto=$contratto AND i.NumRata=$NumRata");
 		if (!is_array($dati)) {
 			trace("La query in storicizzaInsoluto per la lettura dei dati dell'insoluto non ha restituito alcuna riga (rata n.$NumRata)",false);
-			return true;
+			return true; // evita di mandare in errore il batch
 		}
 					
 		// 22/12/2011: storicizza anche quelli non affidati ma in lavorazione interna)

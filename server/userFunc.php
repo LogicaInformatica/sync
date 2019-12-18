@@ -66,7 +66,7 @@ function createContext($user,$master)
 //-------------------------------------------------------------- 
 // userCanDo
 // Verifica nella variabile di sessione 'userContext' se l'utente 
-// loggato è abilitato alla funzione richiesta 
+// loggato ï¿½ abilitato alla funzione richiesta 
 // Ritorna un valore booleano 
 //--------------------------------------------------------------
 function userCanDo($key)
@@ -105,7 +105,7 @@ function userCondition($type=1)
 	
 	// clausola per escludere dalle cose dirette a tutti le scadenze emesse da altre agenzie
 	if ($context['InternoEsterno']=='E') // utente esterno (di agenzia)
-	{  // non può vedere le scadenze di altri reparti
+	{  // non puï¿½ vedere le scadenze di altri reparti
 		if ($type==1) // Select su nota o v_nota
 			$perTutti = " AND (TipoNota!='S' OR IdUtente";
 		else // select su v_insoluti_scadenze
@@ -113,7 +113,7 @@ function userCondition($type=1)
 		
 		if (userCanDo('READ_AGENZIA') or userCanDo('READ_REPARTO')) {
 			$perTutti .= " IN (SELECT IdUtente FROM utente WHERE IdReparto=$idReparto))";
-		} else { // può vedere solo le proprie
+		} else { // puï¿½ vedere solo le proprie
 			$perTutti .= " = $idUtente)";
 		}
 	}
@@ -188,7 +188,7 @@ function creaSubselectNoteAllegati(&$note,&$allegati,$isStorico=false)
 	}
 		
 	$allegati = "if (exists(select 1 from v_allegati_per_utente$suffix where IdUtente=$idUtente and IdContratto=v.IdContratto),1,0)";
-	if (userCanDo("READ_ALL")) // può vedere tutto (supervisore)
+	if (userCanDo("READ_ALL")) // puï¿½ vedere tutto (supervisore)
 	{
 		$allegati = "if (exists(select 1 from $schema.allegato where IdContratto=v.IdContratto),1,0)";
 		// supervisore: tutte le note (considera lette quelle lette dal reparto 1)
@@ -208,23 +208,23 @@ function creaSubselectNoteAllegati(&$note,&$allegati,$isStorico=false)
 				FROM $schema.nota n 
 				LEFT JOIN $schema._opt_note_lette nl ON n.IdNota=nl.IdNota AND nl.IdReparto=$idReparto
 				WHERE TipoNota in ('N','C') AND	(
-					IdUtente = $idUtente OR IdUtenteDest = $idUtente OR (IdUtenteDest IS NULL AND n.IdReparto IS NULL)
+					IdUtente = $idUtente OR IdUtenteDest = 0$idUtente OR (IdUtenteDest IS NULL AND n.IdReparto IS NULL)
 					OR n.IdReparto=$idReparto OR n.IdUtente IN ($utentiReparto) OR IdUtenteDest IN ($utentiReparto)
 				)";
-		if (!userCanDo("READ_RISERVATO"))	// se non può  vedere quelle con flag riservato
+		if (!userCanDo("READ_RISERVATO"))	// se non puï¿½  vedere quelle con flag riservato
 			$note .= " AND IFNULL(FlagRiservato,'N')!='Y'";	
 		$note .= " GROUP BY IdContratto)";
 	}
-	else // utente semplice, può vedere solo quelle dirette o create da lui e quelle dirette a tutti
+	else // utente semplice, puï¿½ vedere solo quelle dirette o create da lui e quelle dirette a tutti
 	{
 		$note = "(select n.idcontratto,
 				CASE WHEN n.IdUtenteDest!=n.IdUtente AND SUM(IF(nl.idNota IS NOT NULL or n.idutente=$idUtente,0,1))>0 THEN SUM(IF(nl.idNota IS NOT NULL or n.idutente=$idUtente,0,1)) ELSE -count(*) END NumNote
 				FROM $schema.nota n 
 				LEFT JOIN $schema._opt_note_lette nl ON n.IdNota=nl.IdNota AND nl.IdReparto=$idReparto
 				WHERE TipoNota in ('N','C') AND	(
-					IdUtente = $idUtente OR IdUtenteDest = $idUtente OR (IdUtenteDest IS NULL AND n.IdReparto IS NULL)
+					IdUtente = $idUtente OR IdUtenteDest = 0$idUtente OR (IdUtenteDest IS NULL AND n.IdReparto IS NULL)
 				)";
-		if (!userCanDo("READ_RISERVATO"))	// se non può  vedere quelle con flag riservato
+		if (!userCanDo("READ_RISERVATO"))	// se non puï¿½  vedere quelle con flag riservato
 			$note .= " AND IFNULL(FlagRiservato,'N')!='Y'";	
 		$note .= " GROUP BY IdContratto)";
 	}
@@ -245,7 +245,7 @@ function condNoteNonLette()
 		$idReparto=0;
 	// Cambiato il 14/6 con IPI Finance: tutti vedono come non lette le sole comunicazioni dirette
 	/*
-	if (userCanDo("READ_ALL")) // può vedere tutto (supervisore)
+	if (userCanDo("READ_ALL")) // puï¿½ vedere tutto (supervisore)
 	{
 		// supervisore: tutte le note (considera lette quelle lette dal reparto 1)
 		$cond = "WHERE TipoNota='C' AND NOT EXISTS (SELECT 1 FROM _opt_note_lette WHERE IdReparto=1 AND IdNota=n.IdNota)";
@@ -261,15 +261,15 @@ function condNoteNonLette()
 					IdUtente = $idUtente OR IdUtenteDest = $idUtente OR (IdUtenteDest IS NULL AND IdReparto IS NULL)
 					OR IdReparto=$idReparto OR IdUtente IN ($utentiReparto) OR IdUtenteDest IN ($utentiReparto)
 				) AND NOT EXISTS (SELECT 1 FROM _opt_note_lette WHERE IdReparto=$idReparto AND IdNota=n.IdNota)";
-		if (!userCanDo("READ_RISERVATO"))	// se non può  vedere quelle con flag riservato
+		if (!userCanDo("READ_RISERVATO"))	// se non puï¿½  vedere quelle con flag riservato
 			$cond .= " AND IFNULL(FlagRiservato,'N')!='Y'";	
 	}
-	else // utente semplice, può vedere solo quelle dirette o create da lui e quelle dirette a tutti
+	else // utente semplice, puï¿½ vedere solo quelle dirette o create da lui e quelle dirette a tutti
 	{*/
 		$cond = "WHERE TipoNota='C' AND	(
-					IdUtente = $idUtente OR IdUtenteDest = $idUtente OR (IdUtenteDest IS NULL AND IdReparto IS NULL)
+					IdUtente = $idUtente OR IdUtenteDest = 0$idUtente OR (IdUtenteDest IS NULL AND IdReparto IS NULL)
 				) AND NOT EXISTS (SELECT 1 FROM _opt_note_lette WHERE IdReparto=$idReparto AND IdNota=n.IdNota)";
-		if (!userCanDo("READ_RISERVATO"))	// se non può  vedere quelle con flag riservato
+		if (!userCanDo("READ_RISERVATO"))	// se non puï¿½  vedere quelle con flag riservato
 			$cond .= " AND IFNULL(FlagRiservato,'N')!='Y'";	
 	/*}*/
 	return $cond;	
