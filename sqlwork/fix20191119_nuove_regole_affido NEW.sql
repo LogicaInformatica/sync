@@ -59,6 +59,9 @@ SELECT null,IdClasse, PercSpeseIncasso, ImpSpeseIncasso, FlagInteressiMora, CURD
 27, 2127
 FROM regolaripartizione WHERE IdRegolaProvvigione=2115 
 ;
+#aggiorna lettera CR per nuova regola provv. 2127 (fatto in prod)
+update automatismo 
+set condizione = replace(condizione,'2115', '2115,2127') where condizione like '%2115%'
 
 # Crea le regole di assegnazione Fire/Osirc distinte per regione
 # IdRegolaAssegnazione, DurataAssegnazione, IdTipoCliente, IdFamiglia, IdClasse, IdReparto, IdUtente, DataIni, DataFin, lastupd, LastUser, IdArea, Ordine, ImportoDa, ImportoA, TipoDistribuzione, TipoAssegnazione, GiorniFissiInizio, GiorniFissiFine, Condizione, IdRegolaProvvigione
