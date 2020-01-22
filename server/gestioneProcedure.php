@@ -1044,7 +1044,7 @@ function addAzioneProcedura()
 			//if(true){
 				$mexFinale="Registrazione correttamente eseguita";
 				if($ErrMex!=''){
-					$mexFinale .="<br /> Vi è inoltre almeno un $ErrMex";
+					$mexFinale .="<br /> Vi ï¿½ inoltre almeno un $ErrMex";
 				}
 				writeLog("APP","Gestione azioni di workflow",$mex,$codMex);
 				echo "{success:true, messaggio:\"$mexFinale\"}";
@@ -1188,7 +1188,7 @@ function addAzioneProcedura()
 						{
 							$mexFinale="Registrazione correttamente eseguita";
 							if($ErrMex!=''){
-								$mexFinale .="<br /> Vi è inoltre almeno un $ErrMex";
+								$mexFinale .="<br /> Vi ï¿½ inoltre almeno un $ErrMex";
 								$mex .= ". ".$mexFinale;
 							}
 							writeLog("APP","Gestione azioni di workflow",$mex,$codMex);
@@ -2104,7 +2104,7 @@ function saveModAndLink()
 			$extens='.html';
 		}
 				
-		//controllo bontà dati combo
+		//controllo bontï¿½ dati combo
 		$regexp ="/^[0-9]$/";
 		if (!preg_match($regexp,$combo))
 		{
@@ -2137,7 +2137,7 @@ function saveModAndLink()
 		if($number>0)
 		{
 			//inserimento in modelli
-			//controllo se è una modifica
+			//controllo se ï¿½ una modifica
 			/*if($mod!=''){
 				$sqlDel="DELETE FROM modello WHERE IdModello=$mod";
 				if(!execute($sqlDel)){
@@ -2160,7 +2160,7 @@ function saveModAndLink()
 				$desc=$nomeFile;
 				if($field != '')
 					$field=$field.'=';
-				$sqinsNus = "UPDATE modello SET TitoloModello='$nome',FileName='$desc',TipoModello='$tmodello',FlagRiservato='$riservato',DataIni='2001-01-01',DataFin='9999-12-31',LastUser='$Operatore'$field$value WHERE $idfield=$idvalue";
+				$sqinsNus = "UPDATE modello SET TitoloModello=".quote_smart($nome).",FileName='$desc',TipoModello='$tmodello',FlagRiservato='$riservato',DataIni='2001-01-01',DataFin='9999-12-31',LastUser='$Operatore'$field$value WHERE $idfield=$idvalue";
 			}else{
 				$desc=$nome.''.$extens;
 				if($combo!=''){

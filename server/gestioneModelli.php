@@ -197,7 +197,7 @@ function saveMM()
 			$respDec=mb_detect_encoding($testoSMS);
 			if($respDec != 'ASCII')
 			{
-				echo "{success:false, error:\"Non è possibile inserire caratteri accentati o speciali.\"}";
+				echo "{success:false, error:\"Non ï¿½ possibile inserire caratteri accentati o speciali.\"}";
 				die();
 			}
 			$order   = array("\r\n", "\n", "\r");
@@ -240,7 +240,7 @@ function saveMM()
 			}
 		}
 		
-		//controllo bontà dati combo
+		//controllo bontï¿½ dati combo
 		$regexp ="/^[0-9]$/";
 		if (!preg_match($regexp,$combo))
 		{
@@ -255,7 +255,7 @@ function saveMM()
 			if($mod!=''){
 				//modifica
 				if(!$client)
-				{//se non siamo in modalità protetta poi chè si sta accedendo da client
+				{//se non siamo in modalitï¿½ protetta poi chï¿½ si sta accedendo da client
 					$codMex="MOD_MMODEL";
 					$number=file_put_contents(TEMPLATE_PATH."/$nomeFile",$TXT);
 					if(!($number>0)){
@@ -276,7 +276,7 @@ function saveMM()
 		if($number>0)
 		{
 			//inserimento in modelli
-			//controllo se è una modifica
+			//controllo se ï¿½ una modifica
 			//trace("combo $combo");		
 			$field='';
 			$value='';
@@ -300,7 +300,7 @@ function saveMM()
 				//	die();
 				//}
 				//trace("comboUP $value");
-				$sqinsNus = "UPDATE modello SET TitoloModello='$nome',FileName='$desc',TipoModello='$tmodello',FlagRiservato='$riservato',DataIni='2001-01-01',DataFin='9999-12-31',LastUser='$Operatore'$field$value WHERE $idfield=$idvalue";
+				$sqinsNus = "UPDATE modello SET TitoloModello=".quote_smart($nome).",FileName='$desc',TipoModello='$tmodello',FlagRiservato='$riservato',DataIni='2001-01-01',DataFin='9999-12-31',LastUser='$Operatore'$field$value WHERE $idfield=$idvalue";
 			}else{
 				$desc=$nome.''.$extens;
 				if($combo!=''){
@@ -379,8 +379,8 @@ function saveModelloWord(){
 					writeLog("APP","Gestione modelli lettera","Impossibile caricare il file",$oper."_MODEL");
 					die('{success:false, error:"Impossibile caricare il file"}');
 			}
-		}else{ //allegato non c'è
-			if($oper == 'INS'){ //se è avvenuto un insert di un nuovo documento
+		}else{ //allegato non c'ï¿½
+			if($oper == 'INS'){ //se ï¿½ avvenuto un insert di un nuovo documento
 				writeLog("APP","Gestione modelli lettera","Manca il file allegato",$oper."_MODEL");
 				die('{success:false, error:"Manca il file allegato"}');
 			}
