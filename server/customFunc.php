@@ -287,7 +287,7 @@ function Custom_Delegation($IdContratto,&$msgForHistory,&$idRegolaProvvigione,$I
 //----------------------------------------------------------------
 // Custom_Classification
 // Classifica una pratica secondo criteri custom
-// Ritorna: FALSE se non pu� stabilire la classificazione e demanda
+// Ritorna: FALSE se non puo' stabilire la classificazione e demanda
 //               la cosa alle regole standard
 //          0    se decide di non classificare
 //          IdClasse   se assegnata alla classe ritornata
@@ -303,7 +303,8 @@ function Custom_Classification($IdContratto)
 		// Imposta classificazione per maxirata non pagata
 		//-----------------------------------------------------------------------------------------------------------
 		if ($pratica["ImpRataFinale"]>0  // prevede una rata finale oppure e' uno dei prodotti speciali inclusi 2018/10
-		|| (!$pratica["IdAgenzia"]) && in_array($IdProdotto,array(356,367,372,397,402,418,419))) // Prodotti LO PA LP/BD/VP/RL/GL/VG/VD       
+        || in_array($IdProdotto,array(356,367,372,397,402,418,419)))
+		//2020-04-30 || (!$pratica["IdAgenzia"]) && in_array($IdProdotto,array(356,367,372,397,402,418,419))) // Prodotti LO PA LP/BD/VP/RL/GL/VG/VD       
 		{
 			// Controlla se la rata finale e' insoluta
 			if (rowExistsInTable("insoluto","IdContratto=$IdContratto AND NumRata>" . 
@@ -316,7 +317,7 @@ function Custom_Classification($IdContratto)
                                         where IdContratto=$IdContratto");
 				if ($CodClasse!='MAX') 
 				{
-					BeginTrans();
+					beginTrans();
 					$colList = ""; // inizializza lista colonne
 					$valList = ""; // inizializza lista valori
 					addInsClause($colList,$valList,"IdContratto",$IdContratto,"N");	 	
