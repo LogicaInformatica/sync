@@ -303,7 +303,7 @@ function Custom_Classification($IdContratto)
 		// Imposta classificazione per maxirata non pagata
 		//-----------------------------------------------------------------------------------------------------------
 		if ($pratica["ImpRataFinale"]>0  // prevede una rata finale oppure e' uno dei prodotti speciali inclusi 2018/10
-        || in_array($IdProdotto,array(356,367,372,397,402,418,419)))
+        || in_array($IdProdotto,array(356,367,372,397,402,418,419,377,425,426,427,428,429,430)))
 		//2020-04-30 || (!$pratica["IdAgenzia"]) && in_array($IdProdotto,array(356,367,372,397,402,418,419))) // Prodotti LO PA LP/BD/VP/RL/GL/VG/VD       
 		{
 			// Controlla se la rata finale e' insoluta
