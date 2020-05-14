@@ -212,12 +212,7 @@ function htmlToPdf($IdContratto,$modello,$strTxt,$ext){
 	//TEST REGEXP PER NOMI FILE LETTERA DEO, LETTERA DEO MAXIRATE E PREAVVISO CENTRALE RISCHI
 	// E PER I MODELLI RELATIVI AI GARANTI
 	//sono le uniche lettere che hanno il QRCode inglobato nel testo
-	if(	preg_match("/.*?\s(DEO)\.html/ism",$file,$match) 
-		|| preg_match("/.*?\s(DEO-CR).*?\.html/ism",$file,$match)
-		|| preg_match("/.*?\s(centrale rischi)\.html/ism",$file,$match) 
-		|| preg_match("/.*?(DEO-CR maxirate GARANTE)\.html/ism",$file,$match)
-		|| preg_match("/.*?(DEO garante)\.html/ism",$file,$match)
-		|| preg_match("/.*?\s(centrale rischi GARANTE)\.html/ism",$file,$match)){
+	if(	preg_match("/.*?\s(DEO)\.html/ism",$file,$match) || preg_match("/.*?(DEO garante)\.html/ism",$file,$match)){
 		if($match){
 			$imgBase64Code = generaQRCode($row,$errConvertion);
 			$qrcode = true;
@@ -334,7 +329,29 @@ function htmlToPdf($IdContratto,$modello,$strTxt,$ext){
 }
 
 
-
+/**
+* MODIFICA 2020-05-12 PER SITUAZIONE COVID-19
+* generaQRCode genera un qr code contenente la stringa Sisal cosi' fatta come da esempio
+* BP=9712000000784819590000173040260000025750896
+* il tag fisso e' 'BP='
+* il codice di pagamento e' '971200000078481959'
+* cosi suddiviso  97 12 000000784819 59
+* i caratteri 97 sono cosi ricavati: se il tipo contratto del titolare e' LO restituisce 97, se LE 98 altrimenti 99.
+* Poi il 12 si riferisce al numero delle rate (se riesci a recuperarle bene altrimenti puoi inserire un valore fisso)
+* I successivi 12 caratteri e' il codice del contratto   000000784819.
+* gli ultimi 2 caratteri codice 59 , e' un codice fisso
+* il c/c postale fisso à '000017304026'
+* l'importo da recuperare e' '0000025750' ossia euro 257,50
+* il tipo di avviso di pagamento (bollettino premarcato) fisso a '896'
+* Per la generazione del codice QR viene utilizzata la libreria PHP qrlib.php:
+* si usa la chiamata QRcode::png($testo,$filepath)
+* Una volta creata viene convertita in base 64 e poi il file dell'immagine viene cancellata
+* dalla cartella temporanea in cui si trova
+* @param {Array] $contratto record relativo al contratto per cui viene generato il codice qr
+* @param {String} $errConvertion (byRef) stringa che contiene messaggio di errore in caso di mancata
+* @return {String} $base64 stringa in base64 dell'immagine
+* generazione dell'immagine o non riconoscimento del codice contratto
+*/
 function generaQRCode($contratto,&$errConvertion){
 	
 	extract($contratto);
