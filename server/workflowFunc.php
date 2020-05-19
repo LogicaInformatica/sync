@@ -5370,8 +5370,8 @@ function creaStampa($IdModello,$IdContratto,$IdMessaggioDifferito)
 		$NomeFileAllegato = $tipoAll["FileName"];
 		$idTipoAllegato = $tipoAll["IdTipoAllegato"];
 		
-		if(!($NomeFileAllegato>"")) 	//  se non ha trovato nessun modello con il codice modello ricevuto
-		{
+		//  se non ha trovato nessun modello con il codice modello ricevuto
+		if(!($NomeFileAllegato>"")){
 		    //  invio errore per mancanza modello sul db
 		    $msg = "Il modello '$IdModello' non  e' presente nella tab modelli.";
 			UpdateStatoMsgDiff($IdMessaggioDifferito,"N","Errore nell'elaborazione della lettera ",$msg);
@@ -5381,14 +5381,14 @@ function creaStampa($IdModello,$IdContratto,$IdMessaggioDifferito)
 	    // controllo se esiste il file modello dell'allegato nella cartella templates
 	    $fileTemp = TEMPLATE_PATH."/$NomeFileAllegato";
 	    //trace(">ftemp $fileTemp");
-	    if(!file_exists ($fileTemp))
-	    {
+	    if(!file_exists ($fileTemp)){
 	       $msg = "Il file $fileTemp non e' presente nella cartella ".TEMPLATE_PATH;
 	       UpdateStatoMsgDiff($IdMessaggioDifferito,"N","Errore nell'elaborazione ".$tipoAll["TitoloModello"],$msg);
 	       trace($msg,false);
 	       return false;		
 	    }
-	     
+	    
+		
 	    // leggo dal db i dati per la costruzione dell'allegato
 	    $sql = "SELECT * FROM v_contratto_lettera WHERE IdContratto=$IdContratto";
 	    $row = getRow($sql);
@@ -5408,14 +5408,29 @@ function creaStampa($IdModello,$IdContratto,$IdMessaggioDifferito)
 	      return -1;  // deve continuare, ma torna -1 per indicare che non si tratta di un IdAllegato
 	    }
 	    
+		//2020-05-19 GENERAZIONE DEL QR CODE VALIDA SOLO PER IL MODELLO Lettera DEO.html e Lettera DEO garante.html (fmazzarani)
+		$qrcode = false;
+		//TEST REGEXP PER NOMI FILE LETTERA DEO, LETTERA DEO MAXIRATE E PREAVVISO CENTRALE RISCHI
+		// E PER I MODELLI RELATIVI AI GARANTI
+		//sono le uniche lettere che hanno il QRCode inglobato nel testo
+		if(	preg_match("/.*?\s(DEO)\.html/ism",$NomeFileAllegato,$match) || preg_match("/.*?(DEO garante)\.html/ism",$NomeFileAllegato,$match)){
+			if($match){
+				$imgBase64Code = generaQRCode($row,$errConvertion);
+				$qrcode = true;
+				if(!$imgBase64Code){
+					$qrcode = false;
+					$msg = $errConvertion > '' ? $errConvertion : '';
+					Throw new Exception("\Genereazione QR Code per il contratto $CodContratto non riuscita a causa del seguente errore: $msg");
+					return false;
+				}
+			}
+		}
+		
 	    $CodContratto = $row["CodContratto"];
 	    
 	    // sceglie la cartella di destinazione in base allo userid
 		$processUser = posix_getpwuid(posix_geteuid());
-		//$processUser['name']=="root") 
-		//	$folder = "sftp_f2";
-		//else
-			$folder = $processUser['name'].'_new/'.substr($CodContratto,0,4); 
+		$folder = $processUser['name'].'_new/'.substr($CodContratto,0,4); 
 
 		$localDir=ATT_PATH."/".$row["IdCompagnia"]."/$folder/".$CodContratto;
 		trace("Scrittura allegato nel folder $localDir",FALSE);
@@ -5423,12 +5438,13 @@ function creaStampa($IdModello,$IdContratto,$IdMessaggioDifferito)
 			if (!mkdir($localDir,0777,true)) // true --> crea le directory ricorsivamente
 				Throw new Exception("\nOperazione non riuscita a causa del seguente errore: Impossibile creare la cartella dei documenti $localDir");				
 
-		// Se l'estensione del modello e' txt, produce una file di testo, se e' HTML produce un file PDF		
-		if (preg_match('/html?$/i',$NomeFileAllegato)) // .html oppure .htm
+		// Se l'estensione del modello e' txt, produce una file di testo, se e' HTML produce un file PDF
+		// .html oppure .htm
+		if (preg_match('/html?$/i',$NomeFileAllegato)){
 			$ext = ".pdf";
-		else 
+		}else{
 			$ext = ".txt";
-		
+		}
 		$fileName =	substr($NomeFileAllegato,0,strrpos($NomeFileAllegato,'.'))."_{$CodContratto}_Rata_{$row["Rata"]}$ext";
 		$newFile  = $localDir."/".$fileName;	
 
@@ -5473,11 +5489,16 @@ function creaStampa($IdModello,$IdContratto,$IdMessaggioDifferito)
 					trace("Non trovato valore da sostituire alla variabile $var",FALSE);
 				}
 			}
-			$strTxt    = str_replace($var,$newVal,$strTxt);				
+			//2020-05-08 gestione della sostituzione della variabile relativa al QRcode nel modello Lettera DEO.txt
+			if($var == '%QRCode%' && $qrcode){
+				$strTxt = str_replace($var,$imgBase64Code,$strTxt);
+			}else{
+				$strTxt = str_replace($var,$newVal,$strTxt);
+			}			
 		}
 
 		// scrivo il nuovo contenuto della lettera nel nuovo allegato
-		// Se il file da produrre � PDF, chiama l'apposita funzione, altrimenti scrive semplicemente il testo fin qui composto
+		// Se il file da produrre e' PDF, chiama l'apposita funzione, altrimenti scrive semplicemente il testo fin qui composto
 		if ($ext=='.pdf') {
 			$result = creaPdfDaHtml($strTxt,$newFile);
 		} else {		
@@ -5495,9 +5516,9 @@ function creaStampa($IdModello,$IdContratto,$IdMessaggioDifferito)
 		$IdUtente = $context["IdUtente"];
 		$idtipo = $idTipoAllegato;
 		
-		// Controllo se l'allegato � stato gi� inserito nella tabella allegato
+		// Controllo se l'allegato e' stato gia' inserito nella tabella allegato
 		$IdAllegato = getScalar("SELECT IdAllegato FROM allegato WHERE UrlAllegato='$url' AND IdContratto=$IdContratto");
-		if ($IdAllegato>0) // gi� presente: modifica solo la data
+		if ($IdAllegato>0) // gia' presente: modifica solo la data
 		{
 			if (!execute("UPDATE allegato SET LastUpd=NOW() WHERE IdAllegato=$IdAllegato"))
 			{
