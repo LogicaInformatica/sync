@@ -1,5 +1,6 @@
 <?php 
 	require_once("workflowFunc.php");
+	require_once("phpqrcode/qrlib.php"); //2020-05-08 Carica il plugin per generare qrcode 
 	//
 //  Compone il testo di una lettera (chiamata con Ajax da pagina js)
 // Nota : 2016-05-26 - l'azione STA ha FlagMultiplo = N anche se questo programma gestisce più contratti in una volta,
@@ -206,6 +207,28 @@ function htmlToPdf($IdContratto,$modello,$strTxt,$ext){
 	
 	$CodContratto = $row["CodContratto"];
 	$file = $modello['FileName'];
+	//2020-05-8 GENERAZIONE DEL QR CODE VALIDA SOLO PER IL MODELLO Lettera DEO.txt (fmazzarani)
+	$qrcode = false;
+	//TEST REGEXP PER NOMI FILE LETTERA DEO, LETTERA DEO MAXIRATE E PREAVVISO CENTRALE RISCHI
+	// E PER I MODELLI RELATIVI AI GARANTI
+	//sono le uniche lettere che hanno il QRCode inglobato nel testo
+	if(	preg_match("/.*?\s(DEO)\.html/ism",$file,$match) 
+		|| preg_match("/.*?\s(DEO-CR).*?\.html/ism",$file,$match)
+		|| preg_match("/.*?\s(centrale rischi)\.html/ism",$file,$match) 
+		|| preg_match("/.*?(DEO-CR maxirate GARANTE)\.html/ism",$file,$match)
+		|| preg_match("/.*?(DEO garante)\.html/ism",$file,$match)
+		|| preg_match("/.*?\s(centrale rischi GARANTE)\.html/ism",$file,$match)){
+		if($match){
+			$imgBase64Code = generaQRCode($row,$errConvertion);
+			$qrcode = true;
+			if(!$imgBase64Code){
+				$qrcode = false;
+				$msg = $errConvertion > '' ? $errConvertion : '';
+				Throw new Exception("\Genereazione QR Code per il contratto $CodContratto non riuscita a causa del seguente errore: $msg");
+				return false;
+			}
+		}
+	}
 	// sceglie la cartella di destinazione in base allo userid
 	$processUser = posix_getpwuid(posix_geteuid());
 	$folder = $processUser['name'].'_new/'.substr($CodContratto,0,4);
@@ -247,14 +270,19 @@ function htmlToPdf($IdContratto,$modello,$strTxt,$ext){
 						$newVal .= TEXT_NEWLINE;
 				}
 		}else{
-			if (array_key_exists($keySearch,$row))
+			if (array_key_exists($keySearch,$row)){
 				$newVal= $row[$keySearch];
-				else {
-					$newVal = '';
-					trace("Non trovato valore da sostituire alla variabile $var",FALSE);
-				}
+			}else{
+				$newVal = '';
+				trace("Non trovato valore da sostituire alla variabile $var",FALSE);
+			}
 		}
-		$strTxt    = str_replace($var,$newVal,$strTxt);
+		//2020-05-08 gestione della sostituzione della variabile relativa al QRcode nel modello Lettera DEO.txt
+		if($var == '%QRCode%' && $qrcode){
+			$strTxt = str_replace($var,$imgBase64Code,$strTxt);
+		}else{
+			$strTxt = str_replace($var,$newVal,$strTxt);
+		}
 	}
 	
 	if($ext =='.pdf'){
@@ -304,4 +332,62 @@ function htmlToPdf($IdContratto,$modello,$strTxt,$ext){
 	readfile($newFile);
 	
 }
+
+
+
+function generaQRCode($contratto,&$errConvertion){
+	
+	extract($contratto);
+	
+	if(preg_match("/([a-z]{2,})([0-9]{2,})/i",$CodContratto,$matches)){
+		if($matches){
+			$tipocontratto = "";
+			switch($matches[1]){
+				case "LO":
+					$tipocontratto = "97";
+					break;
+				case "LE":
+					$tipocontratto = "98";
+					break;
+				default:
+					$tipocontratto = "99";
+					break;
+			}
+			$codice = $matches[2];
+			$imptotaledebito="00000".str_replace(".","",str_replace(",","",$ImpInsolutoIT));
+			$numerorate = $TotaleNumeroRate;
+			$codpagamento = $tipocontratto.$numerorate."000000".$codice."59";
+			$ccpostale="000017304026";
+			$tipopagamento = "896";
+			$stringaSisal = "BP=".$codpagamento.$ccpostale.$imptotaledebito.$tipopagamento;
+			trace("Stringa Sisal - contratto $CodContratto: $stringaSisal");
+
+			//Genero filename con timestamp in testa in modo da renderlo univoco
+			//al momento della cancellazione dopo la trasformazione in base 64
+			$time = strtotime(date('Y-m-d h:i:s'));
+			$filename = TMP_PATH."/".$time."qrcode_".$CodContratto.'.png';
+
+
+			// generating
+			if (!file_exists($filename)) {
+				QRcode::png($stringaSisal,$filename);
+				trace("Generato il file $filename");
+				
+				$type = pathinfo($filename, PATHINFO_EXTENSION);
+				$data = file_get_contents($filename);
+				$base64 = 'data:image/'.$type.';base64,'. base64_encode($data);
+				trace("Cancello il file $filename");
+				unlink($filename);
+				return '"'.$base64.'"';
+			}else{
+				$errConvertion = "Errore nella generazione del file qrcode $filename per il contratto $CodContratto";
+				return "";
+			}
+		}
+	}else{
+		$errConvertion = "Generazione del QR Code interrotta. Non e' stato possibile riconoscere il contratto $CodContratto dal formato del codice.";
+		return "";
+	}
+}
+
 ?>
