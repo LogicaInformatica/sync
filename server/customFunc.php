@@ -459,18 +459,19 @@ function Custom_Return($IdContratto,$IdAgenzia,$CodRegolaProvvigione,$dataInizio
 	// 27/7/2013: la stessa cosa avviene al rientro da OSIRC e FIDES
 	// 15/6/2015: aggiunta OSIRC 2A (che sostituisce SETEL 27)
     // 5/5/2018: stesso trattamento per il rientro da M2 (maxirata fase 2) e riscatto leasing (RS)
+    // 14/5/2020: stesso trattamento per Fire 
 	//-----------------------------------------------------------------------------------
-	if (in_array($CodRegolaProvvigione, array("27", "L2", "L3", "2A", "M2", "RS")))
+	if (in_array($CodRegolaProvvigione, array("27", "L2", "L3", "2A","2B", "M2", "RS")))
 	{
 		$IdAffidoForzato = getScalar("SELECT IdAffidoForzato FROM assegnazione WHERE IdContratto=$IdContratto"
 			." AND IdAgenzia=$IdAgenzia AND DataFin='".ISODate($dataFineAffido)."'");
-		trace("ritorno da SETEL 27/FIDES L2/OSIRC L3/OSIRC 2A/M2,RS: IdAffidoForzato=$IdAffidoForzato",FALSE);
+		trace("ritorno da SETEL 27/FIDES L2/OSIRC L3/OSIRC 2A/ FIRE/2B, M2,RS: IdAffidoForzato=$IdAffidoForzato",FALSE);
 		if (!($IdAffidoForzato>0))
 		{
 			$pagato = getScalar("SELECT sum(ImpPagato-ImpIncassoImproprio) FROM storiainsoluto WHERE IdContratto=$IdContratto"
 		                   ." AND CodAzione!='REV' AND IdAgenzia=$IdAgenzia AND DataFineAffido='".ISODate($dataFineAffido)."'"
 		                   ." AND ImpCapitaleDaPagare>0");
-			trace("ritorno da SETEL 27/FIDES L2/OSIRC L3/OSIRC 2A/M2,RS: pagato=$pagato",FALSE);
+			trace("ritorno da SETEL 27/FIDES L2/OSIRC L3/OSIRC 2A/ FIRE/2B, M2,RS: pagato=$pagato",FALSE);
 		    if (!($pagato>0))
  			{
  				// Imposta il campo necessario alle uscite dal ciclo di workflow
@@ -480,10 +481,10 @@ function Custom_Return($IdContratto,$IdAgenzia,$CodRegolaProvvigione,$dataInizio
 					trace("Custom_Return: fallito passaggio in stato Proposta DBT",FALSE);
  			}
 			else 
-				trace("Custom_Return: rientrata da SETEL 27/FIDES L2/OSIRC L3/OSIRC 2A/M2,RS ma non messa in stato DBT causa incasso di euro $pagato",FALSE);
+				trace("Custom_Return: rientrata da SETEL 27/FIDES L2/OSIRC L3/OSIRC 2A/ FIRE/2B,M2,RS ma non messa in stato DBT causa incasso di euro $pagato",FALSE);
 		}
 		else 
-			trace("Custom_Return: rientrata da SETEL 27/FIDES L2/OSIRC L3/OSIRC 2A/M2,RS ma non messa in stato DBT causa affido forzato: ".print_r($IdAffidoForzato,TRUE),FALSE);
+			trace("Custom_Return: rientrata da SETEL 27/FIDES L2/OSIRC L3/OSIRC 2A/ FIRE/2B,M2,RS ma non messa in stato DBT causa affido forzato: ".print_r($IdAffidoForzato,TRUE),FALSE);
 	}
 	//--------------------------------------------------------------------------------------
 	// Dopo il rientro da stragiudiziale, se � stata registrata una PDP perdita di possesso

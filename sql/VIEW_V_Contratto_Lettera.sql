@@ -75,8 +75,9 @@ IF(RagioneSociale>'','potrete','potra''') AS VerboPotere,
 SUBSTR(DescrBene,INSTR(DescrBene,'Cedente:')+9,INSTR(DescrBene,'\n')-INSTR(DescrBene,'Cedente:')-9) AS Cedente,
 # 2018-10-05 campi per maxirata
 replace(replace(replace(format(fin.ImpDebitoIniziale,2),'.',';'),',','.'),';',',') RataFinale, 
-DATE_FORMAT(fin.DataInsoluto,'%e/%m/%Y') AS DataRataFinale
-
+DATE_FORMAT(fin.DataInsoluto,'%e/%m/%Y') AS DataRataFinale,
+#2020-05-12 - per modifica alle lettere DEO e  centrale rischi
+IF(lr.NumRate>0,lr.NumRate,0) AS TotaleNumeroRate
 FROM contratto c
 JOIN cliente cl ON cl.IdCliente=c.IdCliente
 LEFT JOIN v_interessi_mora im ON c.IdContratto=im.IdContratto
