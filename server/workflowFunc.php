@@ -5750,15 +5750,42 @@ function chiudeConvalide($IdContratto) {
  */
 function creaPdfDaHtml($html,$filePath) {
 	try {
+		//2020-06-08 - MODIFICA PER GESTIONE DEL FOOTER
+		//-------------------------------------------------------------
+		// Estende la classe TCPDF per poter mettere footer
+		//-------------------------------------------------------------
+		class MYPDF extends TCPDF {
+			public $footerImage;
+			
+			public function setFooterImage($path){
+				$this->footerImage = $path;
+			} 
+			
+			// Page footer
+			public function Footer() {
+				$this->SetY(-15); // stacca un po' il footer dal bordo inferiore
+
+				// Mette l'immagine del footer aziendale
+				// il parametro L serve ad allineare a sx il footer
+				// vedi https://stackoverflow.com/questions/44061583/what-are-the-parameter-of-the-image-in-tcpdf
+				// oppure https://w3schools.invisionzone.com/topic/55228-help-with-tcpdf-image-alignment/
+				$logo = $this->Image($this->footerImage, 35, $this->GetY()-13, 0, 25,'','','',false,300,'L'); // altezza 2.5 cm
+				
+				// Mette il numero di pagina
+				$this->Cell(0, 11, 'Pagina '.$this->getAliasNumPage().' di '.$this->getAliasNbPages(), 0, false, 'R', 0, '', 0, false, 'T', 'M');
+			}
+		}
+		$footerImage = "footerLettere2020.png";
 		trace("Creazione PDF da HTML su $filePath",false);
 		//create a new PDF document
-		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+		$pdf = new MYPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 		
 		// set header and footer fonts
 		$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', 9 /* PDF_FONT_SIZE_MAIN */)); // era 10
 		$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', 9 /* PDF_FONT_SIZE_DATA */)); // era 10
 		$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
-		
+		trace("path del footer: ".TEMPLATE_PATH."/$footerImage");
+		$pdf->setFooterImage(TEMPLATE_PATH."/$footerImage");
 		$pdf->SetMargins(18,50); // millimetri
 		
 		$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
@@ -5767,7 +5794,7 @@ function creaPdfDaHtml($html,$filePath) {
 		// headerLettera.jpg deve essere messa nella cartella tcpdf/examples/images  
 		$pdf->setHeaderData("headerLettera.jpg","170" /* larghezza in mm */
 				,'','',array(0,0,0),array(255,255,255));
-		$pdf->setPrintFooter(false); // evita riga di footer
+		$pdf->setPrintFooter(true); // evita riga di footer
 		
 		//set auto page breaks
 		$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
