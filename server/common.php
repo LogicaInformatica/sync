@@ -1807,7 +1807,7 @@ function generaQRCode($contratto,&$errConvertion){
 			}
 			$codice = $matches[2];
 			$imptotaledebito="00000".str_replace(".","",str_replace(",","",$ImpInsolutoIT));
-			$numerorate = $TotaleNumeroRate;
+			$numerorate = str_pad($TotaleNumeroRate, 2, '0', STR_PAD_LEFT);
 			$codpagamento = $tipocontratto.$numerorate."000000".$codice."59";
 			$ccpostale="000017304026";
 			$tipopagamento = "896";
