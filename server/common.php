@@ -1746,7 +1746,7 @@ function writeProcessLog($process,$text,$level=0)
 		}
 	}
 	$sql = "INSERT INTO processlog (ProcessName,LogMessage,LogLevel) VALUES(".quote_smart($process).",".quote_smart($text).",$level)";
-	execute($sql,false); // evita traccia perché se MySql è KO , va in ricorsione
+	execute($sql,false); // evita traccia perchï¿½ se MySql ï¿½ KO , va in ricorsione
 	
 	if ($level!=-2) {
 		if (hasProcessLogInterrupt($process)) { // ricevuto comando di chiusura
@@ -1758,7 +1758,7 @@ function writeProcessLog($process,$text,$level=0)
 
 /**
  * hasProcessLogInterrupt
- * Torna TRUE se nel processlog, per il processo dato, è stata registrata una richiesta di interruzione (LogLevel=-2)
+ * Torna TRUE se nel processlog, per il processo dato, ï¿½ stata registrata una richiesta di interruzione (LogLevel=-2)
  */
 function hasProcessLogInterrupt($process) {
 	return rowExistsInTable('processlog','LogLevel=-2 AND ProcessName='.quote_smart($process));
@@ -1812,7 +1812,7 @@ function generaQRCode($contratto,&$errConvertion){
 			$ccpostale="000017304026";
 			$tipopagamento = "896";
 			$stringaSisal = "BP=".$codpagamento.$ccpostale.$imptotaledebito.$tipopagamento;
-			trace("Stringa Sisal - contratto $CodContratto: $stringaSisal");
+			trace("Stringa Sisal - contratto $CodContratto: $stringaSisal",false);
 
 			//Genero filename con timestamp in testa in modo da renderlo univoco
 			//al momento della cancellazione dopo la trasformazione in base 64
@@ -1823,12 +1823,12 @@ function generaQRCode($contratto,&$errConvertion){
 			// generating
 			if (!file_exists($filename)) {
 				QRcode::png($stringaSisal,$filename);
-				trace("Generato il file $filename");
+				trace("Generato il file $filename",false);
 				
 				$type = pathinfo($filename, PATHINFO_EXTENSION);
 				$data = file_get_contents($filename);
 				$base64 = 'data:image/'.$type.';base64,'. base64_encode($data);
-				trace("Cancello il file $filename");
+				trace("Cancello il file $filename",false);
 				unlink($filename);
 				return '"'.$base64.'"';
 			}else{
