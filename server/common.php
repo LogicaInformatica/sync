@@ -1805,10 +1805,10 @@ function generaQRCode($contratto,&$errConvertion){
 					$tipocontratto = "99";
 					break;
 			}
-			$codice = $matches[2];
-			$imptotaledebito="00000".str_replace(".","",str_replace(",","",$ImpInsolutoIT));
+			$codice = str_pad($matches[2],12,'0',STR_PAD_LEFT);
+			$imptotaledebito= str_pad(str_replace(".","",str_replace(",","",$ImpInsolutoIT)),10,'0',STR_PAD_LEFT);
 			$numerorate = str_pad($TotaleNumeroRate, 2, '0', STR_PAD_LEFT);
-			$codpagamento = $tipocontratto.$numerorate."000000".$codice."59";
+			$codpagamento = $tipocontratto.$numerorate.$codice."59";
 			$ccpostale="000017304026";
 			$tipopagamento = "896";
 			$stringaSisal = "BP=".$codpagamento.$ccpostale.$imptotaledebito.$tipopagamento;
