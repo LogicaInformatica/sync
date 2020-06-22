@@ -5370,8 +5370,8 @@ function creaStampa($IdModello,$IdContratto,$IdMessaggioDifferito)
 		$NomeFileAllegato = $tipoAll["FileName"];
 		$idTipoAllegato = $tipoAll["IdTipoAllegato"];
 		
-		if(!($NomeFileAllegato>"")) 	//  se non ha trovato nessun modello con il codice modello ricevuto
-		{
+		//  se non ha trovato nessun modello con il codice modello ricevuto
+		if(!($NomeFileAllegato>"")){
 		    //  invio errore per mancanza modello sul db
 		    $msg = "Il modello '$IdModello' non  e' presente nella tab modelli.";
 			UpdateStatoMsgDiff($IdMessaggioDifferito,"N","Errore nell'elaborazione della lettera ",$msg);
@@ -5381,14 +5381,14 @@ function creaStampa($IdModello,$IdContratto,$IdMessaggioDifferito)
 	    // controllo se esiste il file modello dell'allegato nella cartella templates
 	    $fileTemp = TEMPLATE_PATH."/$NomeFileAllegato";
 	    //trace(">ftemp $fileTemp");
-	    if(!file_exists ($fileTemp))
-	    {
+	    if(!file_exists ($fileTemp)){
 	       $msg = "Il file $fileTemp non e' presente nella cartella ".TEMPLATE_PATH;
 	       UpdateStatoMsgDiff($IdMessaggioDifferito,"N","Errore nell'elaborazione ".$tipoAll["TitoloModello"],$msg);
 	       trace($msg,false);
 	       return false;		
 	    }
-	     
+	    
+		
 	    // leggo dal db i dati per la costruzione dell'allegato
 	    $sql = "SELECT * FROM v_contratto_lettera WHERE IdContratto=$IdContratto";
 	    $row = getRow($sql);
@@ -5408,14 +5408,29 @@ function creaStampa($IdModello,$IdContratto,$IdMessaggioDifferito)
 	      return -1;  // deve continuare, ma torna -1 per indicare che non si tratta di un IdAllegato
 	    }
 	    
+		//2020-05-19 GENERAZIONE DEL QR CODE VALIDA SOLO PER IL MODELLO Lettera DEO.html e Lettera DEO garante.html (fmazzarani)
+		$qrcode = false;
+		//TEST REGEXP PER NOMI FILE LETTERA DEO, LETTERA DEO MAXIRATE E PREAVVISO CENTRALE RISCHI
+		// E PER I MODELLI RELATIVI AI GARANTI
+		//sono le uniche lettere che hanno il QRCode inglobato nel testo
+		if(	preg_match("/.*?\s(DEO)\.html/ism",$NomeFileAllegato,$match) || preg_match("/.*?(DEO garante)\.html/ism",$NomeFileAllegato,$match)){
+			if($match){
+				$imgBase64Code = generaQRCode($row,$errConvertion);
+				$qrcode = true;
+				if(!$imgBase64Code){
+					$qrcode = false;
+					$msg = $errConvertion > '' ? $errConvertion : '';
+					Throw new Exception("\Genereazione QR Code per il contratto $CodContratto non riuscita a causa del seguente errore: $msg");
+					return false;
+				}
+			}
+		}
+		
 	    $CodContratto = $row["CodContratto"];
 	    
 	    // sceglie la cartella di destinazione in base allo userid
 		$processUser = posix_getpwuid(posix_geteuid());
-		//$processUser['name']=="root") 
-		//	$folder = "sftp_f2";
-		//else
-			$folder = $processUser['name'].'_new/'.substr($CodContratto,0,4); 
+		$folder = $processUser['name'].'_new/'.substr($CodContratto,0,4); 
 
 		$localDir=ATT_PATH."/".$row["IdCompagnia"]."/$folder/".$CodContratto;
 		trace("Scrittura allegato nel folder $localDir",FALSE);
@@ -5423,12 +5438,13 @@ function creaStampa($IdModello,$IdContratto,$IdMessaggioDifferito)
 			if (!mkdir($localDir,0777,true)) // true --> crea le directory ricorsivamente
 				Throw new Exception("\nOperazione non riuscita a causa del seguente errore: Impossibile creare la cartella dei documenti $localDir");				
 
-		// Se l'estensione del modello e' txt, produce una file di testo, se e' HTML produce un file PDF		
-		if (preg_match('/html?$/i',$NomeFileAllegato)) // .html oppure .htm
+		// Se l'estensione del modello e' txt, produce una file di testo, se e' HTML produce un file PDF
+		// .html oppure .htm
+		if (preg_match('/html?$/i',$NomeFileAllegato)){
 			$ext = ".pdf";
-		else 
+		}else{
 			$ext = ".txt";
-		
+		}
 		$fileName =	substr($NomeFileAllegato,0,strrpos($NomeFileAllegato,'.'))."_{$CodContratto}_Rata_{$row["Rata"]}$ext";
 		$newFile  = $localDir."/".$fileName;	
 
@@ -5473,11 +5489,16 @@ function creaStampa($IdModello,$IdContratto,$IdMessaggioDifferito)
 					trace("Non trovato valore da sostituire alla variabile $var",FALSE);
 				}
 			}
-			$strTxt    = str_replace($var,$newVal,$strTxt);				
+			//2020-05-08 gestione della sostituzione della variabile relativa al QRcode nel modello Lettera DEO.txt
+			if($var == '%QRCode%' && $qrcode){
+				$strTxt = str_replace($var,$imgBase64Code,$strTxt);
+			}else{
+				$strTxt = str_replace($var,$newVal,$strTxt);
+			}			
 		}
 
 		// scrivo il nuovo contenuto della lettera nel nuovo allegato
-		// Se il file da produrre � PDF, chiama l'apposita funzione, altrimenti scrive semplicemente il testo fin qui composto
+		// Se il file da produrre e' PDF, chiama l'apposita funzione, altrimenti scrive semplicemente il testo fin qui composto
 		if ($ext=='.pdf') {
 			$result = creaPdfDaHtml($strTxt,$newFile);
 		} else {		
@@ -5495,9 +5516,9 @@ function creaStampa($IdModello,$IdContratto,$IdMessaggioDifferito)
 		$IdUtente = $context["IdUtente"];
 		$idtipo = $idTipoAllegato;
 		
-		// Controllo se l'allegato � stato gi� inserito nella tabella allegato
+		// Controllo se l'allegato e' stato gia' inserito nella tabella allegato
 		$IdAllegato = getScalar("SELECT IdAllegato FROM allegato WHERE UrlAllegato='$url' AND IdContratto=$IdContratto");
-		if ($IdAllegato>0) // gi� presente: modifica solo la data
+		if ($IdAllegato>0) // gia' presente: modifica solo la data
 		{
 			if (!execute("UPDATE allegato SET LastUpd=NOW() WHERE IdAllegato=$IdAllegato"))
 			{
@@ -5729,15 +5750,42 @@ function chiudeConvalide($IdContratto) {
  */
 function creaPdfDaHtml($html,$filePath) {
 	try {
+		//2020-06-08 - MODIFICA PER GESTIONE DEL FOOTER
+		//-------------------------------------------------------------
+		// Estende la classe TCPDF per poter mettere footer
+		//-------------------------------------------------------------
+		class MYPDF extends TCPDF {
+			public $footerImage;
+			
+			public function setFooterImage($path){
+				$this->footerImage = $path;
+			} 
+			
+			// Page footer
+			public function Footer() {
+				$this->SetY(-15); // stacca un po' il footer dal bordo inferiore
+
+				// Mette l'immagine del footer aziendale
+				// il parametro L serve ad allineare a sx il footer
+				// vedi https://stackoverflow.com/questions/44061583/what-are-the-parameter-of-the-image-in-tcpdf
+				// oppure https://w3schools.invisionzone.com/topic/55228-help-with-tcpdf-image-alignment/
+				$logo = $this->Image($this->footerImage, 35, $this->GetY()-13, 0, 25,'','','',false,300,'L'); // altezza 2.5 cm
+				
+				// Mette il numero di pagina
+				$this->Cell(0, 11, 'Pagina '.$this->getAliasNumPage().' di '.$this->getAliasNbPages(), 0, false, 'R', 0, '', 0, false, 'T', 'M');
+			}
+		}
+		$footerImage = "footerLettere2020.png";
 		trace("Creazione PDF da HTML su $filePath",false);
 		//create a new PDF document
-		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+		$pdf = new MYPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 		
 		// set header and footer fonts
 		$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', 9 /* PDF_FONT_SIZE_MAIN */)); // era 10
 		$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', 9 /* PDF_FONT_SIZE_DATA */)); // era 10
 		$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
-		
+		trace("path del footer: ".TEMPLATE_PATH."/$footerImage");
+		$pdf->setFooterImage(TEMPLATE_PATH."/$footerImage");
 		$pdf->SetMargins(18,50); // millimetri
 		
 		$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
@@ -5746,7 +5794,7 @@ function creaPdfDaHtml($html,$filePath) {
 		// headerLettera.jpg deve essere messa nella cartella tcpdf/examples/images  
 		$pdf->setHeaderData("headerLettera.jpg","170" /* larghezza in mm */
 				,'','',array(0,0,0),array(255,255,255));
-		$pdf->setPrintFooter(false); // evita riga di footer
+		$pdf->setPrintFooter(true); // evita riga di footer
 		
 		//set auto page breaks
 		$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);

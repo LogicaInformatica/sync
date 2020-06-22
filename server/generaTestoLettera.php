@@ -1,7 +1,7 @@
 <?php 
 	require_once("workflowFunc.php");
-	require_once("phpqrcode/qrlib.php"); //2020-05-08 Carica il plugin per generare qrcode 
-	//
+	
+//
 //  Compone il testo di una lettera (chiamata con Ajax da pagina js)
 // Nota : 2016-05-26 - l'azione STA ha FlagMultiplo = N anche se questo programma gestisce più contratti in una volta,
 // perchè la separazione del modello word in parti è difettosa nei casi in cui il modello contiene più sezioni
@@ -212,12 +212,7 @@ function htmlToPdf($IdContratto,$modello,$strTxt,$ext){
 	//TEST REGEXP PER NOMI FILE LETTERA DEO, LETTERA DEO MAXIRATE E PREAVVISO CENTRALE RISCHI
 	// E PER I MODELLI RELATIVI AI GARANTI
 	//sono le uniche lettere che hanno il QRCode inglobato nel testo
-	if(	preg_match("/.*?\s(DEO)\.html/ism",$file,$match) 
-		|| preg_match("/.*?\s(DEO-CR).*?\.html/ism",$file,$match)
-		|| preg_match("/.*?\s(centrale rischi)\.html/ism",$file,$match) 
-		|| preg_match("/.*?(DEO-CR maxirate GARANTE)\.html/ism",$file,$match)
-		|| preg_match("/.*?(DEO garante)\.html/ism",$file,$match)
-		|| preg_match("/.*?\s(centrale rischi GARANTE)\.html/ism",$file,$match)){
+	if(	preg_match("/.*?\s(DEO)\.html/ism",$file,$match) || preg_match("/.*?(DEO garante)\.html/ism",$file,$match)){
 		if($match){
 			$imgBase64Code = generaQRCode($row,$errConvertion);
 			$qrcode = true;
@@ -331,63 +326,6 @@ function htmlToPdf($IdContratto,$modello,$strTxt,$ext){
 	header("Content-Disposition: attachment; filename=\"$fileName\"");
 	readfile($newFile);
 	
-}
-
-
-
-function generaQRCode($contratto,&$errConvertion){
-	
-	extract($contratto);
-	
-	if(preg_match("/([a-z]{2,})([0-9]{2,})/i",$CodContratto,$matches)){
-		if($matches){
-			$tipocontratto = "";
-			switch($matches[1]){
-				case "LO":
-					$tipocontratto = "97";
-					break;
-				case "LE":
-					$tipocontratto = "98";
-					break;
-				default:
-					$tipocontratto = "99";
-					break;
-			}
-			$codice = $matches[2];
-			$imptotaledebito="00000".str_replace(".","",str_replace(",","",$ImpInsolutoIT));
-			$numerorate = $TotaleNumeroRate;
-			$codpagamento = $tipocontratto.$numerorate."000000".$codice."59";
-			$ccpostale="000017304026";
-			$tipopagamento = "896";
-			$stringaSisal = "BP=".$codpagamento.$ccpostale.$imptotaledebito.$tipopagamento;
-			trace("Stringa Sisal - contratto $CodContratto: $stringaSisal");
-
-			//Genero filename con timestamp in testa in modo da renderlo univoco
-			//al momento della cancellazione dopo la trasformazione in base 64
-			$time = strtotime(date('Y-m-d h:i:s'));
-			$filename = TMP_PATH."/".$time."qrcode_".$CodContratto.'.png';
-
-
-			// generating
-			if (!file_exists($filename)) {
-				QRcode::png($stringaSisal,$filename);
-				trace("Generato il file $filename");
-				
-				$type = pathinfo($filename, PATHINFO_EXTENSION);
-				$data = file_get_contents($filename);
-				$base64 = 'data:image/'.$type.';base64,'. base64_encode($data);
-				trace("Cancello il file $filename");
-				unlink($filename);
-				return '"'.$base64.'"';
-			}else{
-				$errConvertion = "Errore nella generazione del file qrcode $filename per il contratto $CodContratto";
-				return "";
-			}
-		}
-	}else{
-		$errConvertion = "Generazione del QR Code interrotta. Non e' stato possibile riconoscere il contratto $CodContratto dal formato del codice.";
-		return "";
-	}
 }
 
 ?>
