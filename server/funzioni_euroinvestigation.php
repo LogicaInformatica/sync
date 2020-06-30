@@ -88,7 +88,8 @@ function connectToEuroInvestigation(){
 	trace('connectToEuroInvestigation', false);
 	//set_time_limit(500);
 	//SSH Host
-	$server = '88.33.222.78';
+	//$server = '88.33.222.78'; //VECCHIO INDIRIZZO IP
+	$server = '51.77.120.131';
 	//SSH Port
 	$port = 21;
 	//username
