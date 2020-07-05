@@ -16,7 +16,8 @@ function riceveDatiEuroInvestigation(){
 	trace('riceveDatiEuroInvestigation',false);
 	global $EIPATH;
 	//path della cartella
-	$path = 'FLUSSO_DATI/EURO_TOYOTA';
+	//$path = 'FLUSSO_DATI/EURO_TOYOTA';
+    $path = 'Flusso_dati/euro_toyota';
 
 	$ftp = connectToEuroInvestigation();
 	if(!$ftp) {
